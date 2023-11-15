@@ -1,0 +1,65 @@
+{
+    "advertiser": "Brand Name",
+    "deployment_project_id": "project_id_to_deploy_bardtrender_to",
+    "project_id": "project_id_to_retrieve_data_from",
+    "project_region": "your-google-cloud-project-region - e.g.: us-central1",
+    "client_id": "",
+    "client_secret": "",
+    "refresh_token": "",
+    "login_customer_id": "",
+    "dev_token": "",
+    "cloud_run_service": "bardtrender",
+    "service_account_name": "bardtrender-service-account",
+    "low_performance_mode": true,
+    "language": "ES",
+    "google_trends" : {
+        "big_query":{
+            "trends_params": {
+                "international": true/false,
+                "country_name": "your-country"
+            }
+        },
+        "google_sheets":{
+            "spreadsheet_id": "your-google-trends-spreadsheet-id",
+            "sheet_name": "your-google-trends-spreadsheet-trends-name"
+        },
+        "brand_params": {
+            "merchant_center": true/false,
+            "merchant_center_table_name": "your-mc-table-name",
+            "brands": [ "Disney" ]
+        },
+        "google_ads": {
+            "num_headlines": 15,
+            "num_descriptions": 4
+        }
+    },
+    "client_trends":{
+        "big_query":{
+            "dataset": "your-bq-dataset-name - e.g.: trends-table",
+            "current_state_table": "your-bq-current-state-table-name - e.g.: trends_current_state_table",
+            "trends_limit": 3
+        },
+        "queries":{
+            "trends": "SELECT * FROM `project.dataset.table` WHERE date > '{start_date}' AND date < '{end_date}' LIMIT {limit}"
+        },
+        "google_ads":{
+            "num_headlines": 5,
+            "num_descriptions": 4,
+            "trends_google_ads_path_one": "tienda",
+            "search_bar_url": "https://www.yoursite.com/store?s={search_term}"
+        },
+        "google_sheets":{
+            "spreadsheet_id": "your-client-trends-spreadsheet-id",
+            "sheet_name": "your-client-trends-spreadsheet-name"
+        }
+    },
+    "palm_examples":{
+        "headlines": ["Buy Dior", "Opening gift.", "Every Christmas", "Baby gift table", "Wedding table", "Create your event table", "Samsung sound", "Newest monitors", "Latest cell phones", "Xiaomi cell phones", "Huawei cell phones", "Fashion shoes"],
+        "descriptions":["Desmaquillante Dior", "Open House, Cumpleaños", "Crea una invitación virtual", "Puntos en Monedero Electrónico", "Puedes Recibir Hoy", "Diferentes Estilos", "Puedes Recibir Hoy", "Diferentes Estilos", "Tus marcas favoritas", "Tus marcas favoritas", "Puedes Recibir Hoy", "Diferentes Estilos", "Tus marcas favoritas", "Tus marcas favoritas", "Diferentes Estilos", "Diferentes Estilos", "Diferentes Estilos", "Diferentes Estilos", "Diferentes Estilos", "Diferentes Estilos", "Tus marcas favoritas", "Tus marcas favoritas", "Diferentes Modelos", "Las Mejores Lavadoras", "Calentadores de Agua", "Diferentes Medidas y Marcas", "Batas de Baño", "Cojines para Sillas", "Paraguas Compacto", "Cinturones para Mujer", "Microondas LG", "Click Aquí", "Los Mejores Refrigeradores", "Diferentes Marcas", "Las Mejores Lavadoras", "Renueva tu Colchón", "Solicitar Crédito", "YOUR_STORE.com.mx"]
+    },
+    "keywords": {
+        "language_code": "1003",
+        "region_codes": ["2484"],
+        "url": "https://www.yoursite.com/"
+    }
+}
