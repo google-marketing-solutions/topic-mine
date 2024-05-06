@@ -4,6 +4,14 @@
 #
 #    pip-compile --generate-hashes requirements.in
 #
+about-time==4.2.1 \
+    --hash=sha256:6a538862d33ce67d997429d14998310e1dbfda6cb7d9bbfbf799c4709847fece \
+    --hash=sha256:8bbf4c75fe13cbd3d72f49a03b02c5c7dca32169b6d49117c257e7eb3eaee341
+    # via alive-progress
+alive-progress==3.1.5 \
+    --hash=sha256:347220c1858e3abe137fa0746895668c04df09c5261a13dc03f05795e8a29be5 \
+    --hash=sha256:42e399a66c8150dc507602dff7b7953f105ef11faf97ddaa6d27b1cbf45c4c98
+    # via -r requirements.in
 blinker==1.6.2 \
     --hash=sha256:4afd3de66ef3a9f8067559fb7a1cbe555c17dcbe15971b05d1b625c3e7abe213 \
     --hash=sha256:c3d739772abb7bc2860abf5f2ec284223d9ad5c76da018234f6f50d6f31ab1f0
@@ -125,7 +133,6 @@ google-api-core[grpc]==2.11.0 \
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-    #   google-cloud-translate
     #   pandas-gbq
 google-api-python-client==2.88.0 \
     --hash=sha256:37068453f79ea28e5394a8fe20a4ba620594e7f8541068bea2e844dacdcc9d33 \
@@ -180,7 +187,6 @@ google-cloud-core==2.3.3 \
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-    #   google-cloud-translate
 google-cloud-resource-manager==1.10.3 \
     --hash=sha256:1381a4b0f522248ebe0ebd1289d8822b99c54f4e1fe03924a6e723b2ed93dd7f \
     --hash=sha256:f80efcea36f10c5a81889afe93910926e3978b4b1ceeb82f563a2fc863072d14
@@ -189,10 +195,6 @@ google-cloud-storage==2.10.0 \
     --hash=sha256:934b31ead5f3994e5360f9ff5750982c5b6b11604dc072bc452c25965e076dc7 \
     --hash=sha256:9433cf28801671de1c80434238fb1e7e4a1ba3087470e90f70c928ea77c2b9d7
     # via google-cloud-aiplatform
-google-cloud-translate==3.11.2 \
-    --hash=sha256:09996e4bb0dfa5c2023185af87192f1d2c003668f8c9f4fac43242310b24423e \
-    --hash=sha256:57f1bc119cd61b2552ed7ea10b31a3f6fe90bc6e36c23863bce145b2f144b50d
-    # via -r requirements.in
 google-crc32c==1.5.0 \
     --hash=sha256:024894d9d3cfbc5943f8f230e23950cd4906b2fe004c72e29b209420a1e6b05a \
     --hash=sha256:02c65b9817512edc6a4ae7c7e987fea799d2e0ee40c53ec573a692bee24de876 \
@@ -277,6 +279,9 @@ googleapis-common-protos[grpc]==1.60.0 \
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
+grapheme==0.6.0 \
+    --hash=sha256:44c2b9f21bbe77cfb05835fec230bd435954275267fea1858013b102f8603cca
+    # via alive-progress
 grpc-google-iam-v1==0.12.6 \
     --hash=sha256:2bc4b8fdf22115a65d751c9317329322602c39b7c86a289c9b72d228d960ef5f \
     --hash=sha256:5c10f3d8dc2d88678ab1a9b0cb5482735c5efee71e6c0cd59f872eef22913f5c
@@ -331,6 +336,7 @@ grpcio==1.57.0 \
     #   google-ads
     #   google-api-core
     #   google-cloud-bigquery
+    #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
 grpcio-status==1.57.0 \
@@ -361,9 +367,9 @@ itsdangerous==2.1.2 \
     --hash=sha256:2c2349112351b88699d8d4b6b075022c0808887cb7ad10069318a8b0bc88db44 \
     --hash=sha256:5dbbc68b317e5e42f327f9021763545dc3fc3bfe22e6deb96aaf1fc38874156a
     # via flask
-jinja2==3.1.2 \
-    --hash=sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852 \
-    --hash=sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61
+jinja2==3.1.4 \
+    --hash=sha256:4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369 \
+    --hash=sha256:bc5dd2abb727a5319567b7a813e6a2e7318c39f4f487cfe6c89c6f9c7d25197d
     # via flask
 markupsafe==2.1.3 \
     --hash=sha256:05fb21170423db021895e1ea1e1f3ab3adb85d1c2333cbc2310f2a26bc77272e \
@@ -508,7 +514,6 @@ proto-plus==1.22.3 \
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   google-cloud-resource-manager
-    #   google-cloud-translate
 protobuf==4.24.2 \
     --hash=sha256:237b9a50bd3b7307d0d834c1b0eb1a6cd47d3f4c2da840802cd03ea288ae8880 \
     --hash=sha256:25ae91d21e3ce8d874211110c2f7edd6384816fb44e06b2867afe35139e1fd1c \
@@ -530,7 +535,6 @@ protobuf==4.24.2 \
     #   google-cloud-bigquery
     #   google-cloud-bigquery-storage
     #   google-cloud-resource-manager
-    #   google-cloud-translate
     #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
@@ -735,5 +739,6 @@ werkzeug==2.3.7 \
     # via flask
 
 # WARNING: The following packages were not pinned, but pip requires them to be
-# pinned when the requirements file includes hashes. Consider using the --allow-unsafe flag.
+# pinned when the requirements file includes hashes and the requirement is not
+# satisfied by a package already installed. Consider using the --allow-unsafe flag.
 # setuptools
