@@ -215,7 +215,7 @@ six==1.16.0
     #   google-auth
     #   google-auth-httplib2
     #   python-dateutil
-tqdm==4.66.2
+tqdm==4.66.3
     # via google-generativeai
 typing-extensions==4.10.0
     # via
