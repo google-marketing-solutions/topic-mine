@@ -13,14 +13,17 @@
 # limitations under the License.
 
 from urllib import parse
-from google_auth_oauthlib.flow import Flow
 from google_auth_oauthlib.flow import InstalledAppFlow
 from oauthlib.oauth2.rfc6749.errors import InvalidGrantError
 
 flow = InstalledAppFlow.from_client_secrets_file(
     'creds.json',
-    scopes=['https://www.googleapis.com/auth/adwords', 'https://www.googleapis.com/auth/bigquery', 'https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/cloud-platform'],
-)
+    scopes=['https://www.googleapis.com/auth/adwords',
+            'https://www.googleapis.com/auth/bigquery',
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/drive',
+            'https://www.googleapis.com/auth/cloud-platform'],
+    )
 
 flow.redirect_uri = 'http://localhost:8080'
 
@@ -28,13 +31,12 @@ auth_url, _ = flow.authorization_url(prompt='consent')
 
 print(auth_url)
 
-
 url = input('URL: ').strip()
 code = parse.parse_qs(parse.urlparse(url).query)['code'][0]
 try:
-    flow.fetch_token(code=code)
+  flow.fetch_token(code=code)
 except InvalidGrantError as ex:
-    print('Authentication has failed: %s' % ex)
+  print('Authentication has failed: %s' % ex)
 
 
 print('Access token: %s' % flow.credentials.token)

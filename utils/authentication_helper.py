@@ -12,28 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any
+"""Authentication helper module.
+
+This module contains all the methods for
+authenticating with Google APIs.
+"""
+
 from google.oauth2.credentials import Credentials
 
+
 class Authenticator:
-    """This class lets you create credentials to authenticate with google APIs."""
+  """This class creates credentials to authenticate with google APIs."""
 
-    def __init__(self):
-        pass
+  def __init__(self) -> None:
+    pass
 
-    def authenticate_with_client_credentials(self, client_id: str, client_secret: str, refresh_token: str, ) -> Any:
-        """
-        Standard authentication for Google APIs.
+  def authenticate_with_client_credentials(
+      self,
+      client_id: str,
+      client_secret: str,
+      refresh_token: str
+      ) -> object:
+    """Standard authentication for Google APIs.
 
-        Args:
-            client_id (str): The client_id.
-            client_secret (str): The client_secret.
-            refresh_token (str): The refresh_token.
-        """
+    Args:
+      client_id (str): The client_id.
+      client_secret (str): The client_secret.
+      refresh_token (str): The refresh_token.
 
-        creds = Credentials.from_authorized_user_info({
+    Returns:
+      object: The credentials object.
+    """
+
+    creds = Credentials.from_authorized_user_info({
         "client_id": client_id,
         "client_secret": client_secret,
         "refresh_token": refresh_token,
         })
-        return creds
+    return creds

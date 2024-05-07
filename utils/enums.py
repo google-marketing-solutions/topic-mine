@@ -12,14 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Ignore config file
-config.json
+"""Enums module.
+"""
 
-# Ignore all python cache directories
-**/__pycache__/
+from enum import Enum
 
-# Ignore all python cache files
-*.pyc
 
-# Ignore VS Code config folder
-.vscode/
+class FirstTermSource(Enum):
+  SPREADSHEET = 1
+  BIG_QUERY = 2
+
+
+class SecondTermSource(Enum):
+  NONE = 1
+  GOOGLE_TRENDS = 2
+  SEARCH_SCOUT = 3
+  RSS_FEED = 4
+  SPREADSHEET = 5
+
+
+class Destination(Enum):
+  SA360_API = 1
+  DV360_API = 2
+  SA360_FEED = 3
+  DV360_FEED = 4
+  ACS_FEED = 5

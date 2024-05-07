@@ -14,11 +14,21 @@
  limitations under the License.
  -->
 
-# Bardtrender
+# Topic Mine
 
 This program automates various tasks related to Google Ads campaigns and trends generation. It utilizes the Google Ads API, Google Sheets, BigQuery, and other services to streamline keyword management, trend analysis, and data integration.
 
-So far, it has two running modes: Client trends and Google trends. In Client trends mode, it will generate ad copies and keywords given the trends the client has registered on their site. In Google trends mode, it will check the latest trends from Google Search, try to match them with the brands or products that the client sells, and then create ad copies and keywords for those that do match.
+Features:
+1. Headlines, descriptions and keywords generation given a list of products or brands and (optionally) their descriptions.
+2. Headlines, descriptions and keywords generation given a list of products or brands and trends if there is a relationship between them (meaning if the product or brand is trendy).
+3. Data integration with Google Sheets.
+4. Data integration with BigQuery.
+5. Data integration with Merchant Center via BigQuery.
+6. Data integration with Search Scout via BigQuery.
+7. Data integration with Google Trends via BigQuery.
+8. Data integration with RSS Feeds (pending).
+
+##
 
 Disclaimer: This is not an officially supported Google product.
 
@@ -41,17 +51,16 @@ This program is licensed under the [Apache License, Version 2.0](https://www.apa
 
 ## Introduction
 
-This program is designed to help automate tasks related to Google Ads campaigns and trends analysis. It provides several functionalities, including keyword management, data integration with Google Sheets, and trend generation. It is licensed under the Apache License, Version 2.0.
+This program is designed to help automate tasks related to Google Ads campaigns and trends analysis. It provides several functionalities, including keyword management, data integration with Google Sheets, and copies generation. It is licensed under the Apache License, Version 2.0.
 
 ## Prerequisites
 
-Have the following APIs enabled:
+Have a Google Cloud Platform project with a billing account and the following GCP APIs enabled:
 
-1. Vertex AI API
+1. Generative Language API
 2. Google Ads API
 3. Google Sheets API
-4. Google Drive API
-5. BigQuery API
+4. BigQuery API
 
 ## Getting Started
 
@@ -60,6 +69,7 @@ Before using this program, you will need to configure it with your specific cred
 1. Clone the repository to your local machine.
 2. Set up `config.json` file
 3. Run `deploy.sh` script
+4. Share the spreadsheet(s) that are going to be used with the newly-created service account with edit permission (more details below)
 
 ## Configuration
 
@@ -68,32 +78,19 @@ The `config.json` file contains important settings and credentials required for 
 ```json
 {
     "advertiser": /* Company or brand name */,
-    "deployment_project_id": /* Google Cloud Platform proyect id to deploy Bardtrender */,
-    "project_id": /* Google Cloud Platform proyect id to retrieve data from */,
-    "project_region": /* Google Cloud Platform proyect region */, 
-    "client_id": /* Your client id */,
-    "client_secret": /* Your client secret */,
-    "refresh_token": /* Your refresh token */,
-    "login_customer_id": /* Your Google Ads customer id */, 
-    "dev_token": /* Your Google Ads developer token */,
-    "cloud_run_service": /* Cloud run service name to be created, e.g: "bardtrender" */,
-    "service_account_name": /* GCP service account name to be created, e.g: "bardtrender-service-account" */ ,
-    "low_performance_mode": /* Values accepted: true, false. If you get Vertex AI text-bison model quota error, set value true. This is to limit performance and not exceed Vertex AI text-bison model quota. */, 
+    "project_id": /* Google Cloud Platform proyect id to deploy Topic Mine */,
+    "project_region": /* Google Cloud Platform proyect id to retrieve data from - e.g.: us-central1*/,
+    "client_id": /* Your client id - see Authentication params below */,
+    "client_secret": /* Your client secret - see Authentication params below */,
+    "refresh_token": /* Your refresh token - see Authentication params below */,
+    "login_customer_id": /* Your Google Ads customer id - see Authentication params below */,
+    "google_ads_developer_token": /* Your Google Ads developer token - see Authentication params below */,
+    "gemini_api_token": /* Your Gemini API token - see Authentication params below */,
+    "cloud_run_service": /* Cloud run service name to be created, e.g: "topic-mine" */,
+    "service_account_name": /* GCP service account name to be created, e.g: "topic-mine-service-account" */ ,
     "language": /* Language to generate content. Supported values: "ES", "EN", "PT". */,
-    "google_trends": {
-        // ... (See google trends configuration below)
-    },
-    "client_trends": {
-        // ... (See client trends configuration below)
-    },
-    "palm_examples":{
-        "headlines": /* List of headline examples used for inspiration */,
-        "descriptions": /* List of description examples used for inspiration */
-    },
-
-    "keywords": {
-        // ... (See keywords configuration below)
-    }
+    "country": /* Country for which the ads are for. E.g.: "Mexico" */,
+    // TODO: ADD GEMINI TOKEN
 }
 ```
 
@@ -101,7 +98,7 @@ The `config.json` file contains important settings and credentials required for 
 
 client_id and client_secret: Google Cloud console -> APIs & Services -> Credentials -> + Create credentials -> OAuth Client ID -> Desktop app
 
-refresh_token: 
+refresh_token:
 1. Download credentials file generated in previous step
 2. Rename it `creds.json` and paste inside `refresh_token_generator` folder
 3. Run `refresh_token_generator.py`
@@ -112,155 +109,258 @@ refresh_token:
 
 login_customer_id: Usually at the top right of Google Ads console with a format similar to XXX-XXX-XXXX. Copy without dashes or hyphens.
 
-dev_token: Follow instructions [here](https://developers.google.com/google-ads/api/docs/access-levels)
+google_ads_developer_token: Follow instructions [here](https://developers.google.com/google-ads/api/docs/get-started/dev-token)
 
-### Google trends configuration
+gemini_api_token: Follow instructions [here](https://aistudio.google.com/app/apikey)
 
-The `google_trends` section in the `config.json` file contains settings and parameters related to google trends analysis and generation. Below, we describe each component of this configuration:
+### [Optional] Prompts configuration
 
-```json
-"google_trends" : {
-        "big_query":{
-            "trends_params": {
-                "international": /* A boolean flag indicating whether the analysis is international. */,
-                "country_name": /* The name of the country for trends analysis (e.g., "Mexico") */
-            }
-        },
-        "google_sheets":{
-            "spreadsheet_id": /* The unique identifier of the Google Sheets spreadsheet. */,
-            "sheet_name": /* The name of the sheet. */
-        },
-        "brand_params": {
-            "merchant_center": /* A boolean flag indicating whether Merchant Center data will be used. */,
-            "merchant_center_table_name": /* The table name for Merchant Center data (if applicable). */,
-            "brands": /* A list of brands to try to find relationship with trends. (e.g.: "[ "Nike", "Adidas", ... ]") */
-        },
-        "google_ads": {
-            "num_headlines": /* The number of headlines to generate for Google Ads. For Search Ads recommended 5. For DV360 recommended 1. */,
-            "num_descriptions": /* The number of descriptions to generate for Google Ads. For Search Ads recommended 1. For DV360 recommended 0. */,
-        }
-    },
-```
+In the `/prompts/examples` directory, there are example prompt files. By default, Topic Mine will behave as if you are a retailer, so retailer-oriented prompts will be used. This can be changed by using one of the prompt files from the provided examples, or creating one of your own.
 
-### Client trends configuration
+**Example**: If you are a university, you might want to copy the file `/prompts/examples/prompts_es.py.universities`, paste it and rename to `/prompts/prompts_es.py` (note the directory change from `/prompts/examples` to `/prompts`)
 
-The `client_trends` section in the `config.json` file contains settings and parameters related to client trends analysis and generation. Below, we describe each component of this configuration:
+**Note**: If you want to use custom prompts you can do it, but beware that the return format must be explicitly and clearly specified in them.
+**Note 2**: To add additional information to the prompts (for example, custom info related to the products), you can adapt the prompts accordingly and then you will need to adapt the part of the code that uses the prompts. That code is located in `/services/content_generator_service.py`, in the method called `__get_copy_generation_prompt`.
 
-```json
-"client_trends":{
-        "big_query":{
-            "dataset": /* The BigQuery dataset used for retrieving client trends data. */,
-            "current_state_table": /* Temporal table */,
-            "trends_limit": /* Limit number of top trends results */,
-        },
-        "queries":{
-            "trends": /* Query to be executed in BigQuery that must return a table with client trends data. Return format described below. */
-        },
-        "google_ads":{
-            "num_headlines": /* The number of headlines to generate for Google Ads. For Search Ads recommended 5. For DV360 recommended 1. */,
-            "num_descriptions": /* The number of descriptions to generate for Google Ads. For Search Ads recommended 1. For DV360 recommended 0. */,
-            "trends_google_ads_path_one": /* The first part of the URL path for Google Ads campaigns. */,
-            "search_bar_url": /* Site url path when search (e.g.: "https://www.yoursite.com/store?s={search_term}") */
-        },
-        "google_sheets":{
-            "spreadsheet_id": /* The unique identifier of the Google Sheets spreadsheet. */,
-            "sheet_name": /* The name of the sheet. */
-        }
-    },
-```
 
-#### trends query return table format
-
-| search_term | title  | description | product_link | image_link | product_type | searches | sku    | views |
-|-------------|--------|-------------|--------------|------------|--------------|----------|--------|-------|
-| string      | string | string      | string       | string     | string       | int      | string | int   |
-
-##### Required fields:
-
-- search_term: Trending search term. Used to generate copies. Can be omitted if title is present. Will prioritize title if both present.
-- title: Trending product title. Used to generate copies. Can be omitted if search_term is present. Will be prioritized if both present.
-- product_link: Required for the Search Ads and DV360 feeds.
-- image_link: Required for the DV360 feed. 
-
-##### Optional fields to add more information to Bardtrender's output if needed:
-
-- description
-- product_type
-- searches
-- views
-- sku
-- product_category
-- etc...
-
-### Keywords configuration
-
-The `keywords` section in the `config.json` file contains settings and parameters related to keywords generation. Below, we describe each component of this configuration:
-
-```json
-"keywords": {
-        "language_code": /* Language to generate (e.g., "1003") */,
-        "region_codes": /* List of region codes to be used obtained from https://developers.google.com/google-ads/api/data/geotargets (e.g., ["2484", ...])  */,
-        "url": /* Incoming feature: url seed for keywords suggestion - can be empty for now (e.g., "https://www.yoursite.com/") */
-    }
-```
 ## Deployment
 
 To deploy project, first set up the `config.json` file and then run the `deploy.sh` script.
+**Important note:** once the project is deployed, share the spreadsheet(s) that are going to be used with the newly-created service account with edit permission.
 
 ### [Optional] Create a recurring job with Cloud Scheduler
 
-Once deployed, you can create a job with Cloud Scheduler to run Bardtrender periodically. Steps:
+Once deployed, you can create a job with Cloud Scheduler to run Topic Mine periodically. Steps:
 
-First configure the service account to have permission to run the service:
-1. Go to IAM & Admin -> IAM
-2. Identify the service account created when deploying Bardtrender (set in file `config.json`) and click the edit button on the right
-3. Add the role "Cloud Run Invoker" and save changes
-
-Then create the job and use that service account:
-1. Go to Cloud Scheduler and create new job. 
+1. Go to Cloud Scheduler and create new job.
 2. In "Define the schedule": set name, frequency and timezone.
 3. In "Configure the execution":
-- Target type: HTTP
-- URL: The one printed when running the `deploy.sh` script (can also be found in the new Cloud Run service) followed by de endpoint you want to use (e.g.: `https://bardtrender-xxx.a.run.app/trends/client/generate`)
-- HTTP method: GET
-- Auth header: Add OIDC token
-- Service account: The one created when deploying Bardtrender (set in file `config.json`)
-- Audience: Same URL as before but without the endpoint resource (e.g.: `https://bardtrender-xxx.a.run.app/`)
-4. In "Configure optional settings": set the attempt deadline to something longer (e.g.: 30m) so that the job does not fail when Bardtrender is still running
+- **Target type**: HTTP
+- **URL**: The one printed when running the `deploy.sh` script (can also be found in the new Cloud Run service) followed by de endpoint you want to use (e.g.: `https://topic-mine-xxx.a.run.app/content?...`)
+- **HTTP method**: POST
+- **HTTP headers**: The one that says "Content-Type" must have value "application/json" (if it doesn't show up, save the job and open edit mode again)
+- **Body**: The body of the request (see details below)
+- **Auth header**: Add OIDC token
+- Service account:** The one created when deploying Topic Mine (set in file `config.json`)
+- **Audience**: Same URL as before but without the endpoint resource (e.g.: `https://topic-mine-xxx.a.run.app/`)
+4. In "Configure optional settings": set the attempt deadline to something longer (e.g.: 30m) so that the job does not fail when Topic Mine is still running
 
 
 ## Usage
 
 This program exposes the following endpoints that you can access via HTTP requests:
 
-### `/test`
-
-- Description: A test endpoint that returns a "Hello world!" message.
-- Method: GET
-
-### `/trends/client/generate`
+### `/content`
 
 - Description: Generates content based on client trends data.
-- Method: GET
+- Method: POST
+
+#### Query params
+
+- `destination` [REQUIRED]: dv360feed, sa360feed, acsfeed, dv360 (available soon) or sa360 (available soon)
+- `first-term` [REQUIRED]: spreadsheet or big_query
+- `second-term` [OPTIONAL]: spreadsheet, google_trends, search_scout, rss_feed (available soon) or none (blank)
+- `must-find-relationship` [OPTIONAL]: true or false, only accepted if `second-term` is present
+
 
 #### Body params
 
-- `start_date` (string): The starting date to retreive client trends data in the format "YYYY-MM-DD". Defaults to today.
-- `end_date` (string): The ending date to retreive client trends data in the format "YYYY-MM-DD". Defaults to one week ago.
+- `num_headlines` (int) [REQUIRED]: Number of headlines to generate.
+- `num_descriptions` (int) [REQUIRED]: Number of descriptions to generate.
+- `first_term_source_config` (dict) [REQUIRED]: Configuration for the first term source.
+- `second_term_source_config` (dict) [REQUIRED IF second-term IS PRESENT IN QUERY PARAMS]: Configuration for the second term source.
+- `destination_config` (dict) [REQUIRED]: Configuration for the output destination.
+- `headlines_blacklist` (list of strings) [OPTIONAL]: List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate headlines with these words or phrases.
+- `headlines_regexp_blacklist` (list of strings) [OPTIONAL]: List of regular expressions that are blacklisted. Topic Mine will not generate headlines that match with these regular expressions. Example: if headlines with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/).
+- `descriptions_blacklist` (list of strings) [OPTIONAL]: List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate descriptions with these words or phrases.
+- `descriptions_regexp_blacklist` (list of strings) [OPTIONAL]: List of regular expressions that are blacklisted. Topic Mine will not generate descriptions that match with these regular expressions. Example: if descriptions with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/).
+- `generic_copies` (dict of lists) [OPTIONAL]: Dictionary with generic copies to be used if Gemini could not generate enough copies on its own. Inside, it can contain:
+    - `headlines` (list of strings) [OPTIONAL]: List of generic headlines.
+    - `descriptions` (list of strings) [OPTIONAL]: List of generic descriptions.
+- `enable_feature_extraction` (bool) [OPTIONAL]: If true, Topic Mine will understand the products' descriptions and extract their main features to generate the content. If false or not present, it will use the products' descriptions as they are. Good to try both cases and see what works best for you.
 
-### `/trends/google/generate`
 
-- Description: Generates content based on google trends data.
-- Method: GET
+##### first_term_source_config required values:
 
+- if `first-term` = `spreadsheet`: OK
+    spreadsheet_id(str), sheet_name(str), starting_row(int), term_column(str), term_description_column(str, optional),
+    sku_column(str, optional), url_column(str, optional), image_url_column(str, optional)
+- if `first-term` = `big_query`:
+    query(str, optional, if present then no other params are required), project_id(str),  dataset(str), table(str), term_column(str), term_description_column(str, optional), sku_column(str, optional), url_column(str, optional), image_url_column(str, optional), limit(int)
+
+    Note: if query is present, all other params are ignored. The query must return a table with the following column names: `term` (required), `term_description` (optional), `sku` (optional), `url` (optional), `image_url` (optional).
+
+##### second_term_source_config required values:
+- if `second-term` = `google_trends`:
+    limit(int)
+- if `second-term` = `search_scout`:
+    project_id(str), dataset(str), table(str), term_column(str), term_description_column(str, optional), min_label_weight(double, optional), limit(int)
+- if `second-term` = `rss_feed`:
+    // TODO TBD RSS BODY PARAMS
+- if `second-term` = `spreadsheet`:
+    spreadsheet_id(str), sheet_name(str), starting_row(int), term_column(str), term_description_column(str, optional)
+- if `second-term` = `none`:
+    no value required
+
+##### destination_config required values:
+- if `destination` = `dv360feed` or `destination` = `sa360feed`:
+    spreadsheet_id(str), sheet_name(str)
+- if `destination` = `acsfeed`:
+    spreadsheet_id(str), sheet_name(str), variant_name_column(str),
+    constant_columns(list[str]), copies_columns(list[str]), starting_row(int)
+- if `destination` = `dv360`:
+    // TODO TBD DV360 BODY PARAMS
+- if `destination` = `sa360`:
+    // TODO TBD SA360 BODY PARAMS
+
+
+
+#### Request examples:
+
+- POST `/content?destination=dv360feed&first-term-source=spreadsheet&second-term-source=google_trends&must-find-relationship=true`
+```json
+{
+    "num_headlines": 10,
+    "num_descriptions": 10,
+    "first_term_source_config" : {
+        "spreadsheet_id": "My products spreadsheet id",
+        "sheet_name": "My products sheet name",
+        "starting_row": 2,
+        "term_column": "A",
+        "term_description_column": "B"
+    },
+    "second_term_source_config" : {
+        "limit": 10
+    },
+    "destination_config" : {
+        "spreadsheet_id": "My output spreadsheet id",
+        "sheet_name": "My output sheet name"
+    },
+    "headlines_blacklist": [
+      "Unisex",
+      "Cheap",
+      "Free"
+    ],
+    "descriptions_blacklist": [
+      "Get free",
+    ]
+}
+```
+- POST `/content?destination=acsfeed&first-term-source=big_query&second-term-source=search_scout&must-find-relationship=true`
+```json
+{
+    "num_headlines": 5,
+    "num_descriptions": 5,
+    "first_term_source_config" : {
+        "project_id": "My project id",
+        "dataset": "My dataset",
+        "table": "My table",
+        "term_column": "product_title",
+        "term_description_column": "product_description",
+        "limit": 10
+    },
+    "second_term_source_config" : {
+        "project_id": "My project id",
+        "dataset": "My dataset",
+        "table": "My table",
+        "term_column": "product_title",
+        "limit": 10
+    },
+    "destination_config" : {
+        "spreadsheet_id": "My output spreadsheet id",
+        "sheet_name": "My output sheet name",
+        "variant_name_column": "B",
+        "constant_columns": ["E"],
+        "copies_columns": ["C", "D"],
+        "starting_row": 2
+    },
+    "headlines_regexp_blacklist": [
+      "[AZ]+"
+    ]
+}
+```
+- POST `/content?destination=sa360feed&first-term-source=big_query`
+```json
+{
+    "num_headlines" : 3,
+    "num_descriptions" : 3,
+    "first_term_source_config" : {
+        "query": "SELECT title AS term, description, product_id AS sku FROM `project.dataset.table` SORT BY title DESC LIMIT 10"
+    },
+    "destination_config" : {
+        "spreadsheet_id": "My output spreadsheet id",
+        "sheet_name": "My output sheet name"
+    }
+}
+```
 
 Please refer to the code for detailed functionality and usage.
 
+#### Response examples:
+
+HTTP code 202 Accepted:
+```json
+{
+    "status": "accepted",
+    "task_id": 2
+}
+```
+
+HTTP code 409 CONFLICT:
+```json
+{
+    "error": "Task already running"
+}
+```
+
+HTTP code 400 BAD REQUEST:
+```json
+{
+    "error": "Error message"
+}
+```
+
+HTTP code 500 INTERNAL SERVER ERROR:
+```json
+{
+    "error": "Error message"
+}
+```
+
+### `/tasks/<task_id>`
+
+- Description: Gets the status for a specific task id.
+- Method: GET
+
+#### Return examples:
+
+HTTP code 200 OK:
+```json
+{
+    "result": "completed",
+    "status": "Task status (success/error)"
+}
+```
+
+HTTP code 202 Accepted:
+```json
+{
+    "status": "running"
+}
+```
+
+HTTP code 404 NOT FOUND:
+```json
+{
+    "error": "Task not found"
+}
+```
+
 ## Features
 
-- Keyword management and automation.
-- Integration with Google Ads and Google Sheets.
-- Trend generation and analysis.
+- Headlines, descriptions and keywords generation.
+- Merchant Center and BigQuery integration to retireve products to generate ads of.
+- Google Trends analysis and association with products/brands.
 - Customizable configuration through `config.json`.
 
 

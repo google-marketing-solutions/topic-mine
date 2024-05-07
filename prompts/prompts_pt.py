@@ -29,17 +29,11 @@ prompts_pt = {
                                 Procure incluir palavras-chave relacionadas ao trending topic nos textos.
                                 Se os textos gerados forem longos, procure incluir o nome do varejista, que é {company}, nos textos.
 
-                                Aqui você tem alguns exemplos que você pode usar como inspiração para criar os novos textos que você vai me dar:
-
-                                {examples}
-
-                                Certifique-se de que os textos estejam em conformidade com as políticas descritas aqui: https://support.google.com/adspolicy/answer/6008942?hl=en#con
-
                                 A resposta deve estar exatamente no seguinte formato:
                                 ["escreva aqui o texto 1", "escreva aqui o texto 2", ..., "escreva aqui o texto {n}"]
                                 A resposta deve seguir exatamente esse formato. Não precisa conter vírgulas, espaços em branco ou quebras de linha adicionais. Deve ser apenas uma lista de textos separados por vírgulas entre colchetes e pronto.
                                 """
-    }, 
+    },
     'CLIENT_TRENDS': {
         'COPIES_GENERATION':    """
                                 Quero gerar {n} textos com menos de {length} caracteres para um anúncio do Google Ads.
@@ -48,12 +42,6 @@ prompts_pt = {
                                 É extremamente importante que sejam o mais curtos possível, devem ter menos de {length} caracteres.
                                 Procure incluir no texto palavras-chave relacionadas ao produto.
                                 Se os textos gerados forem longos, procure incluir o nome do varejista, que é {company}, nos textos.
-
-                                Aqui você tem alguns exemplos que você pode usar como inspiração para criar os novos textos que você vai me dar:
-
-                                {examples}
-
-                                Certifique-se de que os textos estejam em conformidade com as políticas descritas aqui: https://support.google.com/adspolicy/answer/6008942?hl=en#con
 
                                 A resposta deve estar exatamente no seguinte formato:
                                 ["escreva aqui o texto 1", "escreva aqui o texto 2", ..., "escreva aqui o texto {n}"]

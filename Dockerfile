@@ -25,6 +25,8 @@ WORKDIR $APP_HOME
 COPY . ./
 
 # Install production dependencies.
+RUN pip install pip-tools
+RUN pip-compile --generate-hashes requirements.in
 RUN pip install --require-hashes --no-deps -r requirements.txt
 
 # Run the web service on container startup. Here we use the gunicorn

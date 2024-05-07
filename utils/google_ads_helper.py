@@ -12,50 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from utils.authentication_helper import Authenticator
-from services.keyword_suggestion_service import KeywordSuggestionService
+"""Google Ads Helper.
+
+This module contains the Google Ads helper class.
+"""
+
 from google.auth.transport.requests import Request
+from services.keyword_suggestion_service import KeywordSuggestionService
+from utils.authentication_helper import Authenticator
 
 
 class GoogleAdsHelper:
-    """
-    Google Ads helper to interact with the service using the specified client.
-    """
+  """Google Ads helper to interact with the service using the specified client.
+  """
 
-    def __init__(self, config):
-        """
-        Initialize a GoogleAdsHelper instance.
+  def __init__(self, config: dict[str, str]) -> None:
+    """Initialize a GoogleAdsHelper instance.
 
-        Args:
-        - config (dict): A dictionary containing configuration parameters.
-        """
-        self.config = config
-        authenticator = Authenticator()
-        self.creds = authenticator.authenticate_with_client_credentials(
-            client_id = config["client_id"],
-            client_secret = config["client_secret"],
-            refresh_token = config["refresh_token"],
+    Args:
+      config (dict[str, str]): A dictionary containing configuration parameters.
+    """
+    self.config = config
+    authenticator = Authenticator()
+    self.creds = authenticator.authenticate_with_client_credentials(
+        client_id=config['client_id'],
+        client_secret=config['client_secret'],
+        refresh_token=config['refresh_token'],
         )
-        if self.creds and self.creds.expired and self.creds.refresh_token:
-            self.creds.refresh(Request())
+    if self.creds and self.creds.expired and self.creds.refresh_token:
+      self.creds.refresh(Request())
 
+  def get_keywords_suggestions(self, terms: list[str]) -> list[str]:
+    """Get keyword suggestions for a list of terms.
 
-    def get_keywords_suggestions(self, terms):
-        """
-        Get keyword suggestions for a list of terms.
+    Args:
+      terms (list[str]): A list of terms for which you want
+      keyword suggestions.
 
-        Args:
-        - terms (list of str): A list of terms for which you want keyword suggestions.
+    Returns:
+      list[str]: A list of suggestions for each term in terms.
+    """
+    keyword_suggestion_service = KeywordSuggestionService(self.config)
 
-        Returns:
-        - list of str: A list of suggestions for each term in terms.
-        """
-        keyword_suggestion_service = KeywordSuggestionService(self.config)
+    suggestions = (
+        [keyword_suggestion_service.get_keywords([term]) for term in terms])
 
-        suggestions = []
-        for term in terms:
-          suggestions.append(keyword_suggestion_service.get_keywords([term]))
+    str_values = [(
+        '[' + ', '.join(f'"{keyword}"' for keyword in keywords_per_term) + ']'
+        for keywords_per_term in suggestions
+        )]
 
-        str_values = ['[' + ', '.join(f'"{keyword}"' for keyword in keywords_per_term) + ']' for keywords_per_term in suggestions]
-
-        return str_values
+    return str_values

@@ -41,6 +41,33 @@ This project follows
 
 ## Contribution process
 
+### Main branch
+
+Main branch must only contain fully tested and fully working code. Each commit corresponds to a bug fix, new feature, code refactor, etc.
+
+### Versioning
+
+This project uses Semantic Versioning (SemVer), which consists of three numbers separated by dots (e.g., MAJOR.MINOR.PATCH):
+- MAJOR version is increased for incompatible API changes or output format changes.
+- MINOR version is increased for backward-compatible new features.
+- PATCH version is increased for backward-compatible bug fixes.
+
+To keep track of versions, Git Tagging is used. Tag each release with the corresponding version number:
+- **git tag -a v0.1.0 -m "Release version 0.1.0":** To create the tag.
+- **git push main v0.1.0:** To push the tag.
+
+Finally, maintain the CHANGELOG.md file to document changes for each version, following the principles of Keep a Changelog (https://keepachangelog.com/).
+
+
+### Add changes
+
+1. Create a new branch with an adequate. 
+2. Development and testing of that change must occur in and only in that branch. 
+3. Fully test ensuring that nothing is broken.
+4. Add changes to CHANGELOG.md.
+5. Merge into main with adequate commit name and description.
+6. Tag the commit.
+
 ### Code reviews
 
 All submissions, including submissions by project members, require review. We

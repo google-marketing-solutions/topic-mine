@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from prompts.prompts_es import prompts_es
 from prompts.prompts_en import prompts_en
+from prompts.prompts_es import prompts_es
 from prompts.prompts_pt import prompts_pt
 
 prompts = {
