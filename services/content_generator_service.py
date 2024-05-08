@@ -459,10 +459,10 @@ class ContentGeneratorService:
         for j in range(0, len(associative_terms)):
           entry = Entry(
               terms[i].capitalize(),
-              descriptions[i].capitalize() if descriptions[i] else None,
+              descriptions[i].capitalize() if descriptions and descriptions[i] else None,
               associative_terms[j].capitalize(),
               (associative_terms_descriptions[j].capitalize()
-               if associative_terms_descriptions[j] else None),
+               if associative_terms_descriptions and associative_terms_descriptions[j] else None),
               skus[i] if skus else None,
               urls[i] if urls else None,
               image_urls[i] if image_urls else None
@@ -472,7 +472,7 @@ class ContentGeneratorService:
       for i in range(0, len(terms)):
         entry = Entry(
             terms[i].capitalize(),
-            descriptions[i].capitalize() if descriptions[i] else None,
+            descriptions[i].capitalize() if descriptions and descriptions[i] else None,
             None,
             None,
             skus[i] if skus else None,

@@ -102,7 +102,7 @@ class ACSFeedDestination:
       self.sheets_helper.write_data_to_sheet(
           sheet_id,
           sheet_name,
-          # f'{second_term_column}{starting_row}:{second_term_column}9999',
+          # f'{second_term_column}{starting_row}:{second_term_column}9999', # TODO: REVIEW
           f'F{starting_row}:F9999',
           [[e.associative_term] for e in entries]
           )

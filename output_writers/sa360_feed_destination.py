@@ -113,7 +113,7 @@ class SA360FeedDestination(Destination):
       self.sheets_helper.write_data_to_sheet(
           sheet_id,
           sheet_name + '_errors',
-          'A1:ZZ9999',
+          'A1:Z9999',
           sa360_feed_errors,
           )
 
@@ -124,7 +124,7 @@ class SA360FeedDestination(Destination):
     self.sheets_helper.write_data_to_sheet(
         sheet_id,
         sheet_name,
-        'A1:ZZ9999',
+        'A1:Z9999',
         sa360_feed
         )
 
@@ -275,6 +275,10 @@ class SA360FeedDestination(Destination):
       list[str]: list of validation errors if any.
     """
     validation_errors = []
+
+    if not validation_rules:
+      validation_rules = []
+
     for validation_rule in validation_rules:
       print(validation_rule.rule_description)
       if validation == 'all_rows':

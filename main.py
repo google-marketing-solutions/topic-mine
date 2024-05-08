@@ -501,7 +501,7 @@ def __export_entries(entries: list[Entry], destination: Destination, body_params
         sheet_id,
         sheet_name
         )
-  elif destination == Destination.ACS_FEED: # TODO: add to readme and test thoroughly
+  elif destination == Destination.ACS_FEED:
     sheet_id = body_params['destination_config']['spreadsheet_id']
     sheet_name = body_params['destination_config']['sheet_name']
     variant_name_column = body_params['destination_config']['variant_name_column']
