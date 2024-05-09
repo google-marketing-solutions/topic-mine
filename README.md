@@ -18,7 +18,7 @@
 
 Topic Mine leverages 1st and/or 2nd party data to identify trending topics and uses our GEMINI to create relevant ads' texts. It generates headlines, descriptions and keywords given a list of products, brands or services and (optionally) additional info about them.
 
-### The solution has two options for operating
+### Operating modes
 
 1. Internal trends: if the client identifies trending topics on their own (e.g.: trending products being purchased on their site, top search terms this week, etc.), Topic Mine takes these trending topics and generate ads' content for them. Clients usually identify trends with Google Analytics (GA4) data on their site. In this case, the input is literally a list of terms and [optionally] their descriptions or extra info about them.
 
