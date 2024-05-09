@@ -90,7 +90,6 @@ The `config.json` file contains important settings and credentials required for 
     "service_account_name": /* GCP service account name to be created, e.g: "topic-mine-service-account" */ ,
     "language": /* Language to generate content. Supported values: "ES", "EN", "PT". */,
     "country": /* Country for which the ads are for. E.g.: "Mexico" */,
-    // TODO: ADD GEMINI TOKEN
 }
 ```
 

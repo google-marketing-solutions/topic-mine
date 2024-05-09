@@ -20,7 +20,7 @@ with the correct format of an DV360 feed.
 
 import uuid
 
-# TODO: REMOVE CLASS
+# NOTE: UNUSED CLASS
 class DV360FeedRow:
   """DV360 Feed Row class.
 

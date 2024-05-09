@@ -17,6 +17,8 @@
 This module contains helper functions for working with Google Sheets.
 """
 
+import logging
+
 from googleapiclient import discovery
 import gspread
 from utils.authentication_helper import Authenticator
@@ -96,34 +98,37 @@ class GoogleSheetsHelper():
     spreadsheet = gc.open_by_key(sheet_id)
     worksheet = spreadsheet.worksheet(sheet_name)
     # Get all values in the specified column starting from the given row
-    column_values = worksheet.col_values(ord(column) - 64)[starting_row - 1:limit+starting_row-1]
+    column_values = (worksheet.col_values(ord(column) - 64)
+                     [starting_row - 1:limit+starting_row-1])
     return column_values
 
-  # def create_sheet_in_spreadsheet(self, sheet_name: str):
-  #   """Creates a new sheet in the specified spreadsheet_id
+  def create_sheet_in_spreadsheet(self, sheet_id: str, sheet_name: str) -> None:
+    """Creates a new sheet in the specified spreadsheet_id.
 
-  #   Args:
-  #       sheet_name: the sheet name to read from
-  #   Returns:
-  #       sheet_id: the id of the new sheet created
-  #   """
-  #   try:
-  #       sheet_id = self._find_sheet_id(sheet_name)
-  #       # Create sheet in spreadsheet only if not previusly created
-  #       if not sheet_id:
-  #           request_body_create = self._build_create_sheet_request_body(sheet_name)
-  #           request = self.service.spreadsheets().batchUpdate(
-  #               spreadsheetId=self.spreadsheet_id, body=request_body_create
-  #           )
-  #           response = request.execute()
-  #           # Get recently created sheet id
-  #           sheet_id = self._find_sheet_id(sheet_name)
-  #       return sheet_id
-  #   except Exception as e:
-  #       print(e)
-  #       return None
+    Args:
+      sheet_id: the id of the spreadsheet to create the sheet in
+      sheet_name: the sheet name to read from
+    """
+    gc = gspread.authorize(self.creds)
+    spreadsheet = gc.open_by_key(sheet_id)
+    try:
+      _ = spreadsheet.worksheet(sheet_name)
+      return
+    except Exception as _:
+      logging.info(' Sheet %s not found in spreadsheet %s. Creating...',
+                   sheet_name,
+                   sheet_id
+                   )
+      _ = spreadsheet.add_worksheet(title=sheet_name, rows=10000, cols=100)
+      logging.info(' Sheet %s created in spreadsheet %s', sheet_name, sheet_id)
+      return
 
-  def write_data_to_sheet( # TODO TEST
+    logging.error(' Error creating sheet %s in spreadsheet %s',
+                  sheet_name,
+                  sheet_id
+                  )
+
+  def write_data_to_sheet(
       self,
       sheet_id: str,
       sheet_name: str,
@@ -138,11 +143,8 @@ class GoogleSheetsHelper():
       sheet_range (str): The range to write data to, e.g., 'Sheet1!A1'.
       data (list[list[str]]): The data to be written.
     """
-    # Create sheet if doesn't exist # TODO: FIX
-    # sheet = self.create_sheet_in_spreadsheet(sheet_name)
-    # if sheet:
-    #   # Clear sheet first
-    #   self.clear_sheet(sheet_name, sheet_range)
+    # Create sheet if doesn't exist
+    self.create_sheet_in_spreadsheet(sheet_id, sheet_name)
 
     body = {
         'values': data
@@ -161,8 +163,7 @@ class GoogleSheetsHelper():
       row: int,
       column: str
       ) -> object:
-    """
-    Retrieve the value of a specific cell in the Google Sheet.
+    """Retrieve the value of a specific cell in the Google Sheet.
 
     Args:
       sheet_id (str): The ID of the Google Sheet.
