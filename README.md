@@ -77,19 +77,19 @@ The `config.json` file contains important settings and credentials required for 
 
 ```json
 {
-    "advertiser": /* Company or brand name */,
-    "project_id": /* Google Cloud Platform proyect id to deploy Topic Mine */,
-    "project_region": /* Google Cloud Platform proyect id to retrieve data from - e.g.: us-central1*/,
-    "client_id": /* Your client id - see Authentication params below */,
-    "client_secret": /* Your client secret - see Authentication params below */,
-    "refresh_token": /* Your refresh token - see Authentication params below */,
-    "login_customer_id": /* Your Google Ads customer id - see Authentication params below */,
-    "google_ads_developer_token": /* Your Google Ads developer token - see Authentication params below */,
-    "gemini_api_token": /* Your Gemini API token - see Authentication params below */,
-    "cloud_run_service": /* Cloud run service name to be created, e.g: "topic-mine" */,
-    "service_account_name": /* GCP service account name to be created, e.g: "topic-mine-service-account" */ ,
-    "language": /* Language to generate content. Supported values: "ES", "EN", "PT". */,
-    "country": /* Country for which the ads are for. E.g.: "Mexico" */,
+    "advertiser": "Company or brand name.",
+    "project_id": "Google Cloud Platform proyect id to deploy Topic Mine.",
+    "project_region": "Google Cloud Platform proyect id to retrieve data from - e.g.: us-central1.",
+    "client_id": "Your client id - see Authentication params below.",
+    "client_secret": "Your client secret - see Authentication params below.",
+    "refresh_token": "Your refresh token - see Authentication params below.",
+    "login_customer_id": "Your Google Ads customer id - see Authentication params below.",
+    "google_ads_developer_token": "Your Google Ads developer token - see Authentication params below.",
+    "gemini_api_token": "Your Gemini API token - see Authentication params below.",
+    "cloud_run_service": "Cloud run service name to be created, e.g: topic-mine.",
+    "service_account_name": "GCP service account name to be created, e.g: topic-mine-service-account.",
+    "language": "Language to generate content. Supported values: ES, EN, PT.",
+    "country": "Country for which the ads are for. E.g.: Mexico.",
 }
 ```
 
@@ -156,63 +156,107 @@ This program exposes the following endpoints that you can access via HTTP reques
 
 #### Query params
 
-- `destination` [REQUIRED]: dv360feed, sa360feed, acsfeed, dv360 (available soon) or sa360 (available soon)
-- `first-term` [REQUIRED]: spreadsheet or big_query
-- `second-term` [OPTIONAL]: spreadsheet, google_trends, search_scout, rss_feed (available soon) or none (blank)
-- `must-find-relationship` [OPTIONAL]: true or false, only accepted if `second-term` is present
+| Parameter              | Required                    | Description                                | Allowed Values                       |
+|------------------------|-----------------------------|--------------------------------------------|--------------------------------------|
+| `destination`          | Yes                         | Output format                              | `dv360feed`, `sa360feed`, `acsfeed`  |
+| `first-term`           | Yes                         | First term (product/brand/services) source | `spreadsheet`, `big_query`           |
+| `second-term`          | No                          | Second term (trends) source | `spreadsheet`,`google_trends`, `search_scout`, None |
+|`must-find-relationship`| If `second-term` is present | Required if `second-term` is present       | `true`, `false`                      |
 
 
 #### Body params
 
-- `num_headlines` (int) [REQUIRED]: Number of headlines to generate.
-- `num_descriptions` (int) [REQUIRED]: Number of descriptions to generate.
-- `first_term_source_config` (dict) [REQUIRED]: Configuration for the first term source.
-- `second_term_source_config` (dict) [REQUIRED IF second-term IS PRESENT IN QUERY PARAMS]: Configuration for the second term source.
-- `destination_config` (dict) [REQUIRED]: Configuration for the output destination.
-- `headlines_blacklist` (list of strings) [OPTIONAL]: List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate headlines with these words or phrases.
-- `headlines_regexp_blacklist` (list of strings) [OPTIONAL]: List of regular expressions that are blacklisted. Topic Mine will not generate headlines that match with these regular expressions. Example: if headlines with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/).
-- `descriptions_blacklist` (list of strings) [OPTIONAL]: List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate descriptions with these words or phrases.
-- `descriptions_regexp_blacklist` (list of strings) [OPTIONAL]: List of regular expressions that are blacklisted. Topic Mine will not generate descriptions that match with these regular expressions. Example: if descriptions with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/).
-- `generic_copies` (dict of lists) [OPTIONAL]: Dictionary with generic copies to be used if Gemini could not generate enough copies on its own. Inside, it can contain:
-    - `headlines` (list of strings) [OPTIONAL]: List of generic headlines.
-    - `descriptions` (list of strings) [OPTIONAL]: List of generic descriptions.
-- `enable_feature_extraction` (bool) [OPTIONAL]: If true, Topic Mine will understand the products' descriptions and extract their main features to generate the content. If false or not present, it will use the products' descriptions as they are. Good to try both cases and see what works best for you.
+| Parameter                       | Required | Type      | Description                                                                         |
+|---------------------------------|----------|-----------|-------------------------------------------------------------------------------------|
+| `num_headlines`                 | Yes      | int       | Number of headlines to generate                                                     |
+| `num_descriptions`              | Yes      | int       | Number of descriptions to generate                                                  |
+| `first_term_source_config`      | Yes      | object    | Configuration for the first term source. See details below                          |
+| `second_term_source_config`     | If `second-term` is present in query params | object | Configuration for the second term source. See details below |
+| `destination_config`            | Yes      | object    | Configuration for the output destination. See details below                         |
+| `headlines_blacklist`           | No       | list(str) | List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate headlines with these words or phrases. |
+| `headlines_regexp_blacklist`    | No       | list(str) | List of regular expressions that are blacklisted. Topic Mine will not generate headlines that match with these regular expressions. Example: if descriptions with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/). |
+| `descriptions_blacklist`        | No       | list(str) | List of case-insensitive words or phrases that are blacklisted. Topic Mine will not generate headlines with these words or phrases. |
+| `descriptions_regexp_blacklist` | No       | list(str) | List of regular expressions that are blacklisted. Topic Mine will not generate descriptions that match with these regular expressions. Example: if descriptions with exclamation signs want to be avoided, use the regex '.*!'. Regular expression matching can be tested [here](https://regex101.com/). |
+| `generic_copies`                | No       | object    | Object with generic copies to be used if Gemini could not generate enough copies.  |
+| `generic_copies.headlines`      | No       | list(str) | List of generic headlines.                                                         |
+| `generic_copies.descriptions`   | No       | list(str) | List of generic descriptions.                                                      |
+| `enable_feature_extraction`     | No       | bool      | If true, Topic Mine will understand the products' descriptions and extract their main features to generate the content. If false or not present, it will use the products' descriptions as they are. Good to try both cases and see what works best for you. |
 
+##### first_term_source_config values if  `first-term` = `spreadsheet`
 
-##### first_term_source_config required values:
+| Parameter                 | Required | Type   | Description                             |
+|---------------------------|----------|--------|-----------------------------------------------------------------------|
+| `spreadsheet_id`          | Yes      | string | Spreadsheet id to retrieve first term from                            |
+| `sheet_name`              | Yes      | string | Worksheet name to retrieve first term from                            |
+| `starting_row`            | Yes      | string | Row from which to start retrieving first term                         |
+| `term_column`             | Yes      | string | Letter of the colum that contains the terms. E.g.: "A"                |
+| `term_description_column` | No       | string | Letter of the colum that contains the terms' descriptions. E.g.: "B"  |
+| `sku_column`              | No       | string | Letter of the colum that contains the skus. E.g.: "C"                 |
+| `url_column`              | No       | string | Letter of the colum that contains the products' urls. E.g.: "D"       |
+| `image_url_column`        | No       | string | Letter of the colum that contains the products' image urls. E.g.: "E" |
 
-- if `first-term` = `spreadsheet`: OK
-    spreadsheet_id(str), sheet_name(str), starting_row(int), term_column(str), term_description_column(str, optional),
-    sku_column(str, optional), url_column(str, optional), image_url_column(str, optional)
-- if `first-term` = `big_query`:
-    query(str, optional, if present then no other params are required), project_id(str),  dataset(str), table(str), term_column(str), term_description_column(str, optional), sku_column(str, optional), url_column(str, optional), image_url_column(str, optional), limit(int)
+##### first_term_source_config values if  `first-term` = `big_query`
 
-    Note: if query is present, all other params are ignored. The query must return a table with the following column names: `term` (required), `term_description` (optional), `sku` (optional), `url` (optional), `image_url` (optional).
+| Parameter                 | Required | Type   | Description                                            |
+|---------------------------|----------|--------|--------------------------------------------------------|
+| `query`                   | No*      | string | Query to run on BigQuery to obtain the first term. The query must return a table with the following column names: `term` (required), `term_description` (optional), `sku` (optional), `url` (optional), `image_url` (optional) |
+| `project_id`              | Yes*     | string | Project id to run the query on                         |
+| `dataset`                 | Yes*     | string | Dataset to run the query on                            |
+| `table`                   | Yes*     | string | Table to run the query on                              |
+| `term_column`             | Yes*     | string | Term column in the table                               |
+| `term_description_column` | No       | string | Term description column in the table                   |
+| `sku_column`              | No       | string | SKU column in the table                                |
+| `url_column`              | No       | string | URL column in the table                                |
+| `image_url_column`        | No       | string | Image URL column in the table                          |
+| `limit`                   | Yes*     | int    | Max number of terms to fetch. limit = 0 means no limit |
 
-##### second_term_source_config required values:
-- if `second-term` = `google_trends`:
-    limit(int)
-- if `second-term` = `search_scout`:
-    project_id(str), dataset(str), table(str), term_column(str), term_description_column(str, optional), min_label_weight(double, optional), limit(int)
-- if `second-term` = `rss_feed`:
-    // TODO TBD RSS BODY PARAMS
-- if `second-term` = `spreadsheet`:
-    spreadsheet_id(str), sheet_name(str), starting_row(int), term_column(str), term_description_column(str, optional)
-- if `second-term` = `none`:
-    no value required
+* *Note: if query is present, all other params are ignored and are not required.
 
-##### destination_config required values:
-- if `destination` = `dv360feed` or `destination` = `sa360feed`:
-    spreadsheet_id(str), sheet_name(str)
-- if `destination` = `acsfeed`:
-    spreadsheet_id(str), sheet_name(str), variant_name_column(str),
-    constant_columns(list[str]), copies_columns(list[str]), starting_row(int)
-- if `destination` = `dv360`:
-    // TODO TBD DV360 BODY PARAMS
-- if `destination` = `sa360`:
-    // TODO TBD SA360 BODY PARAMS
+##### second_term_source_config values if  `second-term` = `google_trends`
 
+| Parameter | Required | Type | Description                                             |
+|-----------|----------|------|---------------------------------------------------------|
+| `limit`   | Yes      | int  | Max number of trends to fetch. limit = 0 means no limit |
 
+##### second_term_source_config values if  `second-term` = `search_scout`
+
+| Parameter                 | Required | Type   | Description                                            |
+|---------------------------|----------|--------|--------------------------------------------------------|
+| `project_id`              | Yes      | string | Project id to run the query on                         |
+| `dataset`                 | Yes      | string | Dataset to run the query on                            |
+| `table`                   | Yes      | string | Table to run the query on                              |
+| `term_column`             | Yes      | string | Term column in the table                               |
+| `term_description_column` | No       | string | Term description column in the table                   |
+| `min_label_weight`        | No       | double | Min label weight to retrieve data                      |
+| `limit`                   | Yes      | int    | Max number of terms to fetch. limit = 0 means no limit |
+
+##### second_term_source_config values if  `second-term` = `spreadsheet`
+
+| Parameter                 | Required | Type   | Description                                                           |
+|---------------------------|----------|--------|-----------------------------------------------------------------------|
+| `spreadsheet_id`          | Yes      | string | Spreadsheet id to retrieve first term from                            |
+| `sheet_name`              | Yes      | string | Worksheet name to retrieve first term from                            |
+| `starting_row`            | Yes      | string | Row from which to start retrieving first term                         |
+| `term_column`             | Yes      | string | Letter of the colum that contains the trends. E.g.: "A"               |
+| `term_description_column` | No       | string | Letter of the colum that contains the trends' descriptions. E.g.: "B" |
+
+##### destination_config required values if `destination` = `dv360feed` or `destination` = `sa360feed`
+
+| Parameter                 | Required | Type   | Description                       |
+|---------------------------|----------|--------|-----------------------------------|
+| `spreadsheet_id`          | Yes      | string | Spreadsheet id to write output to |
+| `sheet_name`              | Yes      | string | Worksheet name to write output to |
+
+##### destination_config required values if `destination` = `acsfeed`
+
+| Parameter             | Required | Type   | Description                                                                                    |
+|-----------------------|----------|--------|------------------------------------------------------------------------------------------------|
+| `spreadsheet_id`      | Yes      | string | Spreadsheet id to write output to                                                              |
+| `sheet_name`          | Yes      | string | Worksheet name to write output to                                                              |
+| `variant_name_column` | Yes      | string | Column that will contain the variant name for ACS. E.g.: "A"                                   |
+| `constant_columns`    | Yes      | string | Columns that will remain constant (values will be copied from the row above). E.g.: ["B", "C"] |
+| `copies_columns`      | Yes      | string | Columns that will contain the copies. E.g.: ["D", "E"]                                         |
+| `starting_row`        | Yes      | string | Row from which to start writing output                                                         |
 
 #### Request examples:
 
