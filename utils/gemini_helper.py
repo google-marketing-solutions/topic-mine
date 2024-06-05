@@ -60,7 +60,7 @@ class GeminiHelper:
     try:
       key = os.environ['API_KEY']
     except KeyError:
-      key = config['gemini_api_token']
+      key = config['gemini_api_key']
     genai.configure(api_key=key)
     self.model = genai.GenerativeModel('gemini-pro')
 

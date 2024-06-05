@@ -7,7 +7,7 @@
     "refresh_token": "",
     "login_customer_id": "",
     "google_ads_developer_token": "",
-    "gemini_api_token": "",
+    "gemini_api_key": "",
     "cloud_run_service": "topic-mine",
     "service_account_name": "topic-mine-service-account",
     "language": "ES",
