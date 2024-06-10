@@ -108,12 +108,14 @@ class SA360FeedDestination(Destination):
     validation_errors = self.validate(feed_rows)
     # If there are validation errors, create a new sheet and load the errors
     if validation_errors:
+      self.sheets_helper.create_or_clear_sheet(sheet_id, sheet_name + '_errors')
+
       for validation_error in validation_errors:
         sa360_feed_errors.append([validation_error])
       self.sheets_helper.write_data_to_sheet(
           sheet_id,
           sheet_name + '_errors',
-          'A1:Z9999',
+          'A1:ZZ9999',
           sa360_feed_errors,
           )
 
@@ -121,10 +123,12 @@ class SA360FeedDestination(Destination):
     for feed_row in feed_rows:
       self._append_columns_to_feed_row(feed_row, sa360_feed)
 
+    self.sheets_helper.create_or_clear_sheet(sheet_id, sheet_name)
+
     self.sheets_helper.write_data_to_sheet(
         sheet_id,
         sheet_name,
-        'A1:Z9999',
+        'A1:ZZ9999',
         sa360_feed
         )
 

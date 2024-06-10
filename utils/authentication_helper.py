@@ -18,7 +18,17 @@ This module contains all the methods for
 authenticating with Google APIs.
 """
 
+from google.auth import default
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+
+API_SCOPES = [
+    'https://www.googleapis.com/auth/adwords',
+    'https://www.googleapis.com/auth/bigquery',
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive',
+    'https://www.googleapis.com/auth/cloud-platform'
+    ]
 
 
 class Authenticator:
@@ -27,26 +37,27 @@ class Authenticator:
   def __init__(self) -> None:
     pass
 
-  def authenticate_with_client_credentials(
-      self,
-      client_id: str,
-      client_secret: str,
-      refresh_token: str
-      ) -> object:
-    """Standard authentication for Google APIs.
+  def authenticate(self, config: dict[str, str]) -> object:
+    """Authentication method.
 
     Args:
-      client_id (str): The client_id.
-      client_secret (str): The client_secret.
-      refresh_token (str): The refresh_token.
+      config (dict[str, str]): A dictionary containing configuration parameters.
 
     Returns:
       object: The credentials object.
     """
+    client_id = config.get('client_id')
+    client_secret = config.get('client_secret')
+    refresh_token = config.get('refresh_token')
 
-    creds = Credentials.from_authorized_user_info({
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "refresh_token": refresh_token,
-        })
+    if not client_id or not client_secret or not refresh_token:
+      creds, _ = default(scopes=API_SCOPES)
+    else:
+      creds = Credentials.from_authorized_user_info({
+          'client_id': client_id,
+          'client_secret': client_secret,
+          'refresh_token': refresh_token,
+          })
+
+    creds.refresh(Request())
     return creds

@@ -60,11 +60,7 @@ class ACSFeedDestination:
     """
     acs_feed = self.__generate_feed(entries)
 
-    self.sheets_helper.clear_sheet(
-        sheet_id,
-        sheet_name,
-        f'A{starting_row + 1}:Z9999'
-        )
+    self.sheets_helper.create_or_clear_sheet(sheet_id, sheet_name)
 
     self.sheets_helper.write_data_to_sheet(
         sheet_id,

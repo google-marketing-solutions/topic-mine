@@ -20,7 +20,6 @@ working with BigQuery.
 
 import logging
 
-from google.auth.transport.requests import Request
 from google.cloud import bigquery
 from utils.authentication_helper import Authenticator
 
@@ -38,20 +37,13 @@ class BigQueryHelper:
     Args:
       config (dict[str, str]): A dictionary containing configuration parameters.
     """
-    self.config = config
-    self.project_id = config['project_id']
     authenticator = Authenticator()
-    self.creds = authenticator.authenticate_with_client_credentials(
-        client_id=config['client_id'],
-        client_secret=config['client_secret'],
-        refresh_token=config['refresh_token'],
-        )
-    if self.creds and self.creds.expired and self.creds.refresh_token:
-      self.creds.refresh(Request())
+    creds = authenticator.authenticate(config)
+
     self.bigquery_client = bigquery.Client(
-        credentials=self.creds,
-        project=self.project_id
-        )
+      credentials=creds,
+      project=config['project_id']
+    )
 
   def read_bigquery_column(
       self,

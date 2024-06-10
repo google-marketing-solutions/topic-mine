@@ -582,11 +582,11 @@ class ContentGeneratorService:
     entry.descriptions = descriptions
     entry.keywords = keywords
 
-  def __get_keywords(self, term: str) -> list[str]:
+  def __get_keywords(self, term: list[str]) -> list[str]:
     """Gets keywords for a given term.
 
     Args:
-      term (str): The term to get keywords for.
+      term (list[str]): The term to get keywords for.
     Returns:
       list[str]: A list of keywords.
     """
@@ -599,6 +599,8 @@ class ContentGeneratorService:
                 La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios. Solo debe ser una lista de keywords separados por comas, todo entre corchetes y nada mas.
                 """
       keywords = self.gemini_helper.generate_text_list(prompt)
+
+    return keywords
 
   def __check_blacklists(
       self,

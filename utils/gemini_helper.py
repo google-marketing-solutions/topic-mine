@@ -22,10 +22,8 @@ import re
 import time
 
 import dirtyjson
-from google.auth.transport.requests import Request
 import google.generativeai as genai
 from prompts.prompts import prompts
-from utils.authentication_helper import Authenticator
 
 # Logger config
 logging.basicConfig()
@@ -47,16 +45,7 @@ class GeminiHelper:
 
   def __init__(self, config: dict[str, str]) -> None:
     self.config = config
-    self.location = config['project_region']
-    self.project_id = config['project_id']
-    authenticator = Authenticator()
-    self.creds = authenticator.authenticate_with_client_credentials(
-        client_id=config['client_id'],
-        client_secret=config['client_secret'],
-        refresh_token=config['refresh_token'],
-        )
-    if self.creds and self.creds.expired and self.creds.refresh_token:
-      self.creds.refresh(Request())
+
     try:
       key = os.environ['API_KEY']
     except KeyError:
