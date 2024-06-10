@@ -12,9 +12,9 @@
 
 echo "Setting variable values..."
 project_id=$(cat config.json | jq -r '.project_id')
-project_region=$(cat config.json | jq -r '.project_region')
-cloud_run_service=$(cat config.json | jq -r '.cloud_run_service')
-service_account_name=$(cat config.json | jq -r '.service_account_name')
+project_region=$(cat config.json | jq -r '.project_region // "us-central1"')
+cloud_run_service=$(cat config.json | jq -r '.cloud_run_service // "topic-mine"')
+service_account_name=$(cat config.json | jq -r '.service_account_name // "topic-mine-service-account"')
 
 echo "Setting Google Cloud project..."
 gcloud config set project "$project_id"

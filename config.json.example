@@ -1,15 +1,15 @@
 {
     "advertiser":"Retailer name",
     "project_id": "Cloud project id - e.g.: my-project",
-    "project_region": "Cloud region to deploy topic mine service to - e.g.: us-central1",
-    "client_id": "Optional - use only if project-level authentication is preferred",
-    "client_secret": "Optional - use only if project-level authentication is preferred",
-    "refresh_token": "Optional - use only if project-level authentication is preferred",
+    "project_region": "Optional, recommended to skip - use only if another service deployment region other than us-central1 is preferred.",
+    "client_id": "Optional, recommended to skip - use only if project-level authentication is preferred.",
+    "client_secret": "Optional, recommended to skip - use only if project-level authentication is preferred.",
+    "refresh_token": "Optional, recommended to skip - use only if project-level authentication is preferred.",
     "login_customer_id": "",
     "google_ads_developer_token": "",
     "gemini_api_key": "",
-    "cloud_run_service": "topic-mine",
-    "service_account_name": "topic-mine-service-account",
+    "cloud_run_service": "Optional, recommended to skip - use only if another service name other than topic-mine is preferred.",
+    "service_account_name": "Optional, recommended to skip - use only if another service deployment region other than topic-mine-service-account is preferred.",
     "language": "ES",
     "country": "Argentina"
 }
