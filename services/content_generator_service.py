@@ -437,6 +437,17 @@ class ContentGeneratorService:
            'none, google_trends, search_scout, rss_feed and spreadsheet.')
           )
 
+  def __remove_double_quotes(self, terms: list[str]) -> list[str]:
+    """Removes the double quotes from the terms.
+
+    Args:
+      terms (list[str]): A list of terms.
+
+    Returns:
+      list[str]: A list of terms without the double quotes.
+    """
+    return [term.replace('"', '\'') for term in terms]
+
   def __generate_base_entries(self) -> None:
     """Generates the list of entries that will be then populated with generated content.
     """
@@ -444,6 +455,10 @@ class ContentGeneratorService:
 
     (terms, descriptions, skus,
      urls, image_urls) = self.__get_first_term_info()
+
+    terms = self.__remove_double_quotes(terms)
+    if descriptions:
+      descriptions = self.__remove_double_quotes(descriptions)
 
     try:
       if self.body_params['enable_feature_extraction']:
@@ -454,6 +469,10 @@ class ContentGeneratorService:
     associative_terms, associative_terms_descriptions = (
         self.__get_associative_terms_and_descriptions()
         )
+
+    associative_terms = self.__remove_double_quotes(associative_terms)
+    if associative_terms_descriptions:
+      associative_terms_descriptions = self.__remove_double_quotes(associative_terms_descriptions)
 
     if associative_terms:
       for i in range(0, len(terms)):
