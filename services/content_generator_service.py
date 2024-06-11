@@ -46,7 +46,8 @@ class ContentGeneratorService:
     self.config = config
     self.gemini_helper = GeminiHelper(self.config)
     self.bigquery_helper = BigQueryHelper(self.config)
-    self.keyword_suggestion_service = KeywordSuggestionService(self.config)
+    if self.config['google_ads_developer_token'] and self.config['login_customer_id']:
+      self.keyword_suggestion_service = KeywordSuggestionService(self.config)
     self.sheets_helper = GoogleSheetsHelper(self.config)
 
   def generate_content(
@@ -590,7 +591,9 @@ class ContentGeneratorService:
     Returns:
       list[str]: A list of keywords.
     """
-    keywords = self.keyword_suggestion_service.get_keywords(term)
+    keywords = []
+    if self.config['google_ads_developer_token'] and self.config['login_customer_id']:
+      keywords = self.keyword_suggestion_service.get_keywords(term)
     if not keywords:
       prompt = f"""
                 Dado el término '{term}', dame una lista de hasta 10 keywords para Google ads que pueda usar relacionadas con el término.

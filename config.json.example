@@ -5,11 +5,11 @@
     "client_id": "Optional, recommended to skip - use only if project-level authentication is preferred.",
     "client_secret": "Optional, recommended to skip - use only if project-level authentication is preferred.",
     "refresh_token": "Optional, recommended to skip - use only if project-level authentication is preferred.",
-    "login_customer_id": "",
-    "google_ads_developer_token": "",
-    "gemini_api_key": "",
+    "login_customer_id": "Optional, recommended to include - Your Google Ads customer id, see Github Authentication params.",
+    "google_ads_developer_token": "Optional, recommended to include - Your Google Ads developer token, see Github Authentication params.",
+    "gemini_api_key": "Your Gemini API key - see Github Authentication params docs.",
     "cloud_run_service": "Optional, recommended to skip - use only if another service name other than topic-mine is preferred.",
-    "service_account_name": "Optional, recommended to skip - use only if another service deployment region other than topic-mine-service-account is preferred.",
+    "service_account_name": "Optional, recommended to skip - use only if another service account name other than topic-mine-service-account is preferred.",
     "language": "ES",
     "country": "Argentina"
 }
