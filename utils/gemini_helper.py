@@ -51,7 +51,7 @@ class GeminiHelper:
     except KeyError:
       key = config['gemini_api_key']
     genai.configure(api_key=key)
-    self.model = genai.GenerativeModel('gemini-pro')
+    self.model = genai.GenerativeModel('gemini-1.5-pro')
 
   def generate_dict(self, prompt: str) -> dict:
     """Makes a request to Gemini and returns a dict.

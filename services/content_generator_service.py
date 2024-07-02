@@ -21,6 +21,7 @@ associating two terms and generating content.
 import logging
 import random
 import re
+import requests
 
 from alive_progress import alive_bar
 from prompts.prompts import prompts
@@ -448,6 +449,43 @@ class ContentGeneratorService:
     """
     return [term.replace('"', '\'') for term in terms]
 
+  def __check_and_replace_urls(self, urls):
+    """
+    Checks the validity and status code of a list of URLs. Replaces invalid
+    or unreachable URLs with a generic URL, but considers redirects as valid.
+
+    Args:
+      urls (list[str]): A list of URLs to check.
+
+    Returns:
+      A new list of URLs with invalid/unreachable ones replaced.
+    """
+
+    valid_urls = []
+
+    for url in urls:
+      try:
+        response = requests.head(url, allow_redirects=True, timeout=5)
+
+        # 200 = OK, 301/302 = Redirect
+        if response.status_code in (200, 301, 302):
+          # Append the final URL after redirects
+          valid_urls.append(response.url)
+        else:
+          if self.body_params['url_validation'] == 'REMOVE_BROKEN_URLS':
+            valid_urls.append('')
+          elif self.body_params['url_validation'] == 'USE_DEFAULT_URL':
+            valid_urls.append(self.body_params['default_url'])
+
+      except (requests.exceptions.RequestException,
+              requests.exceptions.InvalidURL):
+        if self.body_params['url_validation'] == 'REMOVE_BROKEN_URLS':
+          valid_urls.append('')
+        elif self.body_params['url_validation'] == 'USE_DEFAULT_URL':
+          valid_urls.append(self.body_params['default_url'])
+
+    return valid_urls
+
   def __generate_base_entries(self) -> None:
     """Generates the list of entries that will be then populated with generated content.
     """
@@ -455,6 +493,13 @@ class ContentGeneratorService:
 
     (terms, descriptions, skus,
      urls, image_urls) = self.__get_first_term_info()
+
+    try:
+      if (self.body_params['url_validation'] == 'REMOVE_BROKEN_URLS'
+          or self.body_params['url_validation'] == 'USE_DEFAULT_URL'):
+        urls = self.__check_and_replace_urls(urls)
+    except KeyError as _:
+      pass
 
     terms = self.__remove_double_quotes(terms)
     if descriptions:
@@ -803,6 +848,8 @@ class ContentGeneratorService:
         len(generated_copies_with_size_enforced) < num_copies
         and retries_left == 0
         ):
+      if 'Generation failed' in generated_copies_with_size_enforced:
+        generated_copies_with_size_enforced.remove('Generation failed')
       generated_copies_with_size_enforced = self.__fill_with_generic_copies(
           generated_copies_with_size_enforced,
           t,

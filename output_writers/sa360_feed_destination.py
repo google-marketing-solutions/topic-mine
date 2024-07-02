@@ -47,11 +47,11 @@ FEED_HEADERS = [
     'Headline 12',
     'Headline 13',
     'Headline 14',
-    'Headline 15',
+    'Headline 15', # TODO: GET NUMBER OF HEADLINES
     'Description 1',
     'Description 2',
     'Description 3',
-    'Description 4',
+    'Description 4', # TODO: GET NUMBER OF DESCRIPTIONS
     'Campaign Id',
     'Ad Group Id',
 ]
@@ -284,7 +284,7 @@ class SA360FeedDestination(Destination):
       validation_rules = []
 
     for validation_rule in validation_rules:
-      print(validation_rule.rule_description)
+      # print(validation_rule.rule_description)
       if validation == 'all_rows':
         # validation_rule requires all rows to perform validation
         validation_message = validation_rule.function(
@@ -614,16 +614,10 @@ class SA360FeedDestination(Destination):
           keyword,
           feed_row.url,
       ]
-      for i in range(1, 15):
-        if i <= len(feed_row.headlines):
-          row_list.append(feed_row.headlines[i-1])
-        else:
-          row_list.append('')
-      for i in range(1, 15):
-        if i <= len(feed_row.descriptions):
-          row_list.append(feed_row.descriptions[i-1])
-        else:
-          row_list.append('')
+      for i in range(0, len(feed_row.headlines)):
+        row_list.append(feed_row.headlines[i])
+      for i in range(0, len(feed_row.descriptions)):
+        row_list.append(feed_row.descriptions[i])
       for path in feed_row.paths:
         row_list.append(path)
       row_list.append(feed_row.campaign_id)

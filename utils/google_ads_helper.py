@@ -17,9 +17,7 @@
 This module contains the Google Ads helper class.
 """
 
-from google.auth.transport.requests import Request
 from services.keyword_suggestion_service import KeywordSuggestionService
-from utils.authentication_helper import Authenticator
 
 
 class GoogleAdsHelper:

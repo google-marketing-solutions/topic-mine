@@ -317,6 +317,11 @@ def __validate_body_params(
   if data is None:
     raise ValueError('Missing body params.')
 
+  if ('url_validation' in data
+      and data['url_validation'] == 'USE_DEFAULT_URL'
+      and 'default_url' not in data):
+    raise ValueError('Missing default_url body param.')
+
   if 'num_headlines' not in data:
     raise ValueError('Missing num_headlines body param.')
   elif not isinstance(data['num_headlines'], int):
