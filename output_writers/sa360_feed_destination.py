@@ -588,7 +588,7 @@ class SA360FeedDestination(Destination):
               url=entry.url if entry.url else '',
               headlines=entry.headlines if entry.headlines else [],
               descriptions=entry.descriptions if entry.descriptions else [],
-              paths=[],
+              paths=entry.paths if entry.paths else [],
               campaign_id='',
               ad_group_id='',
           )
@@ -607,19 +607,28 @@ class SA360FeedDestination(Destination):
     """
     for keyword in feed_row.keywords:
       row_list = [
-          feed_row.row_id,
+          str(uuid.uuid4()),
           feed_row.publish,
           feed_row.trend,
           feed_row.sku,
           keyword,
           feed_row.url,
       ]
-      for i in range(0, len(feed_row.headlines)):
-        row_list.append(feed_row.headlines[i])
-      for i in range(0, len(feed_row.descriptions)):
-        row_list.append(feed_row.descriptions[i])
-      for path in feed_row.paths:
-        row_list.append(path)
+      for i in range(0, 15):
+        if i < len(feed_row.headlines):
+          row_list.append(feed_row.headlines[i])
+        else:
+          row_list.append('')
+      for i in range(0, 4):
+        if i < len(feed_row.descriptions):
+          row_list.append(feed_row.descriptions[i])
+        else:
+          row_list.append('')
+      for i in range(0, 2):
+        if i < len(feed_row.paths):
+          row_list.append(feed_row.paths[i])
+        else:
+          row_list.append('')
       row_list.append(feed_row.campaign_id)
       row_list.append(feed_row.ad_group_id)
       feed.append(row_list)

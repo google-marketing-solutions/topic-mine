@@ -103,7 +103,35 @@ prompts_es = {
                                     La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios. Solo debe ser una lista de textos separados por comas, todo entre corchetes y nada mas.
                                     """,
 
-        }
+        },
+        'PATHS_WITHOUT_TERM_DESCRIPTION': """
+                                          Te daré un término y su descripción, y debes obtener un path de una url dividido en {n} partes para ese término.
+                                          El path debe referirse al término, en este caso '{term}', y a su descripción, en este caso '{term_description}'.
+                                          Cada parte del path debe ser extremadamente corta, una sola palabras que englobe la idea principal de '{term}' y que tengan en cuenta la descripción '{term_description}'.
+                                          Por ejemplo, si el término es 'celulares' y su descripción es 'Samsung Galaxy S23, Samsung Galaxy S23 Plus, Samsung Galaxy S23 Ultra', entonces la parte 1 del path puede ser 'celulares' y la parte 2 del path puede ser 'galaxy-s23'.
+                                          Este path será usado en la url de un ecommerce de manera tal que se mostrará así: www.ecommerce.com/PATH1/PATH2. Ejemplo: www.ecommerce.com/zapatillas/nike-running
+                                          La primera parte del path debe ser una categoría, como por ejemplo 'celulares', y la segunda parte algo más granular referido al producto, como por ejemplo 'galaxy-s23'.
+                                          Algunos ejemplos de PATHs para que te inspires, con sus dos partes, son: 'zapatillas/nike-running', 'televisores/samsung', 'vehículos/ford-ranger'.
+                                          IMPORTANTE: NO debe contener mayusculas ni espacios, si son varias palabras deben estar en minúscula y separadas por guion medio.
+
+                                          Dame el resultado en el siguiente formato:
+                                          ["escribe aqui la parte 1 del path", "escribe aqui la parte 2 del path"]
+                                          La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios. Solo debe ser una lista de textos separados por comas, todo entre corchetes y nada mas.
+                                          """,
+        'PATHS_WITH_TERM_DESCRIPTION':  """
+                                        Te daré un término y debes obtener un path de una url dividido en {n} partes para ese término.
+                                        El path debe referirse al término, en este caso '{term}'.
+                                        Cada parte del path debe ser extremadamente corta, una sola palabras que englobe la idea principal de '{term}'.
+                                        Por ejemplo, si el término es 'celulares Samsung S23', entonces la parte 1 del path puede ser 'celulares' y la parte 2 del path puede ser 'galaxy-s23'.
+                                        Este path será usado en la url de un ecommerce de manera tal que se mostrará así: www.ecommerce.com/PATH1/PATH2. Ejemplo: www.ecommerce.com/zapatillas/nike-running
+                                        La primera parte del path debe ser una categoría, como por ejemplo 'celulares', y la segunda parte algo más granular referido al producto, como por ejemplo 'galaxy-s23'.
+                                        Algunos ejemplos de PATHs para que te inspires, con sus dos partes, son: 'zapatillas/nike-running', 'televisores/samsung', 'vehículos/ford-ranger'.
+                                        IMPORTANTE: NO debe contener mayusculas ni espacios, si son varias palabras deben estar en minúscula y separadas por guion medio.
+
+                                        Dame el resultado en el siguiente formato:
+                                        ["escribe aqui la parte 1 del path", "escribe aqui la parte 2 del path"]
+                                        La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios. Solo debe ser una lista de textos separados por comas, todo entre corchetes y nada mas.
+                                        """
     },
     'SIZE_ENFORCEMENT': """
                         Te daré un texto de anuncio de Google ads que tengo que es demasiado largo.

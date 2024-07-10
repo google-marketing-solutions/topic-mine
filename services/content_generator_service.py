@@ -47,8 +47,8 @@ class ContentGeneratorService:
     self.config = config
     self.gemini_helper = GeminiHelper(self.config)
     self.bigquery_helper = BigQueryHelper(self.config)
-    if self.config['google_ads_developer_token'] and self.config['login_customer_id']:
-      self.keyword_suggestion_service = KeywordSuggestionService(self.config)
+    if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
+        self.keyword_suggestion_service = KeywordSuggestionService(self.config)
     self.sheets_helper = GoogleSheetsHelper(self.config)
 
   def generate_content(
@@ -598,16 +598,12 @@ class ContentGeneratorService:
     """
     headlines = []
     descriptions = []
+    keywords = []
+    paths = []
+
 
     if self.body_params['num_headlines'] != 0:
-      if entry.has_associative_term():
-        logging.info(
-            ' Generating headlines for term %s and associative term %s',
-            entry.term,
-            entry.associative_term
-            )
-      else:
-        logging.info(' Generating headlines for term %s', entry.term)
+      logging.info(' Generating headlines for term %s', entry.term)
       headlines = self.__generate_copies(
           entry,
           'headlines',
@@ -616,14 +612,7 @@ class ContentGeneratorService:
       logging.info(' Headlines: %s', headlines)
 
     if self.body_params['num_descriptions'] != 0:
-      if entry.has_associative_term():
-        logging.info(
-            ' Generating descriptions for term %s and associative term %s',
-            entry.term,
-            entry.associative_term
-            )
-      else:
-        logging.info(' Generating descriptions for term %s', entry.term)
+      logging.info(' Generating descriptions for term %s', entry.term)
       descriptions = self.__generate_copies(
           entry,
           'descriptions',
@@ -631,21 +620,19 @@ class ContentGeneratorService:
           )
       logging.info(' Descriptions: %s', descriptions)
 
-    if entry.has_associative_term():
-      logging.info(
-          ' Generating keywords for term %s and associative term %s',
-          entry.term,
-          entry.associative_term
-          )
-    else:
-      logging.info(' Generating keywords for term %s', entry.term)
+    logging.info(' Generating keywords for term %s', entry.term)
     keywords = self.__get_keywords([entry.term])
-
     logging.info(' Keywords: %s', keywords)
+
+    if 'generate_paths' in self.config and self.body_params['generate_paths']:
+      logging.info(' Generating paths for term %s', entry.term)
+      paths = self.__generate_copies(entry, 'paths', 2)
+      logging.info(' Paths: %s', paths)
 
     entry.headlines = headlines
     entry.descriptions = descriptions
     entry.keywords = keywords
+    entry.paths = paths
 
   def __get_keywords(self, term: list[str]) -> list[str]:
     """Gets keywords for a given term.
@@ -656,8 +643,9 @@ class ContentGeneratorService:
       list[str]: A list of keywords.
     """
     keywords = []
-    if self.config['google_ads_developer_token'] and self.config['login_customer_id']:
+    if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
       keywords = self.keyword_suggestion_service.get_keywords(term)
+
     if not keywords:
       prompt = f"""
                 Dado el término '{term}', dame una lista de hasta 10 keywords para Google ads que pueda usar relacionadas con el término.
@@ -773,6 +761,8 @@ class ContentGeneratorService:
       max_length = 30
     elif t == 'descriptions':
       max_length = 90
+    elif t == 'paths':
+      max_length = 15
 
     # Get copy generation prompt
     prompt = self.__get_copy_generation_prompt(t, entry, num_copies)
@@ -785,6 +775,7 @@ class ContentGeneratorService:
     generated_copies_with_size_enforced = []
 
     for copy in generated_copies:
+      copy = copy.strip()
       # Remove full stop if it is a headline
       try:
         copy = copy[:-1] if copy[-1] == '.' and t == 'headlines' else copy
@@ -980,6 +971,21 @@ class ContentGeneratorService:
       length = 30
     elif t == 'descriptions':
       length = 90
+    elif t == 'paths':
+      length = 15
+      if entry.term_description:
+        return prompts[self.config['language']]['GENERATION']['PATHS_WITH_TERM_DESCRIPTION'].format(
+                  n=number_of_copies,
+                  length=length,
+                  term=entry.term,
+                  term_description=entry.term_description,
+                  )
+      else:
+        return prompts[self.config['language']]['GENERATION']['PATHS_WITHOUT_TERM_DESCRIPTION'].format(
+                  n=number_of_copies,
+                  length=length,
+                  term=entry.term,
+                  )
     else:
       raise ValueError("Only types supported: 'headlines' and 'descriptions'")
 
@@ -995,7 +1001,7 @@ class ContentGeneratorService:
               )
 
     if not entry.has_associative_term():
-      if entry.term_description is None:
+      if not entry.term_description:
         return (
             prompts[self.config['language']]['GENERATION']
             ['WITHOUT_ASSOCIATIVE_TERM']['WITHOUT_DESCRIPTION']
@@ -1019,8 +1025,8 @@ class ContentGeneratorService:
                 company=self.config['advertiser']
                 )
     elif (
-        entry.term_description is not None
-        and entry.associative_term_description is not None
+        entry.term_description
+        and entry.associative_term_description
         ):
       return (
           prompts[self.config['language']]['GENERATION']
@@ -1037,8 +1043,8 @@ class ContentGeneratorService:
               association_reason=entry.association_reason
               )
     elif (
-        entry.term_description is not None
-        and entry.associative_term_description is None
+        entry.term_description
+        and not entry.associative_term_description
         ):
       return (
           prompts[self.config['language']]['GENERATION']
@@ -1054,8 +1060,8 @@ class ContentGeneratorService:
               association_reason=entry.association_reason
               )
     elif (
-        entry.term_description is None and
-        entry.associative_term_description is not None
+        not entry.term_description and
+        entry.associative_term_description
         ):
       return (
           prompts[self.config['language']]['GENERATION']
@@ -1071,8 +1077,8 @@ class ContentGeneratorService:
               association_reason=entry.association_reason
               )
     elif (
-        entry.term_description is None and
-        entry.associative_term_description is None
+        not entry.term_description and
+        not entry.associative_term_description
         ):
       return (
           prompts[self.config['language']]['GENERATION']

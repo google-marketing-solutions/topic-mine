@@ -34,6 +34,7 @@ class Entry:
   headlines: list[str]
   descriptions: list[str]
   keywords: list[str]
+  paths: list[str]
 
   def __init__(
       self,
@@ -59,13 +60,14 @@ class Entry:
     self.headlines = None
     self.descriptions = None
     self.keywords = None
+    self.paths = None
 
   def __str__(self):
     return (
         '[term: ' + self.term + ', associative_term: ' + self.associative_term +
         ', association_reason: ' + self.association_reason + ', headlines: ' +
         str(self.headlines) + ', descriptions: ' + str(self.descriptions) +
-        ', keywords: ' + str(self.keywords) + ']'
+        ', keywords: ' + str(self.keywords) + ', paths: ' + str(self.paths) + ']'
         )
 
   def must_generate_content(self, must_find_relationship: bool):
@@ -110,5 +112,6 @@ class Entry:
     return (
         self.headlines is not None and self.headlines and
         self.descriptions is not None and self.descriptions and
-        self.keywords is not None and self.keywords
+        self.keywords is not None and self.keywords and
+        self.paths is not None and self.paths
         )

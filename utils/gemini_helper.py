@@ -174,12 +174,17 @@ class GeminiHelper:
     Raises:
       ValueError: If the specified type is not supported.
     """
+    if copy == 'Generation error':
+      return copy
+
     if t == 'headlines':
       max_length = 30
     elif t == 'descriptions':
       max_length = 90
+    elif t == 'paths':
+      max_length = 15
     else:
-      message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions'"
+      message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions', 'paths'"
       raise ValueError(message)
 
     if retries == 0:
@@ -188,6 +193,8 @@ class GeminiHelper:
       prompt = self.__get_enforce_size_prompt(copy, t)
 
       result = self.run_prompt(prompt)
+
+      result = result.strip() if result is not None else None
 
       if result is None or len(result) > max_length:
         return self.enforce_text_size(result, t, retries-1)
@@ -211,8 +218,10 @@ class GeminiHelper:
       max_length = 30
     elif t == 'descriptions':
       max_length = 90
+    elif t == 'paths':
+      max_length = 15
     else:
-      message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions'"
+      message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions', 'paths'"
       raise ValueError(message)
 
     return prompts[self.config['language']]['SIZE_ENFORCEMENT'].format(

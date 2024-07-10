@@ -37,11 +37,4 @@ gcloud projects add-iam-policy-binding $project_id \
     --role roles/run.invoker
 
 echo "Deploying Cloud Run..."
-gcloud run deploy $cloud_run_service --region=$project_region --source="."
-
-# TODO: REMOVE
-# echo "Testing correct deployment..."
-# echo "url: $cloud_run_url"
-# echo "Authorization: Bearer $(gcloud auth print-identity-token)"
-# cloud_run_url=$(gcloud run services describe $cloud_run_service --platform managed --region $project_region --format 'value(status.url)')
-# curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" "$cloud_run_url/test"
+gcloud run deploy $cloud_run_service --region=$project_region --source="." --allow-unauthenticated
