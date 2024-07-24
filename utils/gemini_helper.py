@@ -23,6 +23,7 @@ import time
 
 import dirtyjson
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
 
 # Logger config
@@ -36,8 +37,16 @@ GENERATION_CONFIG = {
     'top_p': 0.8,
     'top_k': 40
 }
-TIME_INTERVAL = 0.3
+SAFETY_SETTINGS = {
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
+    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH
+}
 
+TIME_INTERVAL_BETWEEN_REQUESTS = 0
+TIME_INTERVAL_IF_QUOTA_ERROR = 60
+TIME_INTERVAL_IF_GEMINI_ERROR = 10
 
 class GeminiHelper:
   """Gemini helper to perform Gemini API requests.
@@ -51,7 +60,7 @@ class GeminiHelper:
     except KeyError:
       key = config['gemini_api_key']
     genai.configure(api_key=key)
-    self.model = genai.GenerativeModel('gemini-1.5-pro')
+    self.model = genai.GenerativeModel('gemini-1.5-flash')
 
   def generate_dict(self, prompt: str) -> dict:
     """Makes a request to Gemini and returns a dict.
@@ -67,24 +76,31 @@ class GeminiHelper:
       try:
         response = self.model.generate_content(
             prompt,
-            generation_config=GENERATION_CONFIG
+            generation_config=GENERATION_CONFIG,
+            safety_settings=SAFETY_SETTINGS
             )
         response_json = re.search('({.*?})', response.text, re.DOTALL).group(1)
         response_json = dirtyjson.loads(response_json)
         response_json = dict(response_json)
-        time.sleep(TIME_INTERVAL)
+        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
 
         return response_json
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
-              'Quota exceeded, sleeping 60s. Retries left: %d...',
+              'Quota exceeded, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_QUOTA_ERROR,
               retries
               )
-          time.sleep(60)
+          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
         elif ('candidate' in str(e) or 'response was blocked' in str(e)
               or 'quick accessor' in str(e)):
-          logging.error(' Gemini error. Retries left: %d...', retries)
+          logging.error(
+              'Gemini error, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_GEMINI_ERROR,
+              retries
+              )
+          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
         else:
           logging.error(' %s. Retries left: %d...', str(e), retries)
       retries = retries - 1
@@ -104,23 +120,30 @@ class GeminiHelper:
       try:
         response = self.model.generate_content(
             prompt,
-            generation_config=GENERATION_CONFIG
+            generation_config=GENERATION_CONFIG,
+            safety_settings=SAFETY_SETTINGS
             )
         start_idx = response.text.index('[')
         end_idx = response.text.index(']')
-        time.sleep(TIME_INTERVAL)
+        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
 
         return ast.literal_eval(response.text[start_idx:end_idx+1])
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
-              'Quota exceeded, sleeping 60s. Retries left: %d...',
+              'Quota exceeded, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_QUOTA_ERROR,
               retries
               )
-          time.sleep(60)
+          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
         elif ('candidate' in str(e) or 'response was blocked' in str(e)
               or 'quick accessor' in str(e)):
-          logging.error(' Gemini error. Retries left: %d...', retries)
+          logging.error(
+              'Gemini error, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_GEMINI_ERROR,
+              retries
+              )
+          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
         else:
           logging.error(' %s. Retries left: %d...', str(e), retries)
       retries = retries - 1
@@ -140,21 +163,28 @@ class GeminiHelper:
       try:
         response = self.model.generate_content(
             prompt,
-            generation_config=GENERATION_CONFIG
+            generation_config=GENERATION_CONFIG,
+            safety_settings=SAFETY_SETTINGS
             )
-        time.sleep(TIME_INTERVAL)
+        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
 
         return response.text
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
-              'Quota exceeded, sleeping 60s. Retries left: %d...',
+              'Quota exceeded, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_QUOTA_ERROR,
               retries
               )
-          time.sleep(60)
+          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
         elif ('candidate' in str(e) or 'response was blocked' in str(e)
               or 'quick accessor' in str(e)):
-          logging.error(' Gemini error. Retries left: %d...', retries)
+          logging.error(
+              'Gemini error, sleeping %ds. Retries left: %d...',
+              TIME_INTERVAL_IF_GEMINI_ERROR,
+              retries
+              )
+          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
         else:
           logging.error(' %s. Retries left: %d...', str(e), retries)
       retries = retries - 1
@@ -223,6 +253,12 @@ class GeminiHelper:
     else:
       message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions', 'paths'"
       raise ValueError(message)
+
+    if t == 'paths':
+      return prompts[self.config['language']]['PATH_SIZE_ENFORCEMENT'].format(
+          max_length=max_length,
+          copy=copy,
+          )
 
     return prompts[self.config['language']]['SIZE_ENFORCEMENT'].format(
         max_length=max_length,

@@ -556,8 +556,6 @@ class ContentGeneratorService:
       if entry.must_generate_content(self.must_find_relationship):
         self.__generate_content(entry)
 
-      self.bar()
-
   def __find_association(self, entry: Entry) -> None:
     """Tries to find a relationship between the term and the associative term for a given entry.
 
@@ -624,7 +622,7 @@ class ContentGeneratorService:
     keywords = self.__get_keywords([entry.term])
     logging.info(' Keywords: %s', keywords)
 
-    if 'generate_paths' in self.config and self.body_params['generate_paths']:
+    if 'generate_paths' in self.body_params and self.body_params['generate_paths']:
       logging.info(' Generating paths for term %s', entry.term)
       paths = self.__generate_copies(entry, 'paths', 2)
       logging.info(' Paths: %s', paths)
@@ -633,6 +631,13 @@ class ContentGeneratorService:
     entry.descriptions = descriptions
     entry.keywords = keywords
     entry.paths = paths
+
+    if entry.has_generation_errors() and not entry.has_been_cleared:
+      self.entries.remove(entry)
+      entry.clear_generated_content()
+      self.entries.append(entry)
+    else:
+      self.bar()
 
   def __get_keywords(self, term: list[str]) -> list[str]:
     """Gets keywords for a given term.
@@ -732,6 +737,9 @@ class ContentGeneratorService:
     while generic_copies_pool and len(copies) < num_copies:
       random_copy = random.choice(generic_copies_pool)
       copies.append(random_copy)
+
+    while len(copies) < num_copies:
+      copies.append('Generation error')
 
     return copies
 
