@@ -549,12 +549,21 @@ class ContentGeneratorService:
   def __populate_entries(self) -> None:
     """Populates each entry with headlines, descriptions and keywords.
     """
-    for entry in self.entries:
+    i = 0
+    while i < len(self.entries):
       if self.must_find_relationship:
-        self.__find_association(entry)
+        self.__find_association(self.entries[i])
 
-      if entry.must_generate_content(self.must_find_relationship):
-        self.__generate_content(entry)
+      if self.entries[i].must_generate_content(self.must_find_relationship):
+        self.__generate_content(self.entries[i])
+
+      if self.entries[i].has_generation_errors() and not self.entries[i].has_been_cleared:
+        self.entries.remove(self.entries[i])
+        self.entries[i].clear_generated_content()
+        self.entries.append(self.entries[i])
+      else:
+        self.bar()
+        i = i + 1
 
   def __find_association(self, entry: Entry) -> None:
     """Tries to find a relationship between the term and the associative term for a given entry.
@@ -632,13 +641,6 @@ class ContentGeneratorService:
     entry.keywords = keywords
     entry.paths = paths
 
-    if entry.has_generation_errors() and not entry.has_been_cleared:
-      self.entries.remove(entry)
-      entry.clear_generated_content()
-      self.entries.append(entry)
-    else:
-      self.bar()
-
   def __get_keywords(self, term: list[str]) -> list[str]:
     """Gets keywords for a given term.
 
@@ -674,40 +676,52 @@ class ContentGeneratorService:
       copies (list[str]): A list of copies.
 
     Returns:
-      list(str): A list of copies.
+      list(str): A list of copies that are not blacklisted.
     """
     if t == 'headlines':
       try:
         for term in self.body_params['headlines_blacklist']:
-          for copy in copies:
-            if term.lower() in copy.lower():
-              copies.remove(copy)
+          i = 0
+          while i < len(copies):
+            if term.lower() in copies[i].lower():
+              copies.remove(copies[i])
+            else:
+              i = i + 1
       except KeyError as _:
         pass
 
       try:
         for regexp in self.body_params['headlines_regexp_blacklist']:
-          for copy in copies:
-            pattern = re.compile(regexp)
-            if pattern.match(copy):
-              copies.remove(copy)
+          pattern = re.compile(regexp)
+          i = 0
+          while i < len(copies):
+            if pattern.match(copies[i]):
+              copies.remove(copies[i])
+            else:
+              i = i + 1
       except KeyError as _:
         pass
     elif t == 'descriptions':
       try:
         for term in self.body_params['descriptions_blacklist']:
-          for copy in copies:
-            if term.lower() in copy.lower():
-              copies.remove(copy)
+          i = 0
+          while i < len(copies):
+            if term.lower() in copies[i].lower():
+              copies.remove(copies[i])
+            else:
+              i = i + 1
       except KeyError as _:
         pass
 
       try:
         for regexp in self.body_params['descriptions_regexp_blacklist']:
-          for copy in copies:
-            pattern = re.compile(regexp)
-            if pattern.match(copy):
-              copies.remove(copy)
+          pattern = re.compile(regexp)
+          i = 0
+          while i < len(copies):
+            if pattern.match(copies[i]):
+              copies.remove(copies[i])
+            else:
+              i = i + 1
       except KeyError as _:
         pass
 
@@ -782,18 +796,26 @@ class ContentGeneratorService:
 
     generated_copies_with_size_enforced = []
 
-    for copy in generated_copies:
-      copy = copy.strip()
+    i = 0
+    while i < len(generated_copies):
+      # Remove errors
+      if 'failed' in generated_copies[i].lower() or 'error' in generated_copies[i].lower():
+        generated_copies.remove(generated_copies[i])
+        continue
+
+      # Remove extra whitespaces
+      generated_copies[i] = generated_copies[i].strip()
+
       # Remove full stop if it is a headline
       try:
-        copy = copy[:-1] if copy[-1] == '.' and t == 'headlines' else copy
+        generated_copies[i] = generated_copies[i][:-1] if generated_copies[i][-1] == '.' and t == 'headlines' else generated_copies[i]
       except IndexError as _:
         pass
 
       # Enforce size
-      if len(copy) > max_length:
+      if len(generated_copies[i]) > max_length:
         copy_with_size_enforced = self.gemini_helper.enforce_text_size(
-            copy,
+            generated_copies[i],
             t
             )
 
@@ -806,11 +828,13 @@ class ContentGeneratorService:
         except IndexError as _:
           pass
       else:
-        copy_with_size_enforced = copy
+        copy_with_size_enforced = generated_copies[i]
 
       # Remove duplicates
       if copy_with_size_enforced not in generated_copies_with_size_enforced:
         generated_copies_with_size_enforced.append(copy_with_size_enforced)
+
+      i = i + 1
 
     # Remove copies that are blacklisted
     generated_copies_with_size_enforced = self.__check_blacklists(
@@ -847,8 +871,6 @@ class ContentGeneratorService:
         len(generated_copies_with_size_enforced) < num_copies
         and retries_left == 0
         ):
-      if 'Generation failed' in generated_copies_with_size_enforced:
-        generated_copies_with_size_enforced.remove('Generation failed')
       generated_copies_with_size_enforced = self.__fill_with_generic_copies(
           generated_copies_with_size_enforced,
           t,
