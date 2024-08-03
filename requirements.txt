@@ -34,7 +34,6 @@ google-api-core[grpc]==2.19.1
     # via
     #   google-ads
     #   google-ai-generativelanguage
-    #   google-api-core
     #   google-cloud-bigquery
     #   google-cloud-core
     #   google-generativeai
@@ -153,7 +152,7 @@ typing-extensions==4.10.0
     #   pydantic-core
 tzdata==2023.3
     # via pandas
-urllib3==1.26.16
+urllib3==1.26.19
     # via
     #   google-auth
     #   requests
