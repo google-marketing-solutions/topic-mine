@@ -32,7 +32,10 @@ from utils.enums import FirstTermSource
 from utils.enums import SecondTermSource
 from utils.gemini_helper import GeminiHelper
 from utils.sheet_helper import GoogleSheetsHelper
+from utils.authentication_helper import Authenticator
+from utils.utils import Utils
 
+config = Utils.load_config('config.json')
 # Logger config
 logging.basicConfig()
 logging.root.setLevel(logging.INFO)
@@ -50,6 +53,10 @@ class ContentGeneratorService:
     if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
         self.keyword_suggestion_service = KeywordSuggestionService(self.config)
     self.sheets_helper = GoogleSheetsHelper(self.config)
+    self.authenticator=Authenticator()
+    self.credentials=self.authenticator.authenticate(self.config)
+    
+
 
   def generate_content(
       self,
@@ -549,21 +556,14 @@ class ContentGeneratorService:
   def __populate_entries(self) -> None:
     """Populates each entry with headlines, descriptions and keywords.
     """
-    i = 0
-    while i < len(self.entries):
+    for entry in self.entries:
       if self.must_find_relationship:
-        self.__find_association(self.entries[i])
+        self.__find_association(entry)
 
-      if self.entries[i].must_generate_content(self.must_find_relationship):
-        self.__generate_content(self.entries[i])
+      if entry.must_generate_content(self.must_find_relationship):
+        self.__generate_content(entry)
 
-      if self.entries[i].has_generation_errors() and not self.entries[i].has_been_cleared:
-        self.entries.remove(self.entries[i])
-        self.entries[i].clear_generated_content()
-        self.entries.append(self.entries[i])
-      else:
-        self.bar()
-        i = i + 1
+      self.bar()
 
   def __find_association(self, entry: Entry) -> None:
     """Tries to find a relationship between the term and the associative term for a given entry.
@@ -631,7 +631,7 @@ class ContentGeneratorService:
     keywords = self.__get_keywords([entry.term])
     logging.info(' Keywords: %s', keywords)
 
-    if 'generate_paths' in self.body_params and self.body_params['generate_paths']:
+    if 'generate_paths' in self.config and self.body_params['generate_paths']:
       logging.info(' Generating paths for term %s', entry.term)
       paths = self.__generate_copies(entry, 'paths', 2)
       logging.info(' Paths: %s', paths)
@@ -676,52 +676,40 @@ class ContentGeneratorService:
       copies (list[str]): A list of copies.
 
     Returns:
-      list(str): A list of copies that are not blacklisted.
+      list(str): A list of copies.
     """
     if t == 'headlines':
       try:
         for term in self.body_params['headlines_blacklist']:
-          i = 0
-          while i < len(copies):
-            if term.lower() in copies[i].lower():
-              copies.remove(copies[i])
-            else:
-              i = i + 1
+          for copy in copies:
+            if term.lower() in copy.lower():
+              copies.remove(copy)
       except KeyError as _:
         pass
 
       try:
         for regexp in self.body_params['headlines_regexp_blacklist']:
-          pattern = re.compile(regexp)
-          i = 0
-          while i < len(copies):
-            if pattern.match(copies[i]):
-              copies.remove(copies[i])
-            else:
-              i = i + 1
+          for copy in copies:
+            pattern = re.compile(regexp)
+            if pattern.match(copy):
+              copies.remove(copy)
       except KeyError as _:
         pass
     elif t == 'descriptions':
       try:
         for term in self.body_params['descriptions_blacklist']:
-          i = 0
-          while i < len(copies):
-            if term.lower() in copies[i].lower():
-              copies.remove(copies[i])
-            else:
-              i = i + 1
+          for copy in copies:
+            if term.lower() in copy.lower():
+              copies.remove(copy)
       except KeyError as _:
         pass
 
       try:
         for regexp in self.body_params['descriptions_regexp_blacklist']:
-          pattern = re.compile(regexp)
-          i = 0
-          while i < len(copies):
-            if pattern.match(copies[i]):
-              copies.remove(copies[i])
-            else:
-              i = i + 1
+          for copy in copies:
+            pattern = re.compile(regexp)
+            if pattern.match(copy):
+              copies.remove(copy)
       except KeyError as _:
         pass
 
@@ -751,9 +739,6 @@ class ContentGeneratorService:
     while generic_copies_pool and len(copies) < num_copies:
       random_copy = random.choice(generic_copies_pool)
       copies.append(random_copy)
-
-    while len(copies) < num_copies:
-      copies.append('Generation error')
 
     return copies
 
@@ -788,34 +773,60 @@ class ContentGeneratorService:
 
     # Get copy generation prompt
     prompt = self.__get_copy_generation_prompt(t, entry, num_copies)
+    generated_copies=[]
+    #Logic to determine the use of custom models or endpoints
+    try:
+      has_client_creds=self.authenticator.has_been_authenticated_with_client_credentials()
+      is_authenticated=self.authenticator.has_been_authenticated_with_client_credentials() != "unauthenticated"
+      headlines_endpoint_is_configured=self.body_params["custom_models"]["headlines"]["endpoint"]
+      descriptions_endpoint_is_configured=self.body_params["custom_models"]["descriptions"]["endpoint"]
+      self.authenticator.authenticate(self.config)
+      creds=self.authenticator.creds
+      access_token=creds.token
+      if(has_client_creds and is_authenticated and headlines_endpoint_is_configured):
+        if(t=='headlines'):
+          logging.info("Using custom endpoint for headlines.")
+          generated_copies = self.gemini_helper.generate_text_list(
+                                                                  prompt,
+                                                                  self.body_params["custom_models"]["headlines"]["endpoint"],
+                                                                  access_token
+                                                                  )
+      if(has_client_creds and is_authenticated and descriptions_endpoint_is_configured):
+        logging.info("Using custom model for descriptions.")
+        if(t=='descriptions'):
+          generated_copies = self.gemini_helper.generate_text_list(
+                                                                    prompt,
+                                                                    self.body_params["custom_models"]["descriptions"]["endpoint"],
+                                                                    access_token
+                                                                    )
+
+    except Exception as e:
+      logging.info("Incorrect Authentication for Custom Endpoint")
+      logging.error(e)
+      generated_copies=[]
+
+
 
     # Generate copies
-    generated_copies = self.gemini_helper.generate_text_list(
-        prompt
-        )
+    if len(generated_copies)==0 or generated_copies==['Generation failed']:
+      generated_copies = self.gemini_helper.generate_text_list(
+          prompt
+          )
 
     generated_copies_with_size_enforced = []
 
-    i = 0
-    while i < len(generated_copies):
-      # Remove errors
-      if 'failed' in generated_copies[i].lower() or 'error' in generated_copies[i].lower():
-        generated_copies.remove(generated_copies[i])
-        continue
-
-      # Remove extra whitespaces
-      generated_copies[i] = generated_copies[i].strip()
-
+    for copy in generated_copies:
+      copy = copy.strip()
       # Remove full stop if it is a headline
       try:
-        generated_copies[i] = generated_copies[i][:-1] if generated_copies[i][-1] == '.' and t == 'headlines' else generated_copies[i]
+        copy = copy[:-1] if copy[-1] == '.' and t == 'headlines' else copy
       except IndexError as _:
         pass
 
       # Enforce size
-      if len(generated_copies[i]) > max_length:
+      if len(copy) > max_length:
         copy_with_size_enforced = self.gemini_helper.enforce_text_size(
-            generated_copies[i],
+            copy,
             t
             )
 
@@ -828,13 +839,11 @@ class ContentGeneratorService:
         except IndexError as _:
           pass
       else:
-        copy_with_size_enforced = generated_copies[i]
+        copy_with_size_enforced = copy
 
       # Remove duplicates
       if copy_with_size_enforced not in generated_copies_with_size_enforced:
         generated_copies_with_size_enforced.append(copy_with_size_enforced)
-
-      i = i + 1
 
     # Remove copies that are blacklisted
     generated_copies_with_size_enforced = self.__check_blacklists(
@@ -871,6 +880,8 @@ class ContentGeneratorService:
         len(generated_copies_with_size_enforced) < num_copies
         and retries_left == 0
         ):
+      if 'Generation failed' in generated_copies_with_size_enforced:
+        generated_copies_with_size_enforced.remove('Generation failed')
       generated_copies_with_size_enforced = self.__fill_with_generic_copies(
           generated_copies_with_size_enforced,
           t,

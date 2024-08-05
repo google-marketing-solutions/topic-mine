@@ -35,7 +35,6 @@ class Entry:
   descriptions: list[str]
   keywords: list[str]
   paths: list[str]
-  has_been_cleared: bool
 
   def __init__(
       self,
@@ -62,7 +61,6 @@ class Entry:
     self.descriptions = None
     self.keywords = None
     self.paths = None
-    self.has_been_cleared = False
 
   def __str__(self):
     return (
@@ -71,12 +69,6 @@ class Entry:
         str(self.headlines) + ', descriptions: ' + str(self.descriptions) +
         ', keywords: ' + str(self.keywords) + ', paths: ' + str(self.paths) + ']'
         )
-
-  def __eq__(self, other):
-    if isinstance(other, Entry):
-        return self.id == other.id
-    return False
-
 
   def must_generate_content(self, must_find_relationship: bool):
     """True if content must be generated for this entry, otherwise false.
@@ -123,39 +115,3 @@ class Entry:
         self.keywords is not None and self.keywords and
         self.paths is not None and self.paths
         )
-
-  def has_generation_errors(self) -> bool:
-    """Checks for errors and advances the progress bar if no errors.
-
-    Args:
-      entry (Entry): The entry to check for errors.
-
-    Returns:
-      bool: True if there are errors, otherwise False.
-    """
-    for h in self.headlines:
-      if 'error' in h.lower() or 'failed' in h.lower():
-        return True
-
-    for d in self.descriptions:
-      if 'error' in d.lower() or 'failed' in d.lower():
-        return True
-
-    # for k in self.keywords:
-    #   if 'error' in k.lower() or 'failed' in k.lower():
-    #     return True
-
-    for p in self.paths:
-      if 'error' in p.lower() or 'failed' in p.lower():
-        return True
-
-    return False
-
-  def clear_generated_content(self):
-    """Clears the generated content for this entry.
-    """
-    self.headlines = None
-    self.descriptions = None
-    self.keywords = None
-    self.paths = None
-    self.has_been_cleared = True
