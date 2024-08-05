@@ -20,10 +20,11 @@ import logging
 import os
 import re
 import time
+import requests
+import ast
 
 import dirtyjson
 import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
 
 # Logger config
@@ -37,16 +38,8 @@ GENERATION_CONFIG = {
     'top_p': 0.8,
     'top_k': 40
 }
-SAFETY_SETTINGS = {
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH
-}
+TIME_INTERVAL = 0.3
 
-TIME_INTERVAL_BETWEEN_REQUESTS = 0
-TIME_INTERVAL_IF_QUOTA_ERROR = 60
-TIME_INTERVAL_IF_GEMINI_ERROR = 10
 
 class GeminiHelper:
   """Gemini helper to perform Gemini API requests.
@@ -60,7 +53,7 @@ class GeminiHelper:
     except KeyError:
       key = config['gemini_api_key']
     genai.configure(api_key=key)
-    self.model = genai.GenerativeModel('gemini-1.5-flash')
+    self.model = genai.GenerativeModel('gemini-1.5-pro')
 
   def generate_dict(self, prompt: str) -> dict:
     """Makes a request to Gemini and returns a dict.
@@ -76,78 +69,98 @@ class GeminiHelper:
       try:
         response = self.model.generate_content(
             prompt,
-            generation_config=GENERATION_CONFIG,
-            safety_settings=SAFETY_SETTINGS
+            generation_config=GENERATION_CONFIG
             )
         response_json = re.search('({.*?})', response.text, re.DOTALL).group(1)
         response_json = dirtyjson.loads(response_json)
         response_json = dict(response_json)
-        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
+        time.sleep(TIME_INTERVAL)
 
         return response_json
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
-              'Quota exceeded, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_QUOTA_ERROR,
+              'Quota exceeded, sleeping 60s. Retries left: %d...',
               retries
               )
-          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
+          time.sleep(60)
         elif ('candidate' in str(e) or 'response was blocked' in str(e)
               or 'quick accessor' in str(e)):
-          logging.error(
-              'Gemini error, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_GEMINI_ERROR,
-              retries
-              )
-          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
+          logging.error(' Gemini error. Retries left: %d...', retries)
         else:
           logging.error(' %s. Retries left: %d...', str(e), retries)
       retries = retries - 1
     return {'status': 'Error'}
 
-  def generate_text_list(self, prompt: str) -> list[str]:
-    """Makes a request to Gemini and returns a list of strings.
+  def generate_text_list(self, prompt: str, custom_endpoint: str = "", access_token: str = None) -> list[str]:
+        """Makes a request to Gemini and returns a list of strings.
 
-    Args:
-      prompt (str): the prompt to ask Gemini to generate content
+        The request can be by default to gemini 1.5 pro set as a constant or make a call to a specific endpoint
 
-    Returns:
-      list[str]: a list of strings with the generated texts
-    """
-    retries = RETRIES
-    while retries > 0:
-      try:
-        response = self.model.generate_content(
-            prompt,
-            generation_config=GENERATION_CONFIG,
-            safety_settings=SAFETY_SETTINGS
-            )
-        start_idx = response.text.index('[')
-        end_idx = response.text.index(']')
-        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
+        Args:
+          prompt (str): the prompt to ask Gemini to generate content
+          custom_endpoint (str): the custom endpoint to use for generation
+          access_token (str): the access token to use for custom endpoint (optional)
 
-        return ast.literal_eval(response.text[start_idx:end_idx+1])
-      except Exception as e:
-        if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
-          logging.error(
-              'Quota exceeded, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_QUOTA_ERROR,
-              retries
-              )
-          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
-        elif ('candidate' in str(e) or 'response was blocked' in str(e)
-              or 'quick accessor' in str(e)):
-          logging.error(
-              'Gemini error, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_GEMINI_ERROR,
-              retries
-              )
-          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
-        else:
-          logging.error(' %s. Retries left: %d...', str(e), retries)
-      retries = retries - 1
-    return ['Generation failed']
+        Returns:
+          list[str]: a list of strings with the generated texts
+        """
+        if custom_endpoint and not access_token:
+            raise ValueError("Access token is required when using a custom endpoint")
+
+        retries = RETRIES
+        while retries > 0:
+            try:
+                if custom_endpoint:
+                    # Custom endpoint request
+                    payload = {
+                        "contents": {
+                            "role": "USER",
+                            "parts": {"text": prompt}
+                        },
+                        "generation_config": GENERATION_CONFIG
+                    }
+                    headers = {
+                        "Authorization": f"Bearer {access_token}",
+                        "Content-Type": "application/json"
+                    }
+                    response = requests.post(custom_endpoint, json=payload, headers=headers)
+                    
+                    if response.status_code != 200:
+                        raise Exception(f"Custom endpoint request failed with status code {response.status_code}")
+
+                    response_data = response.json()
+                    response_data = response_data['candidates'][0]['content']['parts'][0]['text']
+
+                else:
+                    # Default Gemini request
+                    response = self.model.generate_content(
+                        prompt,
+                        generation_config=GENERATION_CONFIG
+                    )
+                    response_data = response.text
+
+                start_idx = response_data.index('[')
+                end_idx = response_data.index(']')
+                time.sleep(TIME_INTERVAL)
+
+                return ast.literal_eval(response_data[start_idx:end_idx+1])
+            except Exception as e:
+                if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
+                    logging.error(
+                        'Quota exceeded, sleeping 60s. Retries left: %d...',
+                        retries
+                    )
+                    time.sleep(60)
+                elif ('candidate' in str(e) or 'response was blocked' in str(e)
+                      or 'quick accessor' in str(e)):
+                    logging.error('Gemini error. Retries left: %d...', retries)
+                elif 'status code' in str(e):
+                    logging.error(f'Custom endpoint error: {str(e)}. Retries left: {retries}')
+                else:
+                    logging.error('%s. Retries left: %d...', str(e), retries)
+                retries -= 1
+        return ['Generation failed']
 
   def run_prompt(self, prompt: str) -> str:
     """Makes a request to Gemini and returns a the response.
@@ -163,28 +176,21 @@ class GeminiHelper:
       try:
         response = self.model.generate_content(
             prompt,
-            generation_config=GENERATION_CONFIG,
-            safety_settings=SAFETY_SETTINGS
+            generation_config=GENERATION_CONFIG
             )
-        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
+        time.sleep(TIME_INTERVAL)
 
         return response.text
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
-              'Quota exceeded, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_QUOTA_ERROR,
+              'Quota exceeded, sleeping 60s. Retries left: %d...',
               retries
               )
-          time.sleep(TIME_INTERVAL_IF_QUOTA_ERROR)
+          time.sleep(60)
         elif ('candidate' in str(e) or 'response was blocked' in str(e)
               or 'quick accessor' in str(e)):
-          logging.error(
-              'Gemini error, sleeping %ds. Retries left: %d...',
-              TIME_INTERVAL_IF_GEMINI_ERROR,
-              retries
-              )
-          time.sleep(TIME_INTERVAL_IF_GEMINI_ERROR)
+          logging.error(' Gemini error. Retries left: %d...', retries)
         else:
           logging.error(' %s. Retries left: %d...', str(e), retries)
       retries = retries - 1
@@ -253,12 +259,6 @@ class GeminiHelper:
     else:
       message = f"Unsupported val: {t}. Supported: 'headlines', 'descriptions', 'paths'"
       raise ValueError(message)
-
-    if t == 'paths':
-      return prompts[self.config['language']]['PATH_SIZE_ENFORCEMENT'].format(
-          max_length=max_length,
-          copy=copy,
-          )
 
     return prompts[self.config['language']]['SIZE_ENFORCEMENT'].format(
         max_length=max_length,
