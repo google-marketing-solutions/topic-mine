@@ -20,11 +20,12 @@ import logging
 import os
 import re
 import time
-
 import dirtyjson
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
+import requests
+import ast
 
 # Logger config
 logging.basicConfig()
@@ -106,7 +107,7 @@ class GeminiHelper:
       retries = retries - 1
     return {'status': 'Error'}
 
-  def generate_text_list(self, prompt: str) -> list[str]:
+  def generate_text_list(self, prompt: str, custom_endpoint: str = "", access_token: str = None) -> list[str]:
     """Makes a request to Gemini and returns a list of strings.
 
     Args:
@@ -115,19 +116,47 @@ class GeminiHelper:
     Returns:
       list[str]: a list of strings with the generated texts
     """
+    
+    if custom_endpoint and not access_token:
+            raise ValueError("Access token is required when using a custom endpoint")
+            
+    
     retries = RETRIES
     while retries > 0:
       try:
-        response = self.model.generate_content(
-            prompt,
-            generation_config=GENERATION_CONFIG,
-            safety_settings=SAFETY_SETTINGS
-            )
-        start_idx = response.text.index('[')
-        end_idx = response.text.index(']')
-        time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
-
-        return ast.literal_eval(response.text[start_idx:end_idx+1])
+          if custom_endpoint:
+                # Custom endpoint request
+                payload = {
+                    "contents": {
+                        "role": "USER",
+                        "parts": {"text": prompt}
+                    },
+                    "generation_config": GENERATION_CONFIG
+                }
+                headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json"
+                }
+                response = requests.post(custom_endpoint, json=payload, headers=headers)
+                
+                    
+                if response.status_code != 200:
+                    raise Exception(f"Custom endpoint request failed with status code {response.status_code}")
+                response_data = response.json()
+                response_data = response_data['candidates'][0]['content']['parts'][0]['text']
+                start_idx = response_data.index('[')
+                end_idx = response_data.index(']')
+                return ast.literal_eval(response_data[start_idx:end_idx+1])
+          else:
+              response = self.model.generate_content(
+                    prompt,
+                    generation_config=GENERATION_CONFIG,
+                    safety_settings=SAFETY_SETTINGS
+                    )
+              start_idx = response.text.index('[')
+              end_idx = response.text.index(']')
+              time.sleep(TIME_INTERVAL_BETWEEN_REQUESTS)
+          return ast.literal_eval(response.text[start_idx:end_idx+1])
       except Exception as e:
         if 'Quota exceeded' in str(e) or 'quota' in str(e).lower():
           logging.error(
