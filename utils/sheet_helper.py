@@ -19,7 +19,7 @@ This module contains helper functions for working with Google Sheets.
 
 import logging
 import backoff
-
+from decimal import Decimal
 import gspread
 from utils.authentication_helper import Authenticator
 
@@ -105,7 +105,12 @@ class GoogleSheetsHelper():
     """
     logging.info(' Writing data to sheet: %s', sheet_name)
 
+    #Catch the case where there are decimals to write
     try:
+      for row in data:
+        for i, value in enumerate(row):
+            if isinstance(value, Decimal):
+                row[i] = str(value)
       spreadsheet = self.client.open_by_key(sheet_id)
       worksheet = spreadsheet.worksheet(sheet_name)
       worksheet.update(sheet_range, data)

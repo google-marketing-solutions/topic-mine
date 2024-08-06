@@ -35,7 +35,20 @@ class Authenticator:
   """This class creates credentials to authenticate with google APIs."""
 
   def __init__(self) -> None:
-    pass
+    self.client_id=None
+    self.client_secret=None
+    self.refresh_token=None
+    self.is_authentication_method_client_id='unauthenticated'
+    self.creds=None
+
+  def has_been_authenticated_with_client_credentials(self):
+    """
+    Can return true if authenticated with client credentials
+    Or false if it was done with service account
+    else it will be a tring 'unauthenticated'
+    """
+    return self.is_authentication_method_client_id
+
 
   def authenticate(self, config: dict[str, str]) -> object:
     """Authentication method.
@@ -46,18 +59,21 @@ class Authenticator:
     Returns:
       object: The credentials object.
     """
-    client_id = config.get('client_id')
-    client_secret = config.get('client_secret')
-    refresh_token = config.get('refresh_token')
+    self.client_id = config.get('client_id')
+    self.client_secret = config.get('client_secret')
+    self.refresh_token = config.get('refresh_token')
 
-    if not client_id or not client_secret or not refresh_token:
+    if not self.client_id or not self.client_secret or not self.refresh_token:
       creds, _ = default(scopes=API_SCOPES)
+      self.is_authentication_method_client_id=False
     else:
       creds = Credentials.from_authorized_user_info({
-          'client_id': client_id,
-          'client_secret': client_secret,
-          'refresh_token': refresh_token,
+          'client_id': self.client_id,
+          'client_secret': self.client_secret,
+          'refresh_token': self.refresh_token,
           })
+      self.is_authentication_method_client_id=True
 
     creds.refresh(Request())
+    self.creds=creds
     return creds

@@ -22,7 +22,6 @@ import logging
 import random
 import re
 import requests
-
 from alive_progress import alive_bar
 from prompts.prompts import prompts
 from services.keyword_suggestion_service import KeywordSuggestionService
@@ -32,6 +31,11 @@ from utils.enums import FirstTermSource
 from utils.enums import SecondTermSource
 from utils.gemini_helper import GeminiHelper
 from utils.sheet_helper import GoogleSheetsHelper
+from utils.authentication_helper import Authenticator
+from utils.utils import Utils
+
+config = Utils.load_config('config.json')
+
 
 # Logger config
 logging.basicConfig()
@@ -50,6 +54,8 @@ class ContentGeneratorService:
     if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
         self.keyword_suggestion_service = KeywordSuggestionService(self.config)
     self.sheets_helper = GoogleSheetsHelper(self.config)
+    self.authenticator=Authenticator()
+    self.credentials=self.authenticator.authenticate(self.config)
 
   def generate_content(
       self,
@@ -789,10 +795,45 @@ class ContentGeneratorService:
     # Get copy generation prompt
     prompt = self.__get_copy_generation_prompt(t, entry, num_copies)
 
+    generated_copies=[]
+    #Logic to determine the use of custom models or endpoints
+    try:
+      has_client_creds=self.authenticator.has_been_authenticated_with_client_credentials()
+      is_authenticated=self.authenticator.has_been_authenticated_with_client_credentials() != "unauthenticated"
+      headlines_endpoint_is_configured=self.body_params["custom_models"]["headlines"]["endpoint"]
+      descriptions_endpoint_is_configured=self.body_params["custom_models"]["descriptions"]["endpoint"]
+      self.authenticator.authenticate(self.config)
+      creds=self.authenticator.creds
+      access_token=creds.token
+      if(has_client_creds and is_authenticated and headlines_endpoint_is_configured):
+        if(t=='headlines'):
+          logging.info("Using custom endpoint for headlines.")
+          generated_copies = self.gemini_helper.generate_text_list(
+                                                                  prompt,
+                                                                  self.body_params["custom_models"]["headlines"]["endpoint"],
+                                                                  access_token
+                                                                  )
+      if(has_client_creds and is_authenticated and descriptions_endpoint_is_configured):
+        logging.info("Using custom model for descriptions.")
+        if(t=='descriptions'):
+          generated_copies = self.gemini_helper.generate_text_list(
+                                                                    prompt,
+                                                                    self.body_params["custom_models"]["descriptions"]["endpoint"],
+                                                                    access_token
+                                                                    )
+
+    except Exception as e:
+      logging.info("Incorrect Authentication for Custom Endpoint")
+      logging.error(e)
+      generated_copies=[]
+
+
+
     # Generate copies
-    generated_copies = self.gemini_helper.generate_text_list(
-        prompt
-        )
+    if len(generated_copies)==0 or generated_copies==['Generation failed']:
+      generated_copies = self.gemini_helper.generate_text_list(
+          prompt
+          )
 
     generated_copies_with_size_enforced = []
 
