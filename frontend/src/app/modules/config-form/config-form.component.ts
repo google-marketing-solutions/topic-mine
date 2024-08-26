@@ -44,7 +44,6 @@ import { GenerateAdsService } from '../../services/generate-ads.service';
   styleUrl: './config-form.component.css',
 })
 export class ConfigFormComponent {
-  constructor(private generateAdsService: GenerateAdsService) {}
   private _snackBar = inject(MatSnackBar);
   readonly panelOpenState = signal(false);
 
@@ -52,20 +51,19 @@ export class ConfigFormComponent {
   @Output() selectBrandEvent = new EventEmitter<string>();
   products: string[] = [];
   trends: string[] = this.getTrends();
-  prompts = getPrompts();
-  prompt =
-    this.prompts['EN']['GENERATION']['WITH_ASSOCIATIVE_TERM'][
-      'WITHOUT_DESCRIPTIONS'
-    ];
+
+  promptHeadlines: string = '';
+  promptDescriptions: string = '';
 
   configForm = new FormGroup({
-    brandProducts: new FormControl('', [Validators.required]),
-    gmc: new FormControl('gmcList', []),
+    brandsProductsSelection: new FormControl('gmcList', []),
     gmcId: new FormControl('', [Validators.required]),
     brands: new FormControl('select-brand', [Validators.required]),
     products: new FormControl([''], [Validators.required]),
+    customerProvidedBrand: new FormControl('', [Validators.required]),
+    customerProvidedProducts: new FormControl('', [Validators.required]),
     trendsSelection: new FormControl('externalTrends', [Validators.required]),
-    externalTrends: new FormControl('', [Validators.required]),
+    externalTrends: new FormControl([''], [Validators.required]),
     internalTrends: new FormControl('', [Validators.required]),
     numHeadlines: new FormControl('4', [Validators.required]),
     numDescriptions: new FormControl('4', [Validators.required]),
@@ -73,6 +71,103 @@ export class ConfigFormComponent {
     headlinesBlockList: new FormControl('', []),
     descriptionsBlockList: new FormControl('', []),
   });
+
+  constructor(private generateAdsService: GenerateAdsService) {
+    this.configForm.valueChanges.subscribe((data) => {
+      this.replacePromptParams();
+    });
+  }
+
+  replacePromptParams() {
+    const language = this.configForm.get('language')?.value!;
+    const prompts = getPrompts();
+    // Headlines
+    if (this.configForm.get('headlinesBlockList')?.value) {
+      this.promptHeadlines =
+        prompts[language]['GENERATION']['WITH_ASSOCIATIVE_TERM'][
+          'WITHOUT_DESCRIPTIONS'
+        ]['HEADLINES']['WITH_BLOCK_LIST'];
+    } else {
+      this.promptHeadlines =
+        prompts[language]['GENERATION']['WITH_ASSOCIATIVE_TERM'][
+          'WITHOUT_DESCRIPTIONS'
+        ]['HEADLINES']['WITHOUT_BLOCK_LIST'];
+    }
+    // Descriptions
+    if (this.configForm.get('descriptionsBlockList')?.value!) {
+      this.promptDescriptions =
+        prompts[language]['GENERATION']['WITH_ASSOCIATIVE_TERM'][
+          'WITHOUT_DESCRIPTIONS'
+        ]['DESCRIPTIONS']['WITH_BLOCK_LIST'];
+    } else {
+      this.promptDescriptions =
+        prompts[language]['GENERATION']['WITH_ASSOCIATIVE_TERM'][
+          'WITHOUT_DESCRIPTIONS'
+        ]['DESCRIPTIONS']['WITHOUT_BLOCK_LIST'];
+    }
+    // Products selection
+    const products = this.getProductsFromForm();
+    const product = products[Math.floor(Math.random() * products.length)];
+    // Trends selection
+    const trends = this.getTrendsFromForm();
+    const trend = trends[Math.floor(Math.random() * trends.length)];
+
+    const headlinesBlockList = this.configForm
+      .get('headlinesBlockList')
+      ?.value!.split('\n')
+      .join(', ') as string;
+    const descriptionsBlockList = this.configForm
+      .get('descriptionsBlockList')
+      ?.value!.split('\n')
+      .join(', ') as string;
+
+    this.promptHeadlines = this.promptHeadlines
+      .replaceAll('{n}', this.configForm.get('numHeadlines')?.value!)
+      .replaceAll('{term}', product)
+      .replaceAll('{associative_term}', trend)
+      .replaceAll('{association_reason}', trend)
+      .replaceAll('{company}', this.configForm.get('brands')?.value!)
+      .replaceAll('{headlines_block_list}', headlinesBlockList);
+    this.promptDescriptions = this.promptDescriptions
+      .replaceAll('{n}', this.configForm.get('numHeadlines')?.value!)
+      .replaceAll('{term}', product)
+      .replaceAll('{associative_term}', trend)
+      .replaceAll('{association_reason}', trend)
+      .replaceAll('{company}', this.configForm.get('brands')?.value!)
+      .replaceAll('{descriptions_block_list}', descriptionsBlockList);
+  }
+
+  getBrandFromForm() {
+    let brand: string;
+    if (this.configForm.get('brandsProductsSelection')?.value === 'gmcList') {
+      brand = this.configForm.get('brands')?.value!;
+    } else {
+      brand = this.configForm.get('customerProvidedBrand')?.value!;
+    }
+    return brand;
+  }
+
+  getProductsFromForm() {
+    let products: string[] = [];
+    if (this.configForm.get('brandsProductsSelection')?.value === 'gmcList') {
+      products = this.configForm.get('products')?.value!;
+    } else {
+      products = this.configForm
+        .get('customerProvidedProducts')
+        ?.value!.split('\n')!;
+    }
+    return products;
+  }
+
+  getTrendsFromForm() {
+    let trends: string[] = [];
+    if (this.configForm.get('trendsSelection')?.value === 'externalTrends') {
+      trends = this.configForm.get('externalTrends')?.value!;
+    } else {
+      trends = this.configForm.get('internalTrends')?.value!.split('\n')!;
+    }
+    return trends;
+  }
 
   loadBrandsAndProducts() {
     this.brands = this.getBrands();
@@ -86,10 +181,7 @@ export class ConfigFormComponent {
 
   onLanguageChange(change: MatSelectChange) {
     const language = change.value as string;
-    this.prompt =
-      this.prompts[language]['GENERATION']['WITH_ASSOCIATIVE_TERM'][
-        'WITHOUT_DESCRIPTIONS'
-      ];
+    this.replacePromptParams();
   }
 
   getBrands() {
@@ -146,11 +238,12 @@ export class ConfigFormComponent {
 
   generateAds() {
     const configFormData = {
-      brand: this.configForm.get('brands')?.value,
-      products: this.configForm.get('products')?.value,
+      brandsProductsSelection: this.configForm.get('brandsProductsSelection')
+        ?.value,
+      brand: this.getBrandFromForm(),
+      products: this.getProductsFromForm(),
       trendsSelection: this.configForm.get('trendsSelection')?.value,
-      externalTrends: this.configForm.get('externalTrends')?.value,
-      internalTrends: this.configForm.get('internalTrends')?.value,
+      trends: this.getTrendsFromForm(),
       numHeadlines: this.configForm.get('numHeadlines')?.value,
       numDescriptions: this.configForm.get('numDescriptions')?.value,
       language: this.configForm.get('language')?.value,
@@ -163,6 +256,43 @@ export class ConfigFormComponent {
 
   disableLoadGMCButton() {
     return !this.configForm.get('gmcId')?.valid;
+  }
+
+  enableStep1NextButton() {
+    const products = this.getProductsFromForm();
+    let valid: boolean = false; // check this
+    if (this.configForm.get('brandsProductsSelection')?.value === 'gmcList') {
+      valid = (this.configForm.get('gmcId')?.valid &&
+        this.configForm.get('brands')?.valid &&
+        this.configForm.get('brands')?.value !== 'select-brand' &&
+        products &&
+        products.length > 0 &&
+        products[0] !== '')!;
+    } else {
+      valid = (this.configForm.get('customerProvidedBrand')?.valid &&
+        products &&
+        products.length > 0 &&
+        products[0] !== '')!;
+    }
+    return valid;
+  }
+
+  enableStep2NextButton() {
+    const externalTrends = this.configForm.get('externalTrends')
+      ?.value as string[];
+    // Users can select either external or internal trends
+    const valid =
+      (externalTrends && externalTrends.length > 0 && externalTrends[0]) ||
+      this.configForm.get('internalTrends')?.valid;
+    return valid;
+  }
+
+  enableStep3Button() {
+    const valid =
+      this.configForm.get('numHeadlines')?.valid &&
+      this.configForm.get('numDescriptions')?.valid &&
+      this.configForm.get('language')?.valid;
+    return valid;
   }
 
   openSnackBar(message: string) {

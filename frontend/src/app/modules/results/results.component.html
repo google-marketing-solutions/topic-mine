@@ -48,14 +48,15 @@
         <button mat-button>Edit</button>
       </mat-card-actions>
     </mat-expansion-panel>
-    <div class="buttons-container">
-      <button mat-flat-button (click)="exportToSA360Template()">
-        Export to SA360
-      </button>
-      <button mat-flat-button (click)="exportToDV360Template()">
-        Export to DV360
-      </button>
-    </div>
   </mat-card>
+  } @if (associations && associations.length > 0) {
+  <div class="buttons-container">
+    <button mat-flat-button (click)="exportToSA360Template()">
+      Export to SA360
+    </button>
+    <button mat-flat-button (click)="exportToDV360Template()">
+      Export to DV360
+    </button>
+  </div>
   }
 </mat-expansion-panel>

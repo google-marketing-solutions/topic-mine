@@ -47,7 +47,7 @@ mat-divider {
   justify-content: flex-start;
 }
 
-.gmc-config {
+.brands-product-selection-config {
   button {
     margin: auto 16px;
   }
@@ -66,7 +66,7 @@ mat-form-field {
   }
 }
 
-.prompt {
+.prompt-container {
   padding: 16px;
   width: 50%;
   margin: 0px auto;
@@ -77,4 +77,8 @@ mat-form-field {
     height: 88%;
     padding: 16px;
   }
+}
+
+.highlight {
+  color: red;
 }

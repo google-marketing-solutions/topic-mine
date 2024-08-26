@@ -5,12 +5,12 @@
         <!-- Brands and Products Configuration Step-->
         <mat-step [stepControl]="configForm">
           <ng-template matStepLabel
-            >Brand and Products Configuration</ng-template
+            >Brands and Products Configuration</ng-template
           >
           <div class="form-item">
             <mat-radio-group
               aria-labelledby="example-radio-group-label"
-              formControlName="gmc"
+              formControlName="brandsProductsSelection"
             >
               <mat-radio-button class="example-radio-button" value="gmcList"
                 >Use brands and products from Google Merchant
@@ -24,8 +24,8 @@
               >
             </mat-radio-group>
           </div>
-          @if(configForm.get("gmc")?.value === 'gmcList') {
-          <div class="gmc-config flex-start">
+          @if(configForm.get("brandsProductsSelection")?.value === 'gmcList') {
+          <div class="brands-product-selection-config flex-start">
             <div class="form-item">
               <mat-form-field class="gmcId" appearance="fill">
                 <mat-label>Google Merchant Center ID</mat-label>
@@ -73,27 +73,47 @@
               </mat-form-field>
             </div>
           </div>
-          } } @if(configForm.get("gmc")?.value === 'customerList') {
-          <div class="form-item">
+          } } @if(configForm.get("brandsProductsSelection")?.value === 'customerList') {
+            <div class="form-item">
+              <mat-form-field appearance="fill">
+                <mat-label>Brand</mat-label>
+                <input
+                  matInput
+                  formControlName="customerProvidedBrand"
+                  id="customerProvidedBrand"
+                />
+                <mat-icon matSuffix>store</mat-icon>
+                @if (configForm.get('customerProvidedBrand')?.invalid ) {
+                <mat-error></mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-item">
             <mat-form-field class="large-input" appearance="fill">
-              <mat-label>Brands and/or Products</mat-label>
+              <mat-label>Products</mat-label>
               <textarea
                 matInput
                 rows="5"
                 cols="5"
-                formControlName="brandProducts"
-                id="brandProducts"
+                formControlName="customerProvidedProducts"
+                id="customerProvidedProducts"
               >
               </textarea>
               <mat-icon matSuffix>store</mat-icon>
-              @if (configForm.get('brandProducts')?.invalid ) {
+              @if (configForm.get('customerProvidedProducts')?.invalid ) {
               <mat-error></mat-error>
               }
             </mat-form-field>
           </div>
           }
           <div class="buttons-container">
-            <button mat-button matStepperNext>Next</button>
+            <button
+              mat-button
+              [disabled]="!enableStep1NextButton()"
+              matStepperNext
+            >
+              Next
+            </button>
           </div>
         </mat-step>
 
@@ -163,12 +183,21 @@
           }
           <div class="buttons-container">
             <button mat-button matStepperPrevious>Back</button>
-            <button mat-button matStepperNext>Next</button>
+            <button
+              mat-button
+              [disabled]="!enableStep2NextButton()"
+              matStepperNext
+            >
+              Next
+            </button>
           </div>
         </mat-step>
 
         <!-- Search Ads Step -->
-        <mat-step [stepControl]="configForm" label="Select or input the trends">
+        <mat-step
+          [stepControl]="configForm"
+          label="Search Ads Copies Configuration"
+        >
           <div class="search-ads-copy flex-start">
             <div class="settings">
               <div class="flex-start">
@@ -240,17 +269,26 @@
               </div>
             </div>
             <!-- Prompt -->
-            <div class="prompt">
+            <div class="prompt-container">
               <mat-label>Example Prompt</mat-label>
               <div>
-                <p>{{ prompt }}</p>
+                <label><strong>Headlines</strong></label
+                ><br />
+                <p [innerHTML]="promptHeadlines"></p>
+                <label><strong>Descriptions</strong></label
+                ><br />
+                <p [innerHTML]="promptDescriptions"></p>
               </div>
             </div>
           </div>
           <div class="buttons-container">
             <button mat-button matStepperPrevious>Back</button>
             <!--button mat-button (click)="stepper.reset()">Reset</button-->
-            <button mat-flat-button (click)="generateAds()">
+            <button
+              mat-flat-button
+              [disabled]="!enableStep3Button()"
+              (click)="generateAds()"
+            >
               Generate Ads
             </button>
           </div>
