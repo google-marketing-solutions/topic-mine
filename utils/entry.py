@@ -133,21 +133,24 @@ class Entry:
     Returns:
       bool: True if there are errors, otherwise False.
     """
-    for h in self.headlines:
-      if 'error' in h.lower() or 'failed' in h.lower():
-        return True
+    if self.headlines and isinstance(self.headlines, list):
+      for h in self.headlines:
+        if 'error' in h.lower() or 'failed' in h.lower():
+          return True
 
-    for d in self.descriptions:
-      if 'error' in d.lower() or 'failed' in d.lower():
-        return True
+    if self.descriptions and isinstance(self.descriptions, list):
+      for d in self.descriptions:
+        if 'error' in d.lower() or 'failed' in d.lower():
+          return True
 
     # for k in self.keywords:
     #   if 'error' in k.lower() or 'failed' in k.lower():
     #     return True
 
-    for p in self.paths:
-      if 'error' in p.lower() or 'failed' in p.lower():
-        return True
+    if self.paths and isinstance(self.paths, list):
+      for p in self.paths:
+        if 'error' in p.lower() or 'failed' in p.lower():
+          return True
 
     return False
 

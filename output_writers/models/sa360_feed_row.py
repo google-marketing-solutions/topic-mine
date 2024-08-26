@@ -28,6 +28,9 @@ class SA360FeedRow:
   row_id: str
   publish: str
   trend: str
+  term: str
+  relationship: str
+  reason: str
   sku: str
   keywords: list[str]
   url: str
@@ -42,6 +45,9 @@ class SA360FeedRow:
       row_id: str,
       publish: str,
       trend: str,
+      term: str,
+      relationship: bool,
+      reason: str,
       sku: str,
       keywords: list[str],
       url: str,
@@ -55,6 +61,9 @@ class SA360FeedRow:
     self.row_id = row_id
     self.publish = publish
     self.trend = trend
+    self.term = term
+    self.relationship = relationship
+    self.reason = reason
     self.sku = sku
     self.keywords = keywords
     self.url = url
