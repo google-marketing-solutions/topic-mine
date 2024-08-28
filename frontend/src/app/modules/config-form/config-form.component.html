@@ -54,6 +54,7 @@
                   formControlName="brands"
                   id="brands"
                   (selectionChange)="onBrandChange($event)"
+                  multiple
                 >
                   <mat-option value="select-brand">Select a Brand</mat-option>
                   @for (brand of brands; track brand) {

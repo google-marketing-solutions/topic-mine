@@ -11,44 +11,65 @@
       <mat-icon>insights</mat-icon>
     </mat-panel-description>
   </mat-expansion-panel-header>
-  @for (association of associations; track association) {
-  <mat-card appearance="outlined">
-    <mat-card-header>
-      <mat-card-title> Brand: {{ association.brand }} </mat-card-title>
-      <mat-card-subtitle>Product: {{ association.term }} </mat-card-subtitle>
-      <mat-card-subtitle>Trend: {{ association.trend }} </mat-card-subtitle>
-    </mat-card-header>
 
-    <mat-expansion-panel class="headlines-container">
-      <mat-expansion-panel-header>
-        <mat-panel-title> Headlines </mat-panel-title>
-        <mat-panel-description>
-          Expand to see the generated Headlines
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      @for (headline of association.headlines; track headline; let i = $index) {
-      <p>Headline {{ i + 1 }} - {{ headline }}</p>
-      }
-      <mat-card-actions>
-        <button mat-button>Edit</button>
-      </mat-card-actions>
-    </mat-expansion-panel>
-    <mat-expansion-panel class="descriptions-container">
-      <mat-expansion-panel-header>
-        <mat-panel-title> Descriptions </mat-panel-title>
-        <mat-panel-description>
-          Expand to see the generated Descriptions
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      @for (description of association.descriptions; track description; let i =
-      $index) {
-      <p>Description {{ i + 1 }} - {{ description }}</p>
-      }
-      <mat-card-actions>
-        <button mat-button>Edit</button>
-      </mat-card-actions>
-    </mat-expansion-panel>
+  <mat-card *ngFor="let product of products">
+    <mat-card-title>{{ product.name }}</mat-card-title>
+    <mat-card-content>
+      <h3>Headlines:</h3>
+      <ul>
+        <li *ngFor="let headline of product.headlines">{{ headline }}</li>
+      </ul>
+      <h3>Descriptions:</h3>
+      <ul>
+        <li *ngFor="let description of product.descriptions">{{ description }}</li>
+      </ul>
+    </mat-card-content>
   </mat-card>
+  
+
+  @for (association of associations; track association) {
+    <mat-card class="association-card" appearance="outlined">
+      <mat-card-header class="card-header">
+        <div class="brand-info">
+          <h3>{{ association.brand }}</h3>
+        </div>
+        <div class="product-trend-info">
+          <span class="product">{{ association.term }}</span>
+          <span class="trend">{{ association.trend }}</span>
+        </div>
+      </mat-card-header>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-content class="card-content">
+        <div class="headlines-section">
+          <h4><mat-icon>title</mat-icon> Headlines</h4>
+          @for (headline of association.headlines; track headline; let i = $index) {
+            <div class="headline-item">
+              <p>{{ i + 1 }}. {{ headline }}</p>
+            </div>
+          }
+          <mat-card-actions>
+            <button mat-button color="primary">Edit Headlines</button>
+
+          </mat-card-actions>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="descriptions-section">
+          <h4><mat-icon>description</mat-icon> Descriptions</h4>
+          @for (description of association.descriptions; track description; let i = $index) {
+            <div class="description-item">
+              <p>{{ i + 1 }}. {{ description }}</p>
+            </div>
+          }
+          <mat-card-actions>
+            <button mat-button color="accent">Edit Descriptions</button>
+          </mat-card-actions>
+        </div>
+      </mat-card-content>
+    </mat-card>
   } @if (associations && associations.length > 0) {
   <div class="buttons-container">
     <button mat-flat-button (click)="exportToSA360Template()">

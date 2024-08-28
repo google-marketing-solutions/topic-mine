@@ -20,6 +20,16 @@ export class AppComponent {
   title = 'topic-mine';
   selectedBrand: string = '';
 
+  selectedProducts: string[] = [];
+  numHeadlines: number = 0;
+  numDescriptions: number = 0;
+
+  onFormSubmit(event: any) {
+    this.selectedProducts = event.selectedProducts;
+    this.numHeadlines = event.numHeadlines;
+    this.numDescriptions = event.numDescriptions;
+  }
+
   selectBrand(brand: string) {
     this.selectedBrand = brand;
   }

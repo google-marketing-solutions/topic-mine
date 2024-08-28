@@ -49,6 +49,7 @@ export class ConfigFormComponent {
 
   brands: string[] = [];
   @Output() selectBrandEvent = new EventEmitter<string>();
+  @Output() formSubmit = new EventEmitter<any>();
   products: string[] = [];
   trends: string[] = this.getTrends();
 
@@ -252,6 +253,11 @@ export class ConfigFormComponent {
         ?.value,
     };
     this.generateAdsService.generateAds(configFormData);
+
+    const selectedProducts = this.getProductsFromForm();
+    const numHeadlines = this.configForm.get('numHeadlines')?.value;
+    const numDescriptions = this.configForm.get('numDescriptions')?.value;
+    this.formSubmit.emit({ selectedProducts, numHeadlines, numDescriptions });
   }
 
   disableLoadGMCButton() {
