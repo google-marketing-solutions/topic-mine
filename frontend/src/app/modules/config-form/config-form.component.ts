@@ -20,11 +20,15 @@ import { MatListModule } from '@angular/material/list';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCardModule } from '@angular/material/card';
 import { GenerateAdsService } from '../../services/generate-ads.service';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { isVariableStatement } from 'typescript';
 
 @Component({
   selector: 'app-config-form',
   standalone: true,
   imports: [
+    HttpClientModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatAccordion,
@@ -73,7 +77,7 @@ export class ConfigFormComponent {
     descriptionsBlockList: new FormControl('', []),
   });
 
-  constructor(private generateAdsService: GenerateAdsService) {
+  constructor(private generateAdsService: GenerateAdsService, private http: HttpClient) {
     this.configForm.valueChanges.subscribe((data) => {
       this.replacePromptParams();
     });
@@ -239,8 +243,7 @@ export class ConfigFormComponent {
 
   generateAds() {
     const configFormData = {
-      brandsProductsSelection: this.configForm.get('brandsProductsSelection')
-        ?.value,
+      brandsProductsSelection: this.configForm.get('brandsProductsSelection')?.value,
       brand: this.getBrandFromForm(),
       products: this.getProductsFromForm(),
       trendsSelection: this.configForm.get('trendsSelection')?.value,
@@ -249,15 +252,26 @@ export class ConfigFormComponent {
       numDescriptions: this.configForm.get('numDescriptions')?.value,
       language: this.configForm.get('language')?.value,
       headlinesBlockList: this.configForm.get('headlinesBlockList')?.value,
-      descriptionsBlockList: this.configForm.get('descriptionsBlockList')
-        ?.value,
+      descriptionsBlockList: this.configForm.get('descriptionsBlockList')?.value,
     };
     this.generateAdsService.generateAds(configFormData);
 
-    const selectedProducts = this.getProductsFromForm();
+    const selectedProducts = this.getProductsFromForm().map(product => product.toLowerCase());
     const numHeadlines = this.configForm.get('numHeadlines')?.value;
     const numDescriptions = this.configForm.get('numDescriptions')?.value;
-    this.formSubmit.emit({ selectedProducts, numHeadlines, numDescriptions });
+
+    this.http.get<any[]>('assets/output.json').subscribe((data) => {
+      const entries = data.filter(product =>
+        selectedProducts.includes(product.Term.toLowerCase())
+      ).map(product => {
+        return {
+          ...product,
+          Headlines: product.Headlines.slice(0, numHeadlines),
+          Descriptions: product.Descriptions.slice(0, numDescriptions)
+        };
+      });
+      this.formSubmit.emit(entries);
+    });
   }
 
   disableLoadGMCButton() {

@@ -11,21 +11,21 @@
       <mat-icon>insights</mat-icon>
     </mat-panel-description>
   </mat-expansion-panel-header>
-
-  <mat-card *ngFor="let product of products">
-    <mat-card-title>{{ product.name }}</mat-card-title>
+<!-- 
+  <mat-card *ngFor="let entry of entries">
+    <mat-card-title>{{ entry.Term }}</mat-card-title>
     <mat-card-content>
       <h3>Headlines:</h3>
       <ul>
-        <li *ngFor="let headline of product.headlines">{{ headline }}</li>
+        <li *ngFor="let headline of entry.Headlines">{{ headline }}</li>
       </ul>
       <h3>Descriptions:</h3>
       <ul>
-        <li *ngFor="let description of product.descriptions">{{ description }}</li>
+        <li *ngFor="let description of entry.Descriptions">{{ description }}</li>
       </ul>
     </mat-card-content>
-  </mat-card>
-  
+  </mat-card> -->
+
 
   @for (association of associations; track association) {
     <mat-card class="association-card" appearance="outlined">

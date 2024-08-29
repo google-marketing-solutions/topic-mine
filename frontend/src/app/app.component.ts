@@ -20,14 +20,11 @@ export class AppComponent {
   title = 'topic-mine';
   selectedBrand: string = '';
 
-  selectedProducts: string[] = [];
-  numHeadlines: number = 0;
-  numDescriptions: number = 0;
+  entries: Object[] = [];
 
   onFormSubmit(event: any) {
-    this.selectedProducts = event.selectedProducts;
-    this.numHeadlines = event.numHeadlines;
-    this.numDescriptions = event.numDescriptions;
+    this.entries = event;
+    console.log('entries on app component: ' + this.entries)
   }
 
   selectBrand(brand: string) {

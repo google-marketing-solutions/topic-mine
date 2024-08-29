@@ -179,6 +179,6 @@
 
 <app-navbar></app-navbar>
 <app-config-form (selectBrandEvent)="selectBrand($event)" (formSubmit)="onFormSubmit($event)"></app-config-form>
-<app-results [selectedBrand]="selectedBrand" [selectedProducts]="selectedProducts" [numHeadlines]="numHeadlines" [numDescriptions]="numDescriptions"></app-results>
+<app-results [selectedBrand]="selectedBrand" [entries]="entries"></app-results>
 
 <router-outlet />

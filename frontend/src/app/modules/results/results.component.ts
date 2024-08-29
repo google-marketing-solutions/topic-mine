@@ -7,9 +7,6 @@ import { MatCardModule } from '@angular/material/card';
 import { getAssociations } from '../../utils/associations';
 import { Association } from '../../models/association';
 import { GenerateAdsService } from '../../services/generate-ads.service';
-import { HttpClient } from '@angular/common/http';
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,7 +15,6 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule,
     MatCardModule,
-    HttpClientModule,
     MatButtonModule,
     MatAccordion,
     MatExpansionModule,
@@ -77,37 +73,14 @@ import { CommonModule } from '@angular/common';
 }
   `]
 })
-export class ResultsComponent implements OnInit {
-  @Input() selectedProducts: string[] = [];
-  @Input() numHeadlines: number = 0;
-  @Input() numDescriptions: number = 0;
-
-  products: any[] = [];
-
-  ngOnInit(): void {
-    this.http.get<any[]>('assets/output.json').subscribe((data) => {
-      // Filter the products based on selected products
-      this.products = data.filter(product =>
-        this.selectedProducts.includes(product.Term) // Assuming you want to filter based on the 'Term' field
-      ).map(product => {
-        // Limit the number of headlines and descriptions
-        return {
-          ...product,
-          Headlines: product.Headlines.slice(0, this.numHeadlines),
-          Descriptions: product.Descriptions.slice(0, this.numDescriptions)
-        };
-      });
-    });
-  }
-
-
-
+export class ResultsComponent {
   @Input() selectedBrand: string = '';
+  @Input() entries: Object[] = [];
   associations: Association[] = [];
   readonly panelOpenState = signal(false);
   expand: boolean = true;
 
-  constructor(private generateAdsService: GenerateAdsService, private http: HttpClient) {
+  constructor(private generateAdsService: GenerateAdsService) {
     generateAdsService.generateAds$.subscribe((configFormData: any) => {
       console.log(configFormData);
       this.updateAssociations(configFormData);
@@ -123,6 +96,11 @@ export class ResultsComponent implements OnInit {
   updateAssociations(configFormData: any) {
     const associationsAll = getAssociations()[this.selectedBrand];
     this.associations = associationsAll;
+  }
+
+  onFormSubmit(event: any) {
+    this.entries = event;
+    console.log('entries on results component: ' + this.entries)
   }
 
   exportToSA360Template() {}
