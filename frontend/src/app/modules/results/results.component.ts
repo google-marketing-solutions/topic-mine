@@ -5,9 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { getAssociations } from '../../utils/associations';
+import { getEntries } from '../../utils/entries';
 import { Association } from '../../models/association';
+import { Entry } from '../../models/entry';
 import { GenerateAdsService } from '../../services/generate-ads.service';
 import { CommonModule } from '@angular/common';
+import {MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-results',
@@ -21,6 +24,7 @@ import { CommonModule } from '@angular/common';
     MatIconModule,
     MatDividerModule,
     MatCardModule,
+    MatTableModule,
   ],
   templateUrl: './results.component.html',
   styleUrl: './results.component.css',
@@ -75,32 +79,78 @@ import { CommonModule } from '@angular/common';
 })
 export class ResultsComponent {
   @Input() selectedBrand: string = '';
-  @Input() entries: Object[] = [];
-  associations: Association[] = [];
+  entries: Entry[] = [];
   readonly panelOpenState = signal(false);
   expand: boolean = true;
+  displayedColumns: string[] = ['Product', 'Trend', 'Headlines', 'Descriptions'];
+
 
   constructor(private generateAdsService: GenerateAdsService) {
     generateAdsService.generateAds$.subscribe((configFormData: any) => {
-      console.log(configFormData);
-      this.updateAssociations(configFormData);
+      this.updateEntries(configFormData);
     });
   }
 
   ngAfterViewInit() {
-    console.log('AfterViewInit');
-    console.log(this.selectedBrand);
-    this.updateAssociations({});
+    this.updateEntries({});
   }
 
-  updateAssociations(configFormData: any) {
-    const associationsAll = getAssociations()[this.selectedBrand];
-    this.associations = associationsAll;
+  updateEntries(configFormData: any) {
+    const entriesAll = getEntries();
+    this.entries = entriesAll;
+
+    try {
+      const selectedProducts = configFormData['products'].map((p: string) => p.toLowerCase());
+      const selectedTrends = configFormData['trends'].map((p: string) => p.toLowerCase());
+      const numHeadlines = configFormData['numHeadlines'];
+      const numDescriptions = configFormData['numDescriptions'];
+
+      if (numHeadlines === 0 || numDescriptions === 0 || selectedProducts.length === 0 || selectedTrends.length === 0) {
+        this.entries = []
+        return;
+      }
+
+      this.entries = entriesAll.filter(entry =>{
+        const lowerCaseTerm = entry.Term.toLowerCase();
+        const lowerCaseTrend = entry.Trend.toLowerCase();
+
+        console.log('ENTRY TERM: ' + lowerCaseTerm)
+        console.log('ENTRY TREND: ' + lowerCaseTrend)
+
+        const ok =  selectedProducts.some((product: string) => lowerCaseTerm.includes(product.toLowerCase())) && selectedTrends.some((trend: string) => lowerCaseTrend.includes(trend.toLowerCase()));
+
+        if (ok) {
+          console.log('SIIIII');
+        } else {
+          console.log('NOOOOO');
+        }
+
+        return ok;
+      }).map(product => {
+        return {
+          ...product,
+          Headlines: product.Headlines.slice(0, numHeadlines),
+          Descriptions: product.Descriptions.slice(0, numDescriptions)
+        };
+      });
+    } catch (error) {
+      this.entries = []
+    }
+
+
+    console.log('LEN ENTRIES: ' + this.entries.length)
+  }
+
+  hasRelationship(entry: Entry): boolean {
+    return entry.Relationship === "TRUE"
+  }
+
+  shouldHideContent(): boolean {
+    return this.entries.length === 0;
   }
 
   onFormSubmit(event: any) {
     this.entries = event;
-    console.log('entries on results component: ' + this.entries)
   }
 
   exportToSA360Template() {}

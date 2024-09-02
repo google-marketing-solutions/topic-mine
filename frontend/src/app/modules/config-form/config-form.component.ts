@@ -255,24 +255,7 @@ export class ConfigFormComponent {
       descriptionsBlockList: this.configForm.get('descriptionsBlockList')?.value,
     };
     this.generateAdsService.generateAds(configFormData);
-
-    const selectedProducts = this.getProductsFromForm().map(product => product.toLowerCase());
-    const numHeadlines = this.configForm.get('numHeadlines')?.value;
-    const numDescriptions = this.configForm.get('numDescriptions')?.value;
-
-    this.http.get<any[]>('assets/output.json').subscribe((data) => {
-      const entries = data.filter(product =>
-        selectedProducts.includes(product.Term.toLowerCase())
-      ).map(product => {
-        return {
-          ...product,
-          Headlines: product.Headlines.slice(0, numHeadlines),
-          Descriptions: product.Descriptions.slice(0, numDescriptions)
-        };
-      });
-      this.formSubmit.emit(entries);
-    });
-  }
+}
 
   disableLoadGMCButton() {
     return !this.configForm.get('gmcId')?.valid;
