@@ -34,7 +34,6 @@ google-api-core[grpc]==2.19.1
     # via
     #   google-ads
     #   google-ai-generativelanguage
-    #   google-api-core
     #   google-cloud-bigquery
     #   google-cloud-core
     #   google-generativeai
@@ -159,7 +158,7 @@ urllib3==1.26.16
     #   requests
 validators==0.22.0
     # via -r requirements.in
-werkzeug==2.3.7
+werkzeug==3.0.6
     # via flask
 
 # The following packages are considered to be unsafe in a requirements file:
