@@ -1,5 +1,5 @@
 {
-    "advertiser":"Retailer name",
+    "advertiser": "Retailer name",
     "project_id": "Cloud project id - e.g.: my-project",
     "project_region": "Optional, recommended to skip - use only if another service deployment region other than us-central1 is preferred.",
     "client_id": "Optional, recommended to skip - use only if project-level authentication is preferred.",
