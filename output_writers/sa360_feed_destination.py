@@ -30,6 +30,9 @@ FEED_HEADERS = [
     'Id',
     'Publish',
     'Trend',
+    'Term',
+    'Relationship',
+    'Reason',
     'SKU',
     'Keywords',
     'Test URL',
@@ -582,7 +585,10 @@ class SA360FeedDestination(Destination):
           SA360FeedRow(
               row_id=str(uuid.uuid4()),
               publish='',
-              trend=entry.term if entry.term else '',
+              trend=entry.associative_term if entry.associative_term else '',
+              term=entry.term if entry.term else '',
+              relationship=entry.relationship if entry.relationship else '',
+              reason=entry.association_reason if entry.association_reason else '',
               sku=entry.sku if entry.sku else '',
               keywords=entry.keywords if entry.keywords else [],
               url=entry.url if entry.url else '',
@@ -605,30 +611,33 @@ class SA360FeedDestination(Destination):
       feed_row(SA360FeedRow): the current SA360 feed row
       feed(list[list[str]): a list of base columns for the feed
     """
-    for keyword in feed_row.keywords:
-      row_list = [
-          str(uuid.uuid4()),
-          feed_row.publish,
-          feed_row.trend,
-          feed_row.sku,
-          keyword,
-          feed_row.url,
-      ]
-      for i in range(0, 15):
-        if i < len(feed_row.headlines):
-          row_list.append(feed_row.headlines[i])
-        else:
-          row_list.append('')
-      for i in range(0, 4):
-        if i < len(feed_row.descriptions):
-          row_list.append(feed_row.descriptions[i])
-        else:
-          row_list.append('')
-      for i in range(0, 2):
-        if i < len(feed_row.paths):
-          row_list.append(feed_row.paths[i])
-        else:
-          row_list.append('')
-      row_list.append(feed_row.campaign_id)
-      row_list.append(feed_row.ad_group_id)
-      feed.append(row_list)
+    # for keyword in feed_row.keywords:
+    row_list = [
+        str(uuid.uuid4()),
+        feed_row.publish,
+        feed_row.trend,
+        feed_row.term,
+        feed_row.relationship,
+        feed_row.reason,
+        feed_row.sku,
+        'kw',
+        feed_row.url,
+    ]
+    for i in range(0, 15):
+      if i < len(feed_row.headlines):
+        row_list.append(feed_row.headlines[i])
+      else:
+        row_list.append('')
+    for i in range(0, 4):
+      if i < len(feed_row.descriptions):
+        row_list.append(feed_row.descriptions[i])
+      else:
+        row_list.append('')
+    for i in range(0, 2):
+      if i < len(feed_row.paths):
+        row_list.append(feed_row.paths[i])
+      else:
+        row_list.append('')
+    row_list.append(feed_row.campaign_id)
+    row_list.append(feed_row.ad_group_id)
+    feed.append(row_list)

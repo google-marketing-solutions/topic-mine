@@ -17,14 +17,15 @@
 
 import ast
 import logging
-import os
 import re
 import time
+import vertexai
 
 import dirtyjson
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
+from vertexai.generative_models import GenerativeModel
 
 # Logger config
 logging.basicConfig()
@@ -48,6 +49,7 @@ TIME_INTERVAL_BETWEEN_REQUESTS = 0
 TIME_INTERVAL_IF_QUOTA_ERROR = 60
 TIME_INTERVAL_IF_GEMINI_ERROR = 10
 
+
 class GeminiHelper:
   """Gemini helper to perform Gemini API requests.
   """
@@ -55,12 +57,21 @@ class GeminiHelper:
   def __init__(self, config: dict[str, str]) -> None:
     self.config = config
 
-    try:
-      key = os.environ['API_KEY']
-    except KeyError:
+    if 'gemini_model' in config:
+      model_name = config['gemini_model']
+      models = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
+      if model_name not in models:
+        model_name = 'gemini-1.5-flash'
+    else:
+      model_name = 'gemini-1.5-flash'
+
+    if 'gemini_api_key' in config:
       key = config['gemini_api_key']
-    genai.configure(api_key=key)
-    self.model = genai.GenerativeModel('gemini-1.5-flash')
+      genai.configure(api_key=key)
+      self.model = genai.GenerativeModel(model_name)
+    else:
+      vertexai.init(project=config['project_id'], location='us-central1')
+      self.model = GenerativeModel(model_name)
 
   def generate_dict(self, prompt: str) -> dict:
     """Makes a request to Gemini and returns a dict.

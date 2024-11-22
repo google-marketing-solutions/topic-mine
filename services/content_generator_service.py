@@ -592,10 +592,7 @@ class ContentGeneratorService:
     except KeyError as _:
       entry.association_reason = 'No association found'
       entry.relationship = False
-      logging.info(
-          ' No relationship found because of bad Gemini generation: %s',
-          {response}
-          )
+      logging.info(' No relationship found because of bad Gemini generation')
 
   def __generate_content(self, entry: Entry) -> None:
     """Generates the headlines, descriptions and keywords for a given entry.
