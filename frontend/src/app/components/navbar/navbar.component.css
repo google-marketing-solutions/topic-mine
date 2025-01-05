@@ -1,0 +1,31 @@
+.navbar {
+    background-color: #d7e3ff;
+    color: #005cbb;
+    height: 96px;
+
+    .navbar-logo {
+        display: flex;
+        justify-content: flex-start;
+        padding: 8px;
+        font-size: 32px;
+
+        .images-container {
+
+            img {
+                width: 80px;
+            }
+        }
+
+        .title {
+            margin: auto 8px;
+            span {
+                vertical-align: middle;
+            }
+
+            img {
+                width: 160px;
+                vertical-align: middle;
+            }
+        }
+    }
+}

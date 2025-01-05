@@ -1,0 +1,23 @@
+mat-drawer-container {
+  width: 100%;
+  height: 100%;
+}
+
+.sidenav-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sidenav {
+  padding: 20px;
+  border-right: 1px solid rgba(212, 208, 208, 0.747);
+}
+
+.components-container {
+  padding: 32px;
+}
+
+.button-menu {
+  margin-bottom: 16px;
+}
