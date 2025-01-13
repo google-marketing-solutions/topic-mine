@@ -178,51 +178,6 @@
 </style>
 
 <app-navbar></app-navbar>
-
-<button type="button" mat-button (click)="drawer.toggle()">
-  <mat-icon matSuffix>menu</mat-icon>
-</button>
-
-<mat-drawer-container class="mat-drawer-container" autosize>
-  <mat-drawer #drawer class="sidenav" mode="side">
-    <button
-      class="button-menu"
-      (click)="showContentGenerationSelectionConfig()"
-      mat-raised-button
-    >
-      Content Generation Selection
-    </button>
-    <button
-      class="button-menu"
-      (click)="showDataSourcesConfig()"
-      mat-raised-button
-    >
-      Data Sources Configuration
-    </button>
-    <button
-      class="button-menu"
-      (click)="showDestinationsConfig()"
-      mat-raised-button
-    >
-      Destinations Configuration
-    </button>
-    <button
-      class="button-menu"
-      (click)="showContentGenerationConfig()"
-      mat-raised-button
-    >
-      Content Generation Configuration
-    </button>
-  </mat-drawer>
-
-  <div class="sidenav-content">
-    <div class="components-container">
-      <app-content-generation-selection-config></app-content-generation-selection-config>
-      <app-data-sources-config></app-data-sources-config>
-      <app-destinations-config></app-destinations-config>
-      <app-content-generation-config></app-content-generation-config>
-    </div>
-  </div>
-</mat-drawer-container>
+<app-drawer>
 
 <router-outlet />

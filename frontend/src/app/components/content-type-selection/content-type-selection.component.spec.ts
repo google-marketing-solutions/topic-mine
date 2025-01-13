@@ -19,34 +19,26 @@
 *
 ***************************************************************************/
 
-.navbar {
-    background-color: #d7e3ff;
-    color: #005cbb;
-    height: 96px;
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-    .navbar-logo {
-        display: flex;
-        justify-content: flex-start;
-        padding: 8px;
-        font-size: 32px;
+import { ContentTypeSelectionComponent } from './content-type-selection.component';
 
-        .images-container {
+describe('ContentTypeSelectionComponent', () => {
+  let component: ContentTypeSelectionComponent;
+  let fixture: ComponentFixture<ContentTypeSelectionComponent>;
 
-            img {
-                width: 80px;
-            }
-        }
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ContentTypeSelectionComponent]
+    })
+    .compileComponents();
 
-        .title {
-            margin: auto 8px;
-            span {
-                vertical-align: middle;
-            }
+    fixture = TestBed.createComponent(ContentTypeSelectionComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-            img {
-                width: 160px;
-                vertical-align: middle;
-            }
-        }
-    }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

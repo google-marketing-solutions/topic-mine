@@ -25,17 +25,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-data-sources-config',
+  selector: 'app-content-type-selection',
   imports: [MatButtonModule, MatIconModule],
-  templateUrl: './data-sources-config.component.html',
-  styleUrl: './data-sources-config.component.css',
+  templateUrl: './content-type-selection.component.html',
+  styleUrl: './content-type-selection.component.css',
 })
-export class DataSourcesConfigComponent {
-  title = 'Data Sources Configuration';
-  @Output() dataSourcesConfigEvent = new EventEmitter<string>();
+export class ContentTypeSelectionComponent {
+  title = 'Content Type Selection';
+  @Output() contentTypeSelectionEvent = new EventEmitter<string>();
 
-  sendDataSourcesConfig() {
+  sendContentTypeSelection() {
     // TODO: implement logic to gather params here.
-    this.dataSourcesConfigEvent.emit(`${this.title} sent to parent!`);
+    this.contentTypeSelectionEvent.emit(`${this.title} sent to parent!`);
   }
 }

@@ -19,34 +19,26 @@
 *
 ***************************************************************************/
 
-.navbar {
-    background-color: #d7e3ff;
-    color: #005cbb;
-    height: 96px;
+mat-drawer-container {
+  width: 100%;
+  height: 100%;
+}
 
-    .navbar-logo {
-        display: flex;
-        justify-content: flex-start;
-        padding: 8px;
-        font-size: 32px;
+.sidenav-content {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
 
-        .images-container {
+.sidenav {
+  padding: 20px;
+  border-right: 1px solid rgba(212, 208, 208, 0.747);
+}
 
-            img {
-                width: 80px;
-            }
-        }
+.components-container {
+  padding: 32px;
+}
 
-        .title {
-            margin: auto 8px;
-            span {
-                vertical-align: middle;
-            }
-
-            img {
-                width: 160px;
-                vertical-align: middle;
-            }
-        }
-    }
+.button-menu {
+  margin-bottom: 16px;
 }
