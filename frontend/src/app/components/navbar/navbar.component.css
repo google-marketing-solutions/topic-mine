@@ -23,6 +23,12 @@
     background-color: #d7e3ff;
     color: #005cbb;
     height: 96px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+
 
     .navbar-logo {
         display: flex;

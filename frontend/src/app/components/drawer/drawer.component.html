@@ -1,9 +1,9 @@
-<button type="button" mat-button (click)="drawer.toggle()">
+<!-- <button type="button" mat-button (click)="drawer.toggle()">
   <mat-icon matSuffix>menu</mat-icon>
-</button>
+</button> -->
 <mat-drawer-container class="mat-drawer-container" autosize>
   <mat-drawer #drawer class="sidenav" mode="side" opened>
-    <mat-stepper orientation="vertical">
+    <mat-stepper orientation="vertical" [linear]=true>
       <mat-step>
         <ng-template matStepLabel>Content Generation Selection</ng-template>
         <ng-template matStepContent>

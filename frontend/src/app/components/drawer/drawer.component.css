@@ -21,13 +21,14 @@
 
 mat-drawer-container {
   width: 100%;
-  height: 100%;
+  margin-top: 96px;
+  height: calc(100vh - 96px);
 }
 
 .sidenav-content {
-  display: flex;
   align-items: center;
   justify-content: flex-start;
+  overflow-y: auto;
 }
 
 .sidenav {
@@ -36,7 +37,10 @@ mat-drawer-container {
 }
 
 .components-container {
-  padding: 32px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .button-menu {

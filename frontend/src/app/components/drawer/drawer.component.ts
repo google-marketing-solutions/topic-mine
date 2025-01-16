@@ -31,6 +31,7 @@ import { ContentGenerationConfigComponent } from '../content-generation-config/c
 
 @Component({
   selector: 'app-drawer',
+  standalone: true,
   imports: [
     MatSidenavModule,
     MatStepperModule,
@@ -62,7 +63,7 @@ export class DrawerComponent {
     console.log(value);
   }
 
-  receiveContentGenerationConfig(value: string) {
+  receiveContentGenerationConfig(value: any) {
     console.log(value);
   }
 

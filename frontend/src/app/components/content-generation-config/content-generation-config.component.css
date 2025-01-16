@@ -18,3 +18,37 @@
 *  products and are not formally supported.
 *
 ***************************************************************************/
+
+.divider-class {
+  margin-bottom: 30px;
+}
+
+.checkbox-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding-bottom: 20px;
+}
+
+.form-field-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.tooltip-container-checkboxes {
+  display: inline-flex;
+  align-items: center;
+  grid-template-columns: 500fr auto;
+  gap: 10px;
+}
+
+.tooltip-container-checkboxes mat-icon {
+  color: grey;
+}
+
+.tooltip-container-input-fields {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 500fr auto;
+  gap: 10px;
+}

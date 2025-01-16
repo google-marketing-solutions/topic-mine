@@ -21,7 +21,7 @@
 
 html,
 body {
-  height: 100%;
+  height: calc(100vh - 96px);
 }
 body {
   margin: 0;

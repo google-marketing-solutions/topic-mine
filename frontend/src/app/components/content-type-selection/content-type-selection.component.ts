@@ -26,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-content-type-selection',
+  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './content-type-selection.component.html',
   styleUrl: './content-type-selection.component.css',

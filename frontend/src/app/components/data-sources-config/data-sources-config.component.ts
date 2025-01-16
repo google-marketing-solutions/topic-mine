@@ -26,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-data-sources-config',
+  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './data-sources-config.component.html',
   styleUrl: './data-sources-config.component.css',

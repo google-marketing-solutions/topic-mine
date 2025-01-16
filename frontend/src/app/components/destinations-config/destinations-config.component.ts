@@ -26,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-destinations-config',
+  standalone: true,
   imports: [MatButtonModule, MatIconModule],
   templateUrl: './destinations-config.component.html',
   styleUrl: './destinations-config.component.css',
