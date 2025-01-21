@@ -42,10 +42,6 @@
   gap: 10px;
 }
 
-.tooltip-container-checkboxes mat-icon {
-  color: grey;
-}
-
 .tooltip-container-input-fields {
   display: grid;
   align-items: center;
