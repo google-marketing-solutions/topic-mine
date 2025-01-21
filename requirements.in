@@ -1,15 +1,13 @@
-Flask==2.3.2
-gunicorn==20.1.0
-google-auth==2.19.1
-# google-api-python-client==2.88.0
-google-cloud-aiplatform==1.73.0
-google-cloud-bigquery==3.25.0
-google-ads==24.1.0
-pandas==2.0.3
-gspread==5.10.0
-# pandas-gbq==0.19.2
-dirtyjson==1.0.8
-alive-progress==3.1.5
+Flask
+gunicorn
+google-auth
+google-cloud-aiplatform
+google-cloud-bigquery
+google-ads
+pandas
+gspread
+dirtyjson
+alive-progress
 google.generativeai
 validators
-backoff==2.2.1
+backoff
