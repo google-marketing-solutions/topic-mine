@@ -83,7 +83,6 @@ interface ContentGenerationConfig {
   styleUrl: './content-generation-config.component.css',
 })
 export class ContentGenerationConfigComponent {
-  title = 'Data Sources Configuration';
   @Output() contentGenerationConfigEvent = new EventEmitter<ContentGenerationConfig>();
 
   headlinesCounterFormControl = new FormControl('', [Validators.required, Validators.min(1), Validators.max(15), integerValidator()]);
@@ -114,6 +113,10 @@ export class ContentGenerationConfigComponent {
 
 
 
+
+  goBack() {
+
+  }
 
   sendContentGenerationConfig() {
     const config: ContentGenerationConfig = {

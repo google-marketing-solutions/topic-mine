@@ -1,4 +1,40 @@
 <div>
-  <h1>Destinations Config here</h1>
-  <button type="button" mat-button (click)="sendDestinationsConfig()">Save</button>
+  <h1>Output config</h1>
+  <mat-divider class="divider-class"></mat-divider>
+
+
+  <div class="output-config-container">
+    <div class="tooltip-container-input-fields">
+      <mat-form-field>
+        <mat-label>Output format</mat-label>
+        <mat-select required [formControl]="outputFormatFormControl" [errorStateMatcher]="matcher">
+          @for (outputFormat of outputFormats; track outputFormat) {
+            <mat-option [value]="outputFormat">{{outputFormat}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-icon matSuffix matTooltip="The output format desired. The output will have the format according to the platform selected so that it is ready to be imported into the platform without any changes.">help</mat-icon>
+    </div>
+
+    <div class="tooltip-container-input-fields">
+      <mat-form-field>
+        <mat-label>Spreadsheet ID</mat-label>
+        <input type="text" matInput [formControl]="spreadsheetIdFormControl" [errorStateMatcher]="matcher">
+      </mat-form-field>
+      <mat-icon matSuffix matTooltip="The Google Sheets ID to write the data to">help</mat-icon>
+    </div>
+
+    <div class="tooltip-container-input-fields">
+      <mat-form-field>
+        <mat-label>Sheet name</mat-label>
+        <input type="text" matInput [formControl]="sheetNameFormControl" [errorStateMatcher]="matcher">
+      </mat-form-field>
+      <mat-icon matSuffix matTooltip="The sheet name to write the data to">help</mat-icon>
+    </div>
+  </div>
+
+  <div class="button-container" style="display: flex; justify-content: center; padding: 50px 0;">
+    <button type="button" mat-stroked-button (click)="goBack()">Back</button>
+    <button type="button" mat-flat-button (click)="sendOutputConfig()" [disabled]="isNextButtonDisabled">Next</button>
+  </div>
 </div>

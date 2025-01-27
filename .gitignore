@@ -23,3 +23,7 @@ config.json
 
 # Ignore VS Code config folder
 .vscode/
+
+# Ignore all angular cache and dependencies
+frontend/.angular/
+frontend/node_modules/

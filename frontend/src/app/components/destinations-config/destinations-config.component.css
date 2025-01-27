@@ -18,3 +18,26 @@
 *  products and are not formally supported.
 *
 ***************************************************************************/
+
+.divider-class {
+  margin-bottom: 30px;
+}
+
+.output-config-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.tooltip-container-input-fields {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 500fr auto;
+  gap: 10px;
+}
+
+.button-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}

@@ -55,11 +55,11 @@ export class DrawerComponent {
     console.log(value);
   }
 
-  receiveDataSourcesConfig(value: string) {
+  receiveDataSourcesConfig(value: any) {
     console.log(value);
   }
 
-  receiveDestinationsConfig(value: string) {
+  receiveDestinationsConfig(value: any) {
     console.log(value);
   }
 
