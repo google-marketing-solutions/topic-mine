@@ -19,7 +19,7 @@
  *
  ***************************************************************************/
 
-import { Component } from '@angular/core';
+
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +28,10 @@ import { ContentTypeSelectionComponent } from '../content-type-selection/content
 import { DataSourcesConfigComponent } from '../data-sources-config/data-sources-config.component';
 import { DestinationsConfigComponent } from '../destinations-config/destinations-config.component';
 import { ContentGenerationConfigComponent } from '../content-generation-config/content-generation-config.component';
+
+import { Component, ViewChild } from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
+
 
 @Component({
   selector: 'app-drawer',
@@ -46,14 +50,22 @@ import { ContentGenerationConfigComponent } from '../content-generation-config/c
   styleUrl: './drawer.component.css',
 })
 export class DrawerComponent {
+  @ViewChild(MatStepper) stepper!: MatStepper;
+
   showCTS = true;
   showSC = false;
   showDC = false;
   showCGC = false;
 
-  receiveContentTypeSelection(value: string) {
-    console.log(value);
+  receiveContentTypeSelection(event: { input: string; action: string }) {
+    console.log('Received Event:', event);
+
+    if (event.action === 'showDataSourcesConfig') {
+      console.log('Input Term:', event.input); // Process the input term
+      this.showDataSourcesConfig();
+    }
   }
+
 
   receiveDataSourcesConfig(value: any) {
     console.log(value);
@@ -61,10 +73,11 @@ export class DrawerComponent {
 
   receiveDestinationsConfig(value: any) {
     console.log(value);
+
   }
 
   receiveContentGenerationConfig(value: any) {
-    console.log(value);
+    console.log(`Content Generation Config Event: ${value}`);
   }
 
   showContentGenerationSelectionConfig() {
@@ -72,6 +85,7 @@ export class DrawerComponent {
     this.showSC = false;
     this.showDC = false;
     this.showCGC = false;
+    this.stepper.previous();
   }
 
   showDataSourcesConfig() {
@@ -79,6 +93,7 @@ export class DrawerComponent {
     this.showCTS = false;
     this.showDC = false;
     this.showCGC = false;
+    this.stepper.next();
   }
 
   showDestinationsConfig() {
@@ -86,6 +101,7 @@ export class DrawerComponent {
     this.showSC = false;
     this.showCTS = false;
     this.showCGC = false;
+    this.stepper.next();
   }
 
   showContentGenerationConfig() {
@@ -93,5 +109,6 @@ export class DrawerComponent {
     this.showDC = false;
     this.showSC = false;
     this.showCTS = false;
+    this.stepper.next();
   }
 }

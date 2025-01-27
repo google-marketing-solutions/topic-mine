@@ -18,3 +18,38 @@
 *  products and are not formally supported.
 *
 ***************************************************************************/
+
+
+.content-cards-container {
+  display: flex; /* Use flexbox for horizontal alignment */
+  gap: 16px; /* Add spacing between the cards */
+  justify-content: flex-start; /* Center the cards horizontally */
+  margin-top: 16px; /* Add some space between the header and cards */
+}
+
+.content-card {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.content-card:hover {
+  background-color: #e0e0e0; /* Slightly darker background on hover */
+}
+
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-placeholder {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  cursor: pointer;
+}

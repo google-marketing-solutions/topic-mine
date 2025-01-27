@@ -1,9 +1,6 @@
-<!-- <button type="button" mat-button (click)="drawer.toggle()">
-  <mat-icon matSuffix>menu</mat-icon>
-</button> -->
 <mat-drawer-container class="mat-drawer-container" autosize>
   <mat-drawer #drawer class="sidenav" mode="side" opened>
-    <mat-stepper orientation="vertical" [linear]=true>
+    <mat-stepper #stepper orientation="vertical" [linear]="true">
       <mat-step>
         <ng-template matStepLabel>Content Generation Selection</ng-template>
         <ng-template matStepContent>
@@ -29,26 +26,34 @@
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Destinations Configuration</ng-template>
-        <button
-          mat-button
-          (click)="showContentGenerationConfig()"
-          matStepperNext
-        >
-          Next
-        </button>
-        <button mat-button (click)="showDataSourcesConfig()" matStepperPrevious>
-          Back
-        </button>
+        <ng-template matStepContent>
+          <button
+            mat-button
+            (click)="showContentGenerationConfig()"
+            matStepperNext
+          >
+            Next
+          </button>
+          <button
+            mat-button
+            (click)="showDataSourcesConfig()"
+            matStepperPrevious
+          >
+            Back
+          </button>
+        </ng-template>
       </mat-step>
       <mat-step>
         <ng-template matStepLabel>Content Generation Configuration</ng-template>
-        <button
-          mat-button
-          (click)="showDestinationsConfig()"
-          matStepperPrevious
-        >
-          Back
-        </button>
+        <ng-template matStepContent>
+          <button
+            mat-button
+            (click)="showDestinationsConfig()"
+            matStepperPrevious
+          >
+            Back
+          </button>
+        </ng-template>
       </mat-step>
     </mat-stepper>
   </mat-drawer>
@@ -56,13 +61,21 @@
   <div class="sidenav-content">
     <div class="components-container">
       @if (showCTS){
-      <app-content-type-selection (contentTypeSelectionEvent)="receiveContentTypeSelection($event)"></app-content-type-selection>
+      <app-content-type-selection
+        (contentTypeSelectionEvent)="receiveContentTypeSelection($event)"
+      ></app-content-type-selection>
       } @if (showSC){
-      <app-data-sources-config (dataSourcesConfigEvent)="receiveDataSourcesConfig($event)"></app-data-sources-config>
+      <app-data-sources-config
+        (dataSourcesConfigEvent)="receiveDataSourcesConfig($event)"
+      ></app-data-sources-config>
       } @if (showDC){
-      <app-destinations-config (destinationsConfigEvent)="receiveDestinationsConfig($event)"></app-destinations-config>
+      <app-destinations-config
+        (destinationsConfigEvent)="receiveDestinationsConfig($event)"
+      ></app-destinations-config>
       } @if (showCGC){
-      <app-content-generation-config (contentGenerationConfigEvent)="receiveContentGenerationConfig($event)"></app-content-generation-config>
+      <app-content-generation-config
+        (contentGenerationConfigEvent)="receiveContentGenerationConfig($event)"
+      ></app-content-generation-config>
       }
     </div>
   </div>
