@@ -50,7 +50,19 @@ create_service_account_and_permissions() {
 # Deployment
 
 enable_gcp_services
-create_service_account_and_permissions
+
+EXISTING_SERVICE_ACCOUNT=$(gcloud iam service-accounts list --filter "email:${service_account_name}" --format="value(email)")
+echo $EXISTING_SERVICE_ACCOUNT
+
+if [ -z "${EXISTING_SERVICE_ACCOUNT}" ]; then
+    create_service_account_and_permissions
+    echo
+else
+    echo
+    echo "${text_yellow}INFO: Service account '${service_account_name}' already exists. ${reset}"
+    echo "${text_yellow}INFO: Please check that the service account has all the required permissions to run the solution. ${reset}"
+    echo
+fi
 
 echo "Deploying Cloud Run..."
 gcloud run deploy $cloud_run_service --region=$project_region --source="." \
