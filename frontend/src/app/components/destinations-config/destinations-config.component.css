@@ -41,3 +41,15 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
+
+.side-by-side-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.my-custom-input {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 5px;
+}

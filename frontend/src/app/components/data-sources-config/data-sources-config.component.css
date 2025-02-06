@@ -19,56 +19,6 @@
 *
 ***************************************************************************/
 
-.divider-class {
-  margin-bottom: 30px;
-}
-
-.google-sheets-basic-config-container {
-  padding-top: 30px;
-  display: grid;
-  grid-template-columns: 10fr 10fr 4fr 4fr;
-  gap: 20px;
-}
-
-.google-sheets-other-config-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.google-sheets-second-term-config-container {
-  padding-top: 30px;
-  display: grid;
-  grid-template-columns: 8fr 8fr 4fr 4fr 4fr;
-  gap: 20px;
-}
-
-.big-query-basic-config-container {
-  padding-top: 30px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.big-query-other-config-container {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);;
-  gap: 20px;
-}
-
-.big-query-second-term-config-container {
-  padding-top: 30px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.tooltip-container-input-fields {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 500fr auto;
-  gap: 10px;
-}
 
 .button-container {
   display: grid;

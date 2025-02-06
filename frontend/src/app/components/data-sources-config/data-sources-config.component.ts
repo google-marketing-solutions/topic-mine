@@ -19,7 +19,7 @@
  *
  ***************************************************************************/
 
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
   FormControl,
   FormGroupDirective,
@@ -39,7 +39,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -49,9 +48,9 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
-interface DataSourcesConfig {
-  firstTermSourceConfig: object;
-  secondTermSourceConfig: object;
+export interface DataSourcesConfig {
+  firstTermSourceConfig: any;
+  secondTermSourceConfig: any;
 }
 
 // Custom integer validator function
@@ -75,7 +74,11 @@ export function integerValidator(): ValidatorFn {
   styleUrl: './data-sources-config.component.css',
 })
 export class DataSourcesConfigComponent {
+  @Input() mustShowSecondTermConfig: boolean = false;
+
   @Output() dataSourcesConfigEvent = new EventEmitter<DataSourcesConfig>();
+  @Output() changeViewEvent = new EventEmitter<string>();
+  @Output() nextButtonDisabledEvent = new EventEmitter<boolean>();
 
 
   // Required Google Sheets first term fields
@@ -133,7 +136,6 @@ export class DataSourcesConfigComponent {
   firstTermSourceSelected: string = 'Google Sheets first term';
   secondTermSourceSelected: string = 'Google Sheets second term';
 
-  secondTermSourceNeeded: boolean = false;
   isNextButtonDisabled: boolean = true;
 
   ngOnInit() {
@@ -161,62 +163,72 @@ export class DataSourcesConfigComponent {
     this.termColumnBigQuerySecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
   }
 
-  onFirstTermTabSelected(event: MatTabChangeEvent) {
-    this.firstTermSourceSelected = event.tab.textLabel;
+  onFirstTermTabSelected(label: string) {
+    this.firstTermSourceSelected = label;
     this.updateNextButtonState();
   }
 
-  onSecondTermTabSelected(event: MatTabChangeEvent) {
-    this.secondTermSourceSelected = event.tab.textLabel;
+  onSecondTermTabSelected(label: string) {
+    this.secondTermSourceSelected = label;
     this.updateNextButtonState();
   }
 
-  updateNextButtonState() {
-    if (this.firstTermSourceSelected === 'Google Sheets first term' &&
+  firstTermFormValid() {
+    return (
+        this.firstTermSourceSelected === 'Google Sheets first term' &&
         this.spreadsheetIdGoogleSheetsFirstTermFormControl.valid &&
         this.sheetNameGoogleSheetsFirstTermFormControl.valid &&
         this.termColumnGoogleSheetsFirstTermFormControl.valid &&
-        this.startingRowGoogleSheetsFirstTermFormControl.valid) {
-          this.isNextButtonDisabled = false;
-          return;
-        }
-    if (this.firstTermSourceSelected === 'BigQuery first term' &&
+        this.startingRowGoogleSheetsFirstTermFormControl.valid
+      ) || (
+        this.firstTermSourceSelected === 'BigQuery first term' &&
         this.projectIdBigQueryFirstTermFormControl.valid &&
         this.datasetBigQueryFirstTermFormControl.valid &&
         this.tableBigQueryFirstTermFormControl.valid &&
-        this.termColumnBigQueryFirstTermFormControl.valid) {
-          this.isNextButtonDisabled = false;
-          return;
-        }
-    if (this.firstTermSourceSelected === 'List of terms first term' &&
-        this.listOfTermsFirstTermFormControl.valid) {
-          this.isNextButtonDisabled = false;
-          return;
-        }
-    if (this.secondTermSourceSelected === 'Google Sheets second term' &&
-        this.secondTermSourceNeeded === true &&
+        this.termColumnBigQueryFirstTermFormControl.valid
+      ) || (
+        this.firstTermSourceSelected === 'List of terms first term' &&
+        this.listOfTermsFirstTermFormControl.valid
+      )
+  }
+
+  secondTermFormValid() {
+    if (!this.mustShowSecondTermConfig) return true;
+
+    return (
+        this.secondTermSourceSelected === 'Google Sheets second term' &&
+        this.mustShowSecondTermConfig === true &&
         this.spreadsheetIdGoogleSheetsSecondTermFormControl.valid &&
         this.sheetNameGoogleSheetsSecondTermFormControl.valid &&
         this.termColumnGoogleSheetsSecondTermFormControl.valid &&
-        this.startingRowGoogleSheetsSecondTermFormControl.valid) {
-          this.isNextButtonDisabled = false;
-          return;
-        }
-    if (this.secondTermSourceSelected === 'BigQuery second term' &&
-        this.secondTermSourceNeeded === true &&
+        this.startingRowGoogleSheetsSecondTermFormControl.valid
+      ) || (
+        this.secondTermSourceSelected === 'BigQuery second term' &&
+        this.mustShowSecondTermConfig === true &&
         this.projectIdBigQuerySecondTermFormControl.valid &&
         this.datasetBigQuerySecondTermFormControl.valid &&
         this.tableBigQuerySecondTermFormControl.valid &&
-        this.termColumnBigQuerySecondTermFormControl.valid) {
-          this.isNextButtonDisabled = false;
-          return;
-        }
-        this.isNextButtonDisabled = true;
+        this.termColumnBigQuerySecondTermFormControl.valid
+      ) || (
+        this.secondTermSourceSelected === 'Google Trends second term' &&
+        this.mustShowSecondTermConfig === true
+      )
+  }
+
+  updateNextButtonState() {
+    if (this.firstTermFormValid() && this.secondTermFormValid()) {
+      this.isNextButtonDisabled = false;
+      this.nextButtonDisabledEvent.emit(false);
+      return;
+    }
+
+    this.isNextButtonDisabled = true;
+    this.nextButtonDisabledEvent.emit(true);
   }
 
 
   goBack() {
-
+    this.changeViewEvent.emit('content-type-selection');
   }
 
   sendDataSourcesConfig() {

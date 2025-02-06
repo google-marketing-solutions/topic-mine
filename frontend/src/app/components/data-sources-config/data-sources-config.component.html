@@ -1,300 +1,284 @@
 <div>
-  <h1>Data sources</h1>
-  <mat-divider class="divider-class"></mat-divider>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Data sources</h1>
+    </div>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine/wiki/Body-params" target="_blank" rel="noopener noreferrer">Help</a>
+    </div>
+  </div>
 
 
   <!-- ||||||||||||||||||||||||||||| FIRST TERM ||||||||||||||||||||||||||||| -->
-  <h2>First term source</h2>
-  <!-- <mat-divider class="divider-class"></mat-divider> -->
+  <div class="row pt-5">
+    <div class="col-4">
+      <h4>First term source</h4>
+    </div>
+    <div class="col">
+      <ul class="nav nav-underline justify-content-center" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button (click)="onFirstTermTabSelected('Google Sheets first term');" class="nav-link active" id="google-sheets-first-term-tab" data-bs-toggle="tab" data-bs-target="#google-sheets-first-term-tab-pane" type="button" role="tab" aria-controls="google-sheets-first-term-tab-pane" aria-selected="true">Google Sheets</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button (click)="onFirstTermTabSelected('BigQuery first term');" class="nav-link" id="bigquery-first-term-tab" data-bs-toggle="tab" data-bs-target="#bigquery-first-term-tab-pane" type="button" role="tab" aria-controls="bigquery-first-term-tab-pane" aria-selected="false">BigQuery</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button disabled (click)="onFirstTermTabSelected('List of terms first term');" class="nav-link" id="list-of-terms-first-term-tab" data-bs-toggle="tab" data-bs-target="#list-of-terms-first-term-tab-pane" type="button" role="tab" aria-controls="list-of-terms-first-term-tab-pane" aria-selected="false">List of terms</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <mat-divider class="pt-1"></mat-divider>
 
-  <mat-tab-group dynamicHeight (selectedTabChange)="onFirstTermTabSelected($event)">
+  <div class="tab-content" id="myTabContent">
     <!-- ||||||||||| GOOGLE SHEETS ||||||||||| -->
-    <mat-tab label="Google Sheets first term">
-      <!-- ||| REQUIRED ||| -->
-      <div class="google-sheets-basic-config-container">
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Spreadsheet ID</mat-label>
-            <input type="text" matInput [formControl]="spreadsheetIdGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The Google Sheets ID to retrieve the data from">help</mat-icon>
+    <div class="tab-pane fade show active row" id="google-sheets-first-term-tab-pane" role="tabpanel" aria-labelledby="google-sheets-first-term-tab" tabindex="0">
+      <h5 class="pt-3">General</h5>
+      <div class="row">
+        <div class="col-5">
+          <label for="basic-url" class="form-label">Spreadsheet ID*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Sheet name</mat-label>
-            <input type="text" matInput [formControl]="sheetNameGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The name of the sheet to retrieve the data from">help</mat-icon>
+        <div class="col-5">
+          <label for="basic-url" class="form-label">Sheet name*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Term column</mat-label>
-            <input type="text" matInput [formControl]="termColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The column letter where the terms are located">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field class="number-input-field">
-            <mat-label>Starting row</mat-label>
-            <input type="number" matInput [formControl]="startingRowGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The row number from which to start reading the data">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Starting row*</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="startingRowGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
       </div>
-
-      <!-- ||| OPTIONAL ||| -->
-      <div class="google-sheets-other-config-container">
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Description column</mat-label>
-            <input type="text" matInput [formControl]="descriptionColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column letter where the descriptions are located. Descriptions are used to provide more information about the terms to Gemini to generate better content.">help</mat-icon>
+      <h5 class="pt-3">Columns</h5>
+      <div class="row">
+        <div class="col">
+          <label for="basic-url" class="form-label">Terms*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="termColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>SKU column</mat-label>
-            <input type="text" matInput [formControl]="skuColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column letter where the SKUs are located. SKUs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Descriptions</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>URL column</mat-label>
-            <input type="text" matInput [formControl]="urlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column letter where the URLs are located. URLs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">SKU</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="skuColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Image URL column</mat-label>
-            <input type="text" matInput [formControl]="imageUrlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column letter where the image URLs are located. Image URLs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">URL</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
+        </div>
+        <div class="col">
+          <label for="basic-url" class="form-label">Image URL</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
       </div>
-    </mat-tab>
-
+    </div>
     <!-- ||||||||||| BIG QUERY ||||||||||| -->
-    <mat-tab label="BigQuery first term">
-      <!-- ||| REQUIRED ||| -->
-      <div class="big-query-basic-config-container">
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Project ID</mat-label>
-            <input type="text" matInput [formControl]="projectIdBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The GCP Project ID where the dataset is located">help</mat-icon>
+    <div class="tab-pane fade" id="bigquery-first-term-tab-pane" role="tabpanel" aria-labelledby="bigquery-first-term-tab" tabindex="0">
+      <h5 class="pt-3">General</h5>
+      <div class="row">
+        <div class="col">
+          <label for="basic-url" class="form-label">Project ID*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Dataset</mat-label>
-            <input type="text" matInput [formControl]="datasetBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The name of the dataset where the table is located">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Dataset*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Table</mat-label>
-            <input type="text" matInput [formControl]="tableBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The table where the terms are located">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Table name*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Term column</mat-label>
-            <input type="text" matInput [formControl]="termColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The column name where the terms are located">help</mat-icon>
+        <div class="col-2">
+          <label for="basic-url" class="form-label">Limit</label>
+          <div class="input-group">
+            <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
       </div>
-
-      <!-- ||| OPTIONAL ||| -->
-      <div class="big-query-other-config-container">
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Description column</mat-label>
-            <input type="text" matInput [formControl]="descriptionColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column name where the descriptions are located. Descriptions are used to provide more information about the terms to Gemini to generate better content.">help</mat-icon>
+      <h5 class="pt-3">Columns</h5>
+      <div class="row">
+        <div class="col">
+          <label for="basic-url" class="form-label">Term*</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>SKU column</mat-label>
-            <input type="text" matInput [formControl]="skuColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column name where the SKUs are located. SKUs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Descriptions</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>URL column</mat-label>
-            <input type="text" matInput [formControl]="urlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column name where the URLs are located. URLs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">SKU</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="skuColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Image URL column</mat-label>
-            <input type="text" matInput [formControl]="imageUrlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column name where the image URLs are located. Image URLs are not used for processing, they are only displayed in the output.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">URL</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field class="number-input-field">
-            <mat-label>Limit</mat-label>
-            <input type="number" matInput [formControl]="limitBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The maximum number of terms to retrieve. If not specified, all terms will be retrieved.">help</mat-icon>
+        <div class="col">
+          <label for="basic-url" class="form-label">Image URL</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
         </div>
       </div>
-    </mat-tab>
-
+    </div>
     <!-- ||||||||||| LIST OF TERMS ||||||||||| -->
-    <mat-tab label="List of terms first term">
-      <div class="tooltip-container-input-fields" style="padding-top: 30px;">
-        <mat-form-field>
-          <mat-label>List of terms</mat-label>
-          <input type="text" matInput [formControl]="listOfTermsFirstTermFormControl" [errorStateMatcher]="matcher">
-        </mat-form-field>
-        <mat-icon matSuffix matTooltip="Comma-separated list of terms to use as input.">help</mat-icon>
+    <div class="tab-pane fade" id="list-of-terms-first-term-tab-pane" role="tabpanel" aria-labelledby="list-of-terms-first-term-tab" tabindex="0">
+      <h5 class="pt-3">List of terms</h5>
+      <div class="input-group">
+        <textarea type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="listOfTermsFirstTermFormControl" [errorStateMatcher]="matcher"></textarea>
       </div>
-    </mat-tab>
-  </mat-tab-group>
+      <div class="form-text" id="basic-addon4">Comma separated list of terms to use as input.</div>
+    </div>
+  </div>
 
   <!-- ||||||||||||||||||||||||||||| SECOND TERM ||||||||||||||||||||||||||||| -->
-  <h2>Second term source</h2>
-  <!-- <mat-divider class="divider-class"></mat-divider> -->
+  @if (mustShowSecondTermConfig){
+    <div class="row pt-5">
+      <div class="col-4">
+        <h4>Second term source</h4>
+      </div>
+      <div class="col">
+        <ul class="nav nav-underline justify-content-center" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button (click)="onSecondTermTabSelected('Google Sheets second term');" class="nav-link active" id="google-sheets-second-term-tab" data-bs-toggle="tab" data-bs-target="#google-sheets-second-term-tab-pane" type="button" role="tab" aria-controls="google-sheets-second-term-tab-pane" aria-selected="true">Google Sheets</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button disabled (click)="onSecondTermTabSelected('BigQuery second term');" class="nav-link" id="bigquery-second-term-tab" data-bs-toggle="tab" data-bs-target="#bigquery-second-term-tab-pane" type="button" role="tab" aria-controls="bigquery-second-term-tab-pane" aria-selected="false">BigQuery</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button (click)="onSecondTermTabSelected('Google Trends second term');" class="nav-link" id="google-trends-second-term-tab" data-bs-toggle="tab" data-bs-target="#google-trends-second-term-tab-pane" type="button" role="tab" aria-controls="google-trends-second-term-tab-pane" aria-selected="false">Google Trends</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <mat-divider class="pt-1"></mat-divider>
 
-  <mat-tab-group dynamicHeight (selectedTabChange)="onSecondTermTabSelected($event)">
-    <!-- ||||||||||| GOOGLE SHEETS ||||||||||| -->
-    <mat-tab label="Google Sheets second term">
-      <div class="google-sheets-second-term-config-container">
-        <!-- ||| REQIORED ||| -->
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Spreadsheet ID</mat-label>
-            <input type="text" matInput [formControl]="spreadsheetIdGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The Google Sheets ID to retrieve the data from">help</mat-icon>
+    <div class="tab-content" id="myTabContent">
+      <!-- ||||||||||| GOOGLE SHEETS ||||||||||| -->
+      <div class="tab-pane fade show active row" id="google-sheets-second-term-tab-pane" role="tabpanel" aria-labelledby="google-sheets-second-term-tab" tabindex="0">
+        <h5 class="pt-3">General</h5>
+        <div class="row">
+          <div class="col-5">
+            <label for="basic-url" class="form-label">Spreadsheet ID*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col-5">
+            <label for="basic-url" class="form-label">Sheet name*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col">
+            <label for="basic-url" class="form-label">Starting row*</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="startingRowGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Sheet name</mat-label>
-            <input type="text" matInput [formControl]="sheetNameGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The name of the sheet to retrieve the data from">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Term column</mat-label>
-            <input type="text" matInput [formControl]="termColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The column letter where the terms are located">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field class="number-input-field">
-            <mat-label>Starting row</mat-label>
-            <input type="number" matInput [formControl]="startingRowGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The row number from which to start reading the data">help</mat-icon>
-        </div>
-
-        <!-- ||| OPTIONAL ||| -->
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Description column</mat-label>
-            <input type="text" matInput [formControl]="descriptionColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column letter where the descriptions are located. Descriptions are used to provide more information about the terms to Gemini to generate better content.">help</mat-icon>
+        <h5 class="pt-3">Columns</h5>
+        <div class="row">
+          <div class="col">
+            <label for="basic-url" class="form-label">Terms*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col">
+            <label for="basic-url" class="form-label">Descriptions</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
         </div>
       </div>
-    </mat-tab>
-
-    <!-- ||||||||||| BIG QUERY ||||||||||| -->
-    <mat-tab label="Big Query second term">
-      <div class="big-query-second-term-config-container">
-        <!-- ||| REQIORED ||| -->
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Project ID</mat-label>
-            <input type="text" matInput [formControl]="projectIdBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The GCP Project ID where the dataset is located">help</mat-icon>
+      <!-- ||||||||||| BIG QUERY ||||||||||| -->
+      <div class="tab-pane fade" id="bigquery-second-term-tab-pane" role="tabpanel" aria-labelledby="bigquery-second-term-tab" tabindex="0">
+        <h5 class="pt-3">General</h5>
+        <div class="row">
+          <div class="col">
+            <label for="basic-url" class="form-label">Project ID*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col">
+            <label for="basic-url" class="form-label">Dataset*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col">
+            <label for="basic-url" class="form-label">Table name*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col-2">
+            <label for="basic-url" class="form-label">Limit</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
         </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Dataset</mat-label>
-            <input type="text" matInput [formControl]="datasetBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The name of the dataset where the table is located">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Table</mat-label>
-            <input type="text" matInput [formControl]="tableBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The table where the terms are located">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Term column</mat-label>
-            <input type="text" matInput [formControl]="termColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="The column name where the terms are located">help</mat-icon>
-        </div>
-
-        <!-- ||| OPTIONAL ||| -->
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Description column</mat-label>
-            <input type="text" matInput [formControl]="descriptionColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The column name where the descriptions are located. Descriptions are used to provide more information about the terms to Gemini to generate better content.">help</mat-icon>
-        </div>
-
-        <div class="tooltip-container-input-fields">
-          <mat-form-field>
-            <mat-label>Limit</mat-label>
-            <input type="text" matInput [formControl]="limitBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
-          </mat-form-field>
-          <mat-icon matSuffix matTooltip="Optional. The maximum number of terms to retrieve. If not specified, all terms will be retrieved.">help</mat-icon>
+        <h5 class="pt-3">Columns</h5>
+        <div class="row">
+          <div class="col">
+            <label for="basic-url" class="form-label">Term*</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col">
+            <label for="basic-url" class="form-label">Descriptions</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
         </div>
       </div>
-    </mat-tab>
-
-    <!-- ||||||||||| GOOGLE TRENDS ||||||||||| -->
-    <mat-tab label="Google Trends second term">
-      <div class="tooltip-container-input-fields" style="padding-top: 30px;">
-        <mat-form-field>
-          <mat-label>Limit</mat-label>
-          <input type="text" matInput [formControl]="limitGoogleTrendsSecondTermFormControl" [errorStateMatcher]="matcher">
-        </mat-form-field>
-        <mat-icon matSuffix matTooltip="Optional. The maximum number of terms to retrieve. If not specified, all available trending topics will be retrieved, which is generally 25.">help</mat-icon>
+      <!-- ||||||||||| LIST OF TERMS ||||||||||| -->
+      <div class="tab-pane fade" id="google-trends-second-term-tab-pane" role="tabpanel" aria-labelledby="google-trends-second-term-tab" tabindex="0">
+        <h5 class="pt-3">Google Trends</h5>
+        <div class="input-group">
+          <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitGoogleTrendsSecondTermFormControl" [errorStateMatcher]="matcher">
+        </div>
+        <div class="form-text" id="basic-addon4">Number of trends to retrieve. Empty = no limit.</div>
       </div>
-    </mat-tab>
-  </mat-tab-group>
-
-
-  <div class="button-container" style="display: flex; justify-content: center; padding: 50px 0;">
+    </div>
+  }
+  <div class="button-container" style="display: flex; gap: 20px; justify-content: center; padding: 50px 0;">
     <button type="button" mat-stroked-button (click)="goBack()">Back</button>
     <button type="button" mat-flat-button (click)="sendDataSourcesConfig()" [disabled]="isNextButtonDisabled">Next</button>
   </div>

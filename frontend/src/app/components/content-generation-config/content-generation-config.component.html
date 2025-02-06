@@ -1,116 +1,140 @@
 <div>
-  <h1>Basic config</h1>
-  <mat-divider class="divider-class"></mat-divider>
-
-  <div class="checkbox-container">
-    <div class="tooltip-container-checkboxes">
-      <mat-checkbox [(ngModel)]="generateKeywords">Generate keywords</mat-checkbox>
-      <mat-icon matSuffix matTooltip="Check to enable keyword generation.">help</mat-icon>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Final settings</h1>
     </div>
-
-    <div class="tooltip-container-checkboxes">
-      <mat-checkbox [(ngModel)]="generatePaths">Generate paths</mat-checkbox>
-      <mat-icon matSuffix matTooltip="Check to enable path generation. Paths are part of the ad's display URL, and they don't have to correspond to actual sections or directories on your website. They are primarily for customizing the appearance of your ad's display URL and making it more relevant to the user's search query.">help</mat-icon>
-    </div>
-
-    <div class="tooltip-container-checkboxes">
-      <mat-checkbox [(ngModel)]="enableFeatureExtraction">Enable feature extraction</mat-checkbox>
-      <mat-icon matSuffix matTooltip="Check to enable feature extraction. This will try to identify your product's main features to better understand its content and generate more precise texts.">help</mat-icon>
-    </div>
-
-    <div class="tooltip-container-checkboxes">
-      <mat-checkbox [(ngModel)]="enableURLValidation">URL validation</mat-checkbox>
-      <mat-icon matSuffix matTooltip="Check to enable URL validation. This will check if your URLs are valid.">help</mat-icon>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine/wiki/Body-params" target="_blank" rel="noopener noreferrer">Help</a>
     </div>
   </div>
 
-  <div class="form-field-container">
-    <div class="tooltip-container-input-fields">
-      <mat-form-field class="number-input-field">
-        <mat-label>Number of headlines</mat-label>
-        <input type="number" matInput [formControl]="headlinesCounterFormControl" [errorStateMatcher]="matcher"
-                placeholder="Enter a number between 0 and 15">
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="Number of headlines that Topic Mine will generate.">help</mat-icon>
+  <h3 class="pt-5">Basic configuration</h3>
+
+  <mat-chip-listbox selectable multiple class="mat-mdc-chip-set" aria-label="Cutest dog breeds" style="padding-bottom: 20px;">
+    @for (option of options; track option) {
+      <mat-chip-option>{{option}}</mat-chip-option>
+    }
+  </mat-chip-listbox>
+
+  <div class="row">
+    <div class="col-3">
+      <label for="basic-url" class="form-label"># of headlines*</label>
+      <div class="input-group">
+        <input type="number" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesCounterFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="basic-addon4">Min.: 1, max.: 15</div>
     </div>
-
-    <div class="tooltip-container-input-fields">
-      <mat-form-field class="number-input-field">
-        <mat-label>Number of descriptions</mat-label>
-        <input type="number" matInput [formControl]="descriptionsCounterFormControl" [errorStateMatcher]="matcher"
-                placeholder="Enter a number between 0 and 4">
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="Number of descriptions that Topic Mine will generate.">help</mat-icon>
+    <div class="col-3">
+      <label for="basic-url" class="form-label"># of descriptions*</label>
+      <div class="input-group">
+        <input type="number" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsCounterFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="basic-addon4">Min.: 1, max.: 4</div>
     </div>
-  </div>
-
-  <h1>Blocklisting</h1>
-  <mat-divider class="divider-class"></mat-divider>
-
-  <div class="form-field-container">
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Headlines blocklist</mat-label>
-        <input type="text" matInput [formControl]="headlinesBlocklistingFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of words or phrases blocked in headlines. Case insensitive.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="These terms will be excluded from the output. Topic Mine will not generate headlines with these terms.">help</mat-icon>
+    <div class="col-3">
+      <label for="basic-url" class="form-label">Language</label>
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ selectedLanguage }}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" (click)="selectLanguage('Spanish')">Spanish</a></li>
+        <li><a class="dropdown-item" (click)="selectLanguage('English')">English</a></li>
+      </ul>
     </div>
-
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Descriptions blocklist</mat-label>
-        <input type="text" matInput [formControl]="descriptionsBlocklistingFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of words or phrases blocked in descriptions. Case insensitive.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="These terms will be excluded from the output. Topic Mine will not generate descriptions with these terms.">help</mat-icon>
-    </div>
-
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Headlines regular expressions blocklist</mat-label>
-        <input type="text" matInput [formControl]="headlinesBlocklistingFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of regular expressions blocked in headlines.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="Topic Mine will not generate headlines that match with these regular expressions.">help</mat-icon>
-    </div>
-
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Descriptions regular expressions blocklist</mat-label>
-        <input type="text" matInput [formControl]="descriptionsBlocklistingFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of regular expressions blocked in descriptions.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="Topic Mine will not generate descriptions that match with these regular expressions.">help</mat-icon>
+    <div class="col-3">
+      <label for="basic-url" class="form-label">Gemini model</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="basic-addon4">Recommended to leave empty to use default model 1.5 Flash. Can indicate custom fine-tuned model here.</div>
     </div>
   </div>
 
-
-  <h1>Generic copies</h1>
-  <mat-divider class="divider-class"></mat-divider>
-
-  <div class="form-field-container">
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Generic headlines</mat-label>
-        <input type="text" matInput [formControl]="genericHeadlinesFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of headlines that will be present in the output in case the AI cannot generate anymore.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="If Gemini cannot generate enough headlines, these will be used randomly to fill in the output until the desired number of headlines is reached.">help</mat-icon>
+  <div class="row">
+    <div class="col">
+      <label for="basic-url" class="form-label">Advertiser name*</label>
+      <div class="input-group">
+        <input type="text" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="advertiserNameFormControl" [errorStateMatcher]="matcher">
+      </div>
     </div>
-
-    <div class="tooltip-container-input-fields">
-      <mat-form-field>
-        <mat-label>Generic descriptions</mat-label>
-        <input type="text" matInput [formControl]="genericDescriptionsFormControl" [errorStateMatcher]="matcher">
-        <mat-hint>Comma-separated list of descriptions that will be present in the output in case the AI cannot generate anymore.</mat-hint>
-      </mat-form-field>
-      <mat-icon matSuffix matTooltip="If Gemini cannot generate enough descriptions, these will be used randomly to fill in the output until the desired number of descriptions is reached.">help</mat-icon>
+    <div class="col">
+      <label for="basic-url" class="form-label">Country*</label>
+      <div class="input-group">
+        <input type="text" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="countryFormControl" [errorStateMatcher]="matcher">
+      </div>
     </div>
   </div>
 
-  <div class="form-field-container" style="display: flex; justify-content: center; padding: 50px 0;">
+  <h3 style="padding-top: 20px;">Blocklisting</h3>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="basic-url">Headlines blocklist</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in headlines. Case insensitive."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="basic-url">Descriptions blocklist</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in descriptions. Case insensitive."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="basic-url">Headlines regular expressions blocklist</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in headlines."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="basic-url">Descriptions regular expressions blocklist</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in descriptions."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="padding-top: 20px;">Generic copies</h3>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="basic-url">Generic headlines</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericHeadlinesFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of headlines that will be present in the output in case the AI cannot generate anymore."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="basic-url">Generic descriptions</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericDescriptionsFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of descriptions that will be present in the output in case the AI cannot generate anymore."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-by-side-container" style="display: flex; gap: 20px; justify-content: center; padding: 50px 0;">
     <button type="button" mat-stroked-button (click)="goBack()">Back</button>
-    <button type="button" mat-flat-button (click)="sendContentGenerationConfig()" [disabled]="isStartButtonDisabled">Start generation</button>
-  </div>
+    <!-- TODO: THE CONDITIONAL IS PRESENT TO ALLOW FOR DIFFERENT FUNCTION CALLING WHEN RETRYING-->
+    <button type="button" [disabled]="isStartButtonDisabled" mat-flat-button (click)="isSendingRequest ? null : (requestFailed ? sendContentGenerationConfig() : sendContentGenerationConfig())">
+      @if (isSendingRequest) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+         Loading...
+      }
+      @if (!isSendingRequest && !requestFailed) {
+        <span>Start generation</span>
+      }
+      @if (requestFailed) {
+        <!-- TODO: FIX ICON -->
+        <i class="bi bi-arrow-clockwise"></i>
+        Retry
+      }
+    </button>
+    </div>
+
 </div>

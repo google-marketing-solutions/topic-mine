@@ -44,7 +44,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
-interface OutputConfig {
+export interface DestinationConfig {
   outputFormat: string;
   spreadsheetId: string;
   sheetName: string;
@@ -59,42 +59,51 @@ interface OutputConfig {
 })
 export class DestinationsConfigComponent {
   title = 'Destinations Configuration';
-  @Output() destinationsConfigEvent = new EventEmitter<OutputConfig>();
-
-  outputFormats: string[] = ['Google Ads', 'SA360', 'DV360'];
+  @Output() destinationsConfigEvent = new EventEmitter<DestinationConfig>();
+  @Output() changeViewEvent = new EventEmitter<string>();
+  @Output() nextButtonDisabledEvent = new EventEmitter<boolean>();
 
   isNextButtonDisabled: boolean = true;
 
-  outputFormatFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
+  // outputFormatFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   spreadsheetIdFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   sheetNameFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
 
   matcher = new MyErrorStateMatcher();
 
+  selectedFormat: string = 'Format';
+
+  selectFormat(format: string) {
+    this.selectedFormat = format;
+    this.updateNextButtonState();
+  }
+
   ngOnInit() {
-    this.outputFormatFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
+    // this.outputFormatFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.spreadsheetIdFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.sheetNameFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
   }
 
   updateNextButtonState() {
-    if (this.outputFormatFormControl.valid &&
+    if (this.selectedFormat !== 'Format' &&
         this.spreadsheetIdFormControl.valid &&
         this.sheetNameFormControl.valid) {
           this.isNextButtonDisabled = false;
+          this.nextButtonDisabledEvent.emit(false);
           return;
         }
 
     this.isNextButtonDisabled = true;
+    this.nextButtonDisabledEvent.emit(true);
   }
 
   goBack() {
-
+    this.changeViewEvent.emit('data-sources-config');
   }
 
   sendOutputConfig() {
-    const config: OutputConfig = {
-      outputFormat: this.outputFormatFormControl.value!,
+    const config: DestinationConfig = {
+      outputFormat: this.selectedFormat,
       spreadsheetId: this.spreadsheetIdFormControl.value!,
       sheetName: this.sheetNameFormControl.value!,
     }

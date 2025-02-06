@@ -5,6 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+export interface ContentTypeConfig {
+  url: string;
+  numberOfTerms: number;
+  mustFindRelationship: boolean | null;
+}
+
 @Component({
   selector: 'app-content-type-selection',
   standalone: true,
@@ -15,33 +21,27 @@ import { CommonModule } from '@angular/common';
 export class ContentTypeSelectionComponent {
   title = 'Content Type Selection';
   inputTerm: string = ''; // Property to hold the user input
-  @Output() contentTypeSelectionEvent = new EventEmitter<{ input: string; action: string }>();
+  @Output() contentTypeSelectionEvent = new EventEmitter<ContentTypeConfig>();
   errorMessage: string = ''; // Property to hold error messages
 
   // Function to handle term logic
   private handleTerm(numberOfTerms: string, mustFindRelationship: boolean | null) {
-    console.log(`Handling Term: numberOfTerms=${numberOfTerms}, mustFindRelationship=${mustFindRelationship}`);
-    console.log('Input Term:', this.inputTerm);
-
     // Validate URL
-    if (!this.isValidUrl(this.inputTerm)) {
-      this.errorMessage = 'Please enter a valid URL.';
-      return; // Exit if URL is invalid
-    }
+    // if (!this.isValidUrl(this.inputTerm)) {
+    //   this.errorMessage = 'Please enter a valid URL.';
+    //   return; // Exit if URL is invalid
+    // }
 
     // Prepare return object
-    const returnObject: { [key: string]: string } = {
-      URL: this.inputTerm,
-      "number-of-terms": numberOfTerms,
+    const returnObject: ContentTypeConfig = {
+      url: this.inputTerm,
+      numberOfTerms: parseInt(numberOfTerms),
+      mustFindRelationship: mustFindRelationship,
     };
-    if (mustFindRelationship !== null) {
-      returnObject["must-find-relationship"] = mustFindRelationship.toString();
-    }
 
     // Clear error message and emit event
     this.errorMessage = '';
-    this.contentTypeSelectionEvent.emit({ input: JSON.stringify(returnObject), action: 'showDataSourcesConfig' });
-    console.log('Emitted JSON:', JSON.stringify(returnObject));
+    this.contentTypeSelectionEvent.emit(returnObject);
   }
 
   oneInputTerm() {

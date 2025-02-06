@@ -6,7 +6,14 @@
 -->
 
 <div>
-  <h1>Content Type Selection</h1>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Running mode</h1>
+    </div>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine" target="_blank" rel="noopener noreferrer">Help</a>
+    </div>
+  </div>
 
 <!-- Input text box -->
    <div style="margin-bottom: 16px;">
@@ -28,11 +35,11 @@
 
   <div class="content-cards-container">
     <!-- First Content Card -->
-    <div class="content-card">
+    <div class="content-card" (click)="oneInputTerm()" >
       <div class="card-header">
         <div class="icon-container">
           <h2>One input term</h2>
-          <img src="logo.png" alt="One Input Term Image" class="image-placeholder" (click)="oneInputTerm()" />
+          <img src="logo.png" alt="One Input Term Image" class="image-placeholder"/>
         </div>
       </div>
       <div class="card-content">
@@ -41,11 +48,11 @@
     </div>
 
     <!-- Second Content Card -->
-    <div class="content-card">
+    <div class="content-card" (click)="twoInputTermFindRelationship()">
       <div class="card-header">
         <div class="icon-container">
           <h2>Two input terms</h2>
-          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder" (click)="twoInputTermFindRelationship()" />
+          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder"/>
         </div>
       </div>
       <div class="card-content">
@@ -55,11 +62,11 @@
 
 
 <!-- Third Content Card -->
-    <div class="content-card">
+    <div class="content-card" (click)="twoInputTermForceRelationship()">
       <div class="card-header">
         <div class="icon-container">
           <h2>Two input terms</h2>
-          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder" (click)="twoInputTermForceRelationship()" />
+          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder"/>
         </div>
       </div>
       <div class="card-content">
@@ -71,7 +78,3 @@
 
   </div>
 </div>
-
-
-
-  

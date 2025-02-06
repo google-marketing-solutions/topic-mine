@@ -29,6 +29,7 @@ mat-drawer-container {
   align-items: center;
   justify-content: flex-start;
   overflow-y: auto;
+  padding-inline: 20%;
 }
 
 .sidenav {
@@ -43,6 +44,7 @@ mat-drawer-container {
   padding-bottom: 12px;
 }
 
-.button-menu {
-  margin-bottom: 16px;
+/* TO DISABLE STEPPER NAVIGATION BECAUSE IT WASN'T WORKING PROPERLY */
+::ng-deep .mat-vertical-stepper-header{
+    pointer-events: none !important;
 }
