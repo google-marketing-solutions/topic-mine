@@ -25,7 +25,7 @@ import dirtyjson
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
-from vertexai.generative_models import GenerativeModel
+from vertexai.generative_models import GenerativeModel, SafetySetting
 
 # Logger config
 logging.basicConfig()
@@ -33,17 +33,28 @@ logging.root.setLevel(logging.INFO)
 
 RETRIES = 5
 GENERATION_CONFIG = {
-    'temperature': 0.6,
-    'max_output_tokens': 1024,
-    'top_p': 0.8,
-    'top_k': 40
+    'temperature': 1,
+    'max_output_tokens': 8192,
+    'top_p': 0.95,
 }
-SAFETY_SETTINGS = {
-    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_ONLY_HIGH,
-    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_ONLY_HIGH
-}
+SAFETY_SETTINGS = [
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold=SafetySetting.HarmBlockThreshold.OFF
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold=SafetySetting.HarmBlockThreshold.OFF
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold=SafetySetting.HarmBlockThreshold.OFF
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold=SafetySetting.HarmBlockThreshold.OFF
+    ),
+]
 
 TIME_INTERVAL_BETWEEN_REQUESTS = 0
 TIME_INTERVAL_IF_QUOTA_ERROR = 60
@@ -57,7 +68,7 @@ class GeminiHelper:
   def __init__(self, config: dict[str, str]) -> None:
     self.config = config
 
-    if 'gemini_model' in config:
+    if 'gemini_model' in config and config["gemini_model"]:
       model_name = config['gemini_model']
       models = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
       if model_name not in models:
@@ -65,7 +76,7 @@ class GeminiHelper:
     else:
       model_name = 'gemini-1.5-flash'
 
-    if 'gemini_api_key' in config:
+    if 'gemini_api_key' in config and config["gemini_api_key"]:
       key = config['gemini_api_key']
       genai.configure(api_key=key)
       self.model = genai.GenerativeModel(model_name)

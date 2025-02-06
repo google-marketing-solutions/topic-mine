@@ -19,22 +19,41 @@ service_account_name=$(cat config.json | jq -r '.service_account_name // "topic-
 echo "Setting Google Cloud project..."
 gcloud config set project "$project_id"
 
-echo "Enabling required API services..."
-gcloud services enable run.googleapis.com
-gcloud services enable artifactregistry.googleapis.com
-gcloud services enable cloudbuild.googleapis.com
-gcloud services enable aiplatform.googleapis.com
-gcloud services enable googleads.googleapis.com
-gcloud services enable sheets.googleapis.com
+enable_gcp_services() {
+    echo "Enabling required API services..."
+    gcloud services enable run.googleapis.com
+    gcloud services enable artifactregistry.googleapis.com
+    gcloud services enable cloudbuild.googleapis.com
+    gcloud services enable aiplatform.googleapis.com
+    gcloud services enable googleads.googleapis.com
+    gcloud services enable sheets.googleapis.com
+}
 
-echo "Creating Service Account..."
-gcloud iam service-accounts create $service_account_name --display-name "Topic Mine Service Account"
-gcloud projects add-iam-policy-binding $project_id \
-    --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
-    --role roles/bigquery.admin
-gcloud projects add-iam-policy-binding $project_id \
-    --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
-    --role roles/run.invoker
+
+create_service_account_and_permissions() {
+    echo "Creating Service Account..."
+    gcloud iam service-accounts create $service_account_name --display-name "Topic Mine Service Account"
+    gcloud projects add-iam-policy-binding $project_id \
+        --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
+        --role roles/bigquery.jobUser
+    gcloud projects add-iam-policy-binding $project_id \
+        --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
+        --role roles/bigquery.dataViewer
+    gcloud projects add-iam-policy-binding $project_id \
+        --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
+        --role roles/aiplatform.user
+    gcloud projects add-iam-policy-binding $project_id \
+        --member serviceAccount:$service_account_name@$project_id.iam.gserviceaccount.com \
+        --role roles/run.invoker
+}
+
+# Deployment
+
+enable_gcp_services
+create_service_account_and_permissions
 
 echo "Deploying Cloud Run..."
-gcloud run deploy $cloud_run_service --region=$project_region --source="." --allow-unauthenticated
+gcloud run deploy $cloud_run_service --region=$project_region --source="." \
+    --service-account $service_account_name \
+    --timeout 3600 \
+    --memory 4Gi

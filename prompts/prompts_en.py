@@ -13,42 +13,174 @@
 # limitations under the License.
 
 prompts_en = {
-  'ASSOCIATION': {
-    'WITH_BOTH_DESCRIPTIONS': "Tell me if you find a direct or indirect relationship between '{term}', which's description is '{term_description}', and '{associative_term}', which's description is '{associative_term_description}'.",
-    'WITH_TERM_DESCRIPTION': "Tell me if you find a direct or indirect relationship between '{term}', which's description is '{term_description}', and '{associative_term}'.",
-    'WITH_ASSOCIATIVE_TERM_DESCRIPTION': "Tell me if you find a direct or indirect relationship between '{term}' and '{associative_term}', which's description is '{associative_term_description}'.",
-    'WITHOUT_DESCRIPTIONS': "Tell me if you find a direct or indirect relationship between '{term}' and '{associative_term}'.",
-    'COMMON_PART':  """
-                    If there is any way to associate them, even if it is not very clear, it already means they are related.
+    "ASSOCIATION": {
+        "WITH_BOTH_DESCRIPTIONS": """
+    Tell me if there is a direct or indirect relationship between '{term}', whose description is '{term_description}',
+    and '{associative_term}' whose description is '{associative_term_description}'.
+  """,
+        "WITH_TERM_DESCRIPTION": """
+    Tell me if there is a direct or indirect relationship between '{term}', whose description is '{term_description}',
+    and '{associative_term}'.
+  """,
+        "WITH_ASSOCIATIVE_TERM_DESCRIPTION": """
+    Tell me if there is a direct or indirect relationship between '{term}' and '{associative_term}',
+    whose description is '{associative_term_description}'.
+  """,
+        "WITHOUT_DESCRIPTIONS": """
+    Tell me if there is a direct or indirect relationship between '{term}' and '{associative_term}'.
+  """,
+        "COMMON_PART": """
+    Find if there is any way to associate the terms, even if it is not a very direct relationship.
 
-                                    Response must be in JSON format, following this example:
-                                    {{"term": "{term}", "associative_term": "{associative_term}", "relationship": true/false, "reason": "reason why there is or isn't relationship between {term} and {associative_term}"}}
-                    """,
-  },
-  'GENERATION': {
-    'WITH_ASSOCIATIVE_TERM': {
-      'WITH_TERM_DESCRIPTION':  """
-                                Generate {n} texts of less than {length} characters for a Google Ads ad.
-                                This ad has to be related with the terms '{term}', which's description is '{term_description}', and '{associative_term}'.
-                                  They must incentive the reader to buy '{term}' because '{association_reason}' is trending.
-                                  Consider the following association reason between the two terms: '{association_reason}'.
-                                  It is extremely important that they are as short as possible, they must be shorter than {length} characters.
-                                  Try to include key words related with the trending topic in the texts.
-                                  If the generated texts are long, try to include the retailer's name, which is {company}, in the texts.
-
-                                  Response must be in exactly the following format:
-                                  ["write here the text 1", "write here the text 2", ..., "write here the text {n}"]
-                                  The response must follow exactly that format. It does not have to contain any additional commas, whitespaces or line breaks. It must be just a comma-separated list of texts between square brackets and thats it.
-                                  """
+    Response must be in JSON format, following this example:
+    {{"term": "{term}", "associative_term": "{associative_term}", "relationship": true/false, "reason": "reason why there is or isn't relationship between {term} and {associative_term}"}}
+  """,
     },
-  },
-  'SIZE_ENFORCEMENT': """
-                    I will give you one text for a Google Ads ad that is too long.
-                    Make it shorter, it has to be shorter than {max_length} characters.
-                    The text is: {copy}
+    "GENERATION": {
+        "WITH_ASSOCIATIVE_TERM": {
+            "WITHOUT_RELATIONSHIP_AND_DESCRIPTIONS": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad must be related to the terms '{term}' and '{associative_term}'.
+            The text ad must encourage potential customers to buy '{term}' because '{associative_term}' is trending.
 
-                    Give me the response like this:
-                    shortened_text
-                    Just give me as a response the shortened text without quotation marks, line breaks or anything else.
-                    """
+            The reponse should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+            "WITHOUT_DESCRIPTIONS": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad must be related to the terms '{term}' and '{associative_term}'.
+            The text ad must encourage potential customers to buy '{term}' because '{associative_term}' is trending.
+            Consider the following association reason between both terms to create the ad: '{association_reason}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+            "WITH_TERM_DESCRIPTION": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad must be related to the terms '{term}' whose description is '{term_description}' and '{associative_term}'.
+            The text ad must encourage potential customers to buy '{term}' because '{associative_term}' is trending.
+            Consider the following association reason between both terms to create the ad: '{association_reason}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+            "WITH_ASSOCIATIVE_TERM_DESCRIPTION": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad must be related to the terms '{term}' and '{associative_term}' whose description is '{associative_term_description}'.
+            The text ad must encourage potential customers to buy '{term}' because '{associative_term}' is trending.
+            Consider the following association reason between both terms to create the ad: '{association_reason}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+            "WITH_BOTH_DESCRIPTIONS": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad must be related to the terms '{term}' whose description is '{term_description}' and '{associative_term}' whose description is '{associative_term_description}'.
+            The text ad must encourage potential customers to buy '{term}' because '{associative_term}' is trending.
+            Consider the following association reason between both terms to create the ad: '{association_reason}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+        },
+        "WITHOUT_ASSOCIATIVE_TERM": {
+            "WITH_DESCRIPTION": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad has to be related to the term '{term}' whose description is '{term_description}'.
+            It is from a retailer called {company} and must encourage potential customers to buy '{term}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+            "WITHOUT_DESCRIPTION": """
+            Generate {n} text ads of less than {length} characters for Google Ads.
+            The ad has to be related to the term '{term}'.
+            It is from a retailer called {company} and must encourage potential customers to buy '{term}'.
+            If the generated text ads are long, try to include the retailer name: '{company}'.
+
+            The response should be in the following format:
+            ["text 1 here", "text 2 here", ..., "text {n} here"]
+            The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+            It should only be a list of text ads separated by commas and between brackets.
+          """,
+        },
+        "PATHS_WITHOUT_TERM_DESCRIPTION": """
+        You will be provided with a term, and you should generate a url path split into {n} parts for that term.
+        The path should refer to the term '{term}'.
+        Each part of the path should be extremely short, just one word that encompasses the main idea of '{term}'
+        and that takes into account the description '{term_description}'.
+
+        For example, if the term is 'cell phones' and its description is 'Samsung Galaxy S23, Samsung Galaxy S23 Plus, Samsung Galaxy S23 Ultra',
+        then part 1 of the path can be 'cell phones' and part 2 of the path can be 'galaxy-s23'.
+        This path will be used in the url of an ecommerce site so that it will be displayed as follows: www.ecommerce.com/PATH1/PATH2.
+        Example: www.ecommerce.com/cell-phones/galaxy-s23
+        The first part of the path should be a category, for example 'cell phones', and the second part should be something more granular
+        referring to the product, for example 'galaxy-s23'.
+        These are some examples of PATHs with 2 parts: 'sneakers/nike-running', 'televisions/samsung', 'vehicles/ford-ranger'.
+        IMPORTANT: It should NOT contain capital letters or spaces, if there are several words they should be in lowercase and separated by a hyphen.
+
+        The response should be in the following format:
+        ["path part 1 here", "path part 2 here", ..., "path part {n} here"]
+        The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+        It should only be a list of text ads separated by commas and between brackets.
+      """,
+        "PATHS_WITH_TERM_DESCRIPTION": """
+        You will be provided with a term and its description, and you should generate a url path split into {n} parts for that term.
+        The path should refer to the term '{term}' and its description '{term_description}'.
+        Each part of the path should be extremely short, just one word that encompasses the main idea of '{term}'
+        and that takes into account the description '{term_description}'.
+
+        For example, if the term is 'cell phones' and its description is 'Samsung Galaxy S23, Samsung Galaxy S23 Plus, Samsung Galaxy S23 Ultra',
+        then part 1 of the path can be 'cell phones' and part 2 of the path can be 'galaxy-s23'.
+        This path will be used in the url of an ecommerce site so that it will be displayed as follows: www.ecommerce.com/PATH1/PATH2.
+        Example: www.ecommerce.com/cell-phones/galaxy-s23
+        The first part of the path should be a category, for example 'cell phones', and the second part should be something more granular
+        referring to the product, for example 'galaxy-s23'.
+        These are some examples of PATHs with 2 parts: 'sneakers/nike-running', 'televisions/samsung', 'vehicles/ford-ranger'.
+        IMPORTANT: It should NOT contain capital letters or spaces, if there are several words they should be in lowercase and separated by a hyphen.
+
+        The response should be in the following format:
+        ["path part 1 here", "path part 2 here", ..., "path part {n} here"]
+        The response should be exactly in the provided format, without including line breaks or unnecessary spaces.
+        It should only be a list of text ads separated by commas and between brackets.
+      """,
+    },
+    "SIZE_ENFORCEMENT": """
+    Make the following text ad shorter, it has to be shorter than {max_length} characters.
+    The text ad is: {copy}
+
+    The response should be in the following format:
+    shortened_text
+    The response should be just the shortened text without quotation marks, line breaks or anything else.
+  """,
+    "EXTRACT_MAIN_FEATURES": """
+    Given the following product description:
+    '{description}'
+    Generate a short list of the main features. The result should be in the following format:
+    "Feature 1", "Feature 2", ..., "Feature N"
+  """,
+    "KEYWORDS_GENERATION": """
+    Given the term '{term}', give me a list of up to 10 keywords for Google Ads that are related to the provided term.
+    The response should be in the following format:
+    ["Feature 1", "Feature 2", ..., "Feature N"]
+    The response should be exactly in the provided format without adding unnecessary line breaks or spaces.
+    It should only be a list of keywords separated by commas and between brackets.
+  """,
 }

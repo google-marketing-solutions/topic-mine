@@ -141,5 +141,19 @@ prompts_es = {
                         Proporciona la respuesta en este formato:
                         texto_acortado
                         Solamente escribe como respuesta el texto acortado, sin comillas, saltos de linea ni nada adicional.
-                        """
+                        """,
+    'EXTRACT_MAIN_FEATURES': """
+        Dada la siguiente descripcion de producto:
+        "{description}"
+        Dame una lista breve de las caracteristicas principales.
+        Dame el resultado en el siguiente formato:
+        "Característica 1", "Característica 2", ..., "Característica N"
+    """,
+    'KEYWORD_GENERATION': """
+        Dado el término '{term}', dame una lista de hasta 10 keywords para Google ads que pueda usar relacionadas con el término.
+        Dame el resultado de la siguiente forma:
+        ["Característica 1", "Característica 2", ..., "Característica N"]
+        La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios.
+        Solo debe ser una lista de keywords separados por comas, todo entre corchetes y nada mas.
+    """
 }
