@@ -21,6 +21,7 @@ from enum import Enum
 class FirstTermSource(Enum):
   SPREADSHEET = 1
   BIG_QUERY = 2
+  LIST_OF_TERMS = 3
 
 
 class SecondTermSource(Enum):
@@ -29,6 +30,7 @@ class SecondTermSource(Enum):
   SEARCH_SCOUT = 3
   RSS_FEED = 4
   SPREADSHEET = 5
+  BIG_QUERY = 6
 
 
 class Destination(Enum):

@@ -54,14 +54,11 @@ class GeminiHelper:
   """Gemini helper to perform Gemini API requests.
   """
 
-  def __init__(self, config: dict[str, str]) -> None:
+  def __init__(self, config: dict[str, str], model: str = None) -> None:
     self.config = config
 
-    if 'gemini_model' in config:
-      model_name = config['gemini_model']
-      models = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
-      if model_name not in models:
-        model_name = 'gemini-1.5-flash'
+    if model:
+      model_name = model
     else:
       model_name = 'gemini-1.5-flash'
 

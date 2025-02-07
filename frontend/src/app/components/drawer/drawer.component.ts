@@ -184,16 +184,14 @@ export class DrawerComponent {
     } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'BigQuery') {
       this.path += '&first-term-source=big_query';
     } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'List of terms') {
-      // TODO: IMPLEMENT IN THE BACKEND
-      throw new Error('Not implemented in the backend yet');
+      this.path += '&first-term-source=list_of_terms';
     }
 
     if (this.contentTypeSelectionConfig!.numberOfTerms === 2) {
       if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Sheets') {
         this.path += '&second-term-source=spreadsheet';
       } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'BigQuery') {
-        // TODO: IMPLEMENT IN THE BACKEND
-        throw new Error('Not implemented in the backend yet');
+        this.path += '&second-term-source=big_query';
       } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'Google Trends') {
         this.path += '&second-term-source=google_trends';
       }
@@ -239,8 +237,10 @@ export class DrawerComponent {
         'limit': this.dataSourcesConfig!.firstTermSourceConfig.bigQueryConfig.limit ?? 0,
       }
     } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'List of terms') {
-      // TODO: IMPLEMENT IN THE BACKEND
-      throw new Error('Not implemented in the backend yet');
+      this.body['first_term_source_config'] = {
+        // Mandatory
+        'terms': this.dataSourcesConfig!.firstTermSourceConfig.listOfTermsConfig.listOfTerms,
+      }
     }
 
     if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Sheets') {
@@ -254,10 +254,19 @@ export class DrawerComponent {
         // Optional
         'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.descriptionColumn
       }
-    } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'BigQuery') {
-      // TODO: IMPLEMENT IN THE BACKEND
-      throw new Error('Not implemented in the backend yet');
-    } else if (this.dataSourcesConfig!.firstTermSourceConfig.type === 'Google Trends') {
+    } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'BigQuery') {
+      this.body['second_term_source_config'] = {
+        // Mandatory
+        'project_id': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.projectId,
+        'dataset': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.dataset,
+        'table': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.table,
+        'term_column': this.dataSourcesConfig!.secondTermSourceConfig.termColumn,
+
+        // Optional
+        'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.descriptionColumn,
+        'limit': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.limit ?? 0,
+      }
+    } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Trends') {
       this.body['second_term_source_config'] = {
         'limit':this.dataSourcesConfig!.secondTermSourceConfig.googleTrendsConfig.limit
       }
@@ -287,7 +296,6 @@ export class DrawerComponent {
     // this.body['default_url'] = this.dataSourcesConfig!.defaultUrl;
     this.body['generate_paths'] = this.contentGenerationConfig!.generatePaths;
 
-    // TODO: MUST IMPLEMENT IN THE BACKEND ALL OF THE FOLLOWING
     this.body['generate_keywords'] = this.contentGenerationConfig!.generateKeywords;
     this.body['advertiser_name'] = this.contentGenerationConfig!.advertiserName;
     this.body['country'] = this.contentGenerationConfig!.country;

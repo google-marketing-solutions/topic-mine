@@ -45,7 +45,7 @@ class ContentGeneratorService:
 
   def __init__(self, config: dict[str, str]):
     self.config = config
-    self.gemini_helper = GeminiHelper(self.config)
+    self.gemini_helper = GeminiHelper(self.config, self.body_params['gemini_model'])
     self.bigquery_helper = BigQueryHelper(self.config)
     if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
         self.keyword_suggestion_service = KeywordSuggestionService(self.config)
@@ -259,6 +259,19 @@ class ContentGeneratorService:
 
     return terms, descriptions, skus, urls, image_urls
 
+  def __get_first_term_info_from_list(
+      self
+      ) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
+    """Gets the terms to generate content for.
+
+    Returns:
+      tuple(list(str), list(str), list(str), list(str), list(str)):
+      A tuple with a list of terms, descriptions, skus, urls and image_urls.
+    """
+    logging.info(' Getting terms from list')
+    terms = self.body_params['first_term_source_config']['terms']
+    return terms, [], [], [], []
+
   def __get_first_term_info(
       self
       ) -> tuple[list[str], list[str], list[str], list[str], list[str]]:
@@ -272,11 +285,10 @@ class ContentGeneratorService:
       return self.__get_first_term_info_from_spreadsheet()
     elif self.first_term_source == FirstTermSource.BIG_QUERY:
       return self.__get_first_term_info_from_bq()
+    elif self.first_term_source == FirstTermSource.LIST_OF_TERMS:
+      return self.__get_first_term_info_from_list()
     else:
-      raise ValueError(
-          ('Invalid first-term-source query param. '
-           'Supported values are spreadsheet and big_query.')
-          )
+      raise ValueError('Invalid first-term-source query param.')
 
   def __get_associative_terms_and_descriptions_from_gt(
       self
@@ -300,7 +312,7 @@ class ContentGeneratorService:
                     FROM
                     `bigquery-public-data.google_trends.international_top_terms`
                     )
-                AND country_name = '{self.config['country']}'
+                AND country_name = '{self.body_params['country']}'
             GROUP BY
                 term
             ORDER BY
@@ -413,6 +425,46 @@ class ContentGeneratorService:
                                                                 )
     return associative_terms, descriptions
 
+  def __get_associative_terms_and_descriptions_from_bq(
+      self
+      ) -> tuple[list[str], list[str]]:
+    """Gets the associative terms and descriptions from BigQuery.
+
+    Returns:
+      tuple(list(str), list(str)): A tuple with a list of associative
+      terms and a list of descriptions.
+    """
+    logging.info(' Getting associative terms and descriptions from bq')
+    project_id = self.body_params['second_term_source_config']['project_id']
+    dataset_id = self.body_params['second_term_source_config']['dataset']
+    table_id = self.body_params['second_term_source_config']['table']
+    term_column = self.body_params['second_term_source_config']['term_column']
+    limit = self.body_params['second_term_source_config']['limit']
+    terms = self.bigquery_helper.read_bigquery_column(
+        project_id,
+        dataset_id,
+        table_id,
+        term_column,
+        limit
+        )
+
+    if ('term_description_column' in
+        self.body_params['second_term_source_config']):
+      term_description_column = (self.body_params
+                                 ['second_term_source_config']
+                                 ['term_description_column'])
+      descriptions = self.bigquery_helper.read_bigquery_column(
+          project_id,
+          dataset_id,
+          table_id,
+          term_description_column,
+          limit
+          )
+    else:
+      descriptions = []
+
+    return terms, descriptions
+
   def __get_associative_terms_and_descriptions(
       self
       ) -> tuple[list[str], list[str]]:
@@ -432,11 +484,10 @@ class ContentGeneratorService:
       return self.__get_associative_terms_and_descriptions_from_rss()
     elif self.second_term_source == SecondTermSource.SPREADSHEET:
       return self.__get_associative_terms_and_descriptions_from_spreadsheet()
+    elif self.second_term_source == SecondTermSource.BIG_QUERY:
+      return self.__get_associative_terms_and_descriptions_from_bq()
     else:
-      raise ValueError(
-          ('Invalid second-term-source query param. Supported values are '
-           'none, google_trends, search_scout, rss_feed and spreadsheet.')
-          )
+      raise ValueError('Invalid second-term-source query param.')
 
   def __remove_double_quotes(self, terms: list[str]) -> list[str]:
     """Removes the double quotes from the terms.
@@ -625,7 +676,8 @@ class ContentGeneratorService:
       logging.info(' Descriptions: %s', descriptions)
 
     logging.info(' Generating keywords for term %s', entry.term)
-    keywords = self.__get_keywords([entry.term])
+    if self.body_params['generate_keywords']:
+      keywords = self.__get_keywords([entry.term])
     logging.info(' Keywords: %s', keywords)
 
     if 'generate_paths' in self.body_params and self.body_params['generate_paths']:
@@ -920,7 +972,7 @@ class ContentGeneratorService:
         and entry.associative_term_description is not None
         ):
       first_part = (
-          prompts[self.config['language']]
+          prompts[self.body_params['language']]
           ['ASSOCIATION']['WITH_BOTH_DESCRIPTIONS']
           ).format(
               term=entry.term,
@@ -933,7 +985,7 @@ class ContentGeneratorService:
         and entry.associative_term_description is None
         ):
       first_part = (
-          prompts[self.config['language']]['ASSOCIATION']
+          prompts[self.body_params['language']]['ASSOCIATION']
           ['WITH_TERM_DESCRIPTION']
           ).format(
               term=entry.term,
@@ -945,7 +997,7 @@ class ContentGeneratorService:
         and entry.associative_term_description is not None
         ):
       first_part = (
-          prompts[self.config['language']]['ASSOCIATION']
+          prompts[self.body_params['language']]['ASSOCIATION']
           ['WITH_ASSOCIATIVE_TERM_DESCRIPTION']
           ).format(
               term=entry.term,
@@ -957,7 +1009,7 @@ class ContentGeneratorService:
         and entry.associative_term_description is None
         ):
       first_part = (
-          prompts[self.config['language']]['ASSOCIATION']
+          prompts[self.body_params['language']]['ASSOCIATION']
           ['WITHOUT_DESCRIPTIONS']
           ).format(
               term=entry.term,
@@ -965,7 +1017,7 @@ class ContentGeneratorService:
               )
 
     second_part = (
-        prompts[self.config['language']]['ASSOCIATION']
+        prompts[self.body_params['language']]['ASSOCIATION']
         ['COMMON_PART']
         ).format(
             term=entry.term,
@@ -1001,14 +1053,14 @@ class ContentGeneratorService:
     elif t == 'paths':
       length = 15
       if entry.term_description:
-        return prompts[self.config['language']]['GENERATION']['PATHS_WITH_TERM_DESCRIPTION'].format(
+        return prompts[self.body_params['language']]['GENERATION']['PATHS_WITH_TERM_DESCRIPTION'].format(
                   n=number_of_copies,
                   length=length,
                   term=entry.term,
                   term_description=entry.term_description,
                   )
       else:
-        return prompts[self.config['language']]['GENERATION']['PATHS_WITHOUT_TERM_DESCRIPTION'].format(
+        return prompts[self.body_params['language']]['GENERATION']['PATHS_WITHOUT_TERM_DESCRIPTION'].format(
                   n=number_of_copies,
                   length=length,
                   term=entry.term,
@@ -1018,45 +1070,47 @@ class ContentGeneratorService:
 
     if entry.has_associative_term() and not self.must_find_relationship:
       return (
-          prompts[self.config['language']]['GENERATION']
+          prompts[self.body_params['language']]['GENERATION']
           ['WITH_ASSOCIATIVE_TERM']['WITHOUT_RELATIONSHIP_AND_DESCRIPTIONS']
           ).format(
               n=number_of_copies,
               length=length,
               term=entry.term,
               associative_term=entry.associative_term,
+              location=self.body_params['country'],
+              company=self.body_params['advertiser_name']
               )
 
     if not entry.has_associative_term():
       if not entry.term_description:
         return (
-            prompts[self.config['language']]['GENERATION']
+            prompts[self.body_params['language']]['GENERATION']
             ['WITHOUT_ASSOCIATIVE_TERM']['WITHOUT_DESCRIPTION']
             ).format(
                 n=number_of_copies,
                 length=length,
                 term=entry.term,
-                location=self.config['country'],
-                company=self.config['advertiser']
+                location=self.body_params['country'],
+                company=self.body_params['advertiser_name']
                 )
       else:
         return (
-            prompts[self.config['language']]['GENERATION']
+            prompts[self.body_params['language']]['GENERATION']
             ['WITHOUT_ASSOCIATIVE_TERM']['WITH_DESCRIPTION']
             ).format(
                 n=number_of_copies,
                 length=length,
                 term=entry.term,
                 term_description=entry.term_description,
-                location=self.config['country'],
-                company=self.config['advertiser']
+                location=self.body_params['country'],
+                company=self.body_params['advertiser_name']
                 )
     elif (
         entry.term_description
         and entry.associative_term_description
         ):
       return (
-          prompts[self.config['language']]['GENERATION']
+          prompts[self.body_params['language']]['GENERATION']
           ['WITH_ASSOCIATIVE_TERM']['WITH_BOTH_DESCRIPTIONS']
           ).format(
               n=number_of_copies,
@@ -1065,8 +1119,8 @@ class ContentGeneratorService:
               term_description=entry.term_description,
               associative_term=entry.associative_term,
               associative_term_description=entry.associative_term_description,
-              location=self.config['country'],
-              company=self.config['advertiser'],
+              location=self.body_params['country'],
+              company=self.body_params['advertiser_name'],
               association_reason=entry.association_reason
               )
     elif (
@@ -1074,7 +1128,7 @@ class ContentGeneratorService:
         and not entry.associative_term_description
         ):
       return (
-          prompts[self.config['language']]['GENERATION']
+          prompts[self.body_params['language']]['GENERATION']
           ['WITH_ASSOCIATIVE_TERM']['WITH_TERM_DESCRIPTION']
           ).format(
               n=number_of_copies,
@@ -1082,8 +1136,8 @@ class ContentGeneratorService:
               term=entry.term,
               term_description=entry.term_description,
               associative_term=entry.associative_term,
-              location=self.config['country'],
-              company=self.config['advertiser'],
+              location=self.body_params['country'],
+              company=self.body_params['advertiser_name'],
               association_reason=entry.association_reason
               )
     elif (
@@ -1091,7 +1145,7 @@ class ContentGeneratorService:
         entry.associative_term_description
         ):
       return (
-          prompts[self.config['language']]['GENERATION']
+          prompts[self.body_params['language']]['GENERATION']
           ['WITH_ASSOCIATIVE_TERM']['WITH_ASSOCIATIVE_TERM_DESCRIPTION']
           ).format(
               n=number_of_copies,
@@ -1099,8 +1153,8 @@ class ContentGeneratorService:
               term=entry.term,
               associative_term=entry.associative_term,
               associative_term_description=entry.associative_term_description,
-              location=self.config['country'],
-              company=self.config['advertiser'],
+              location=self.body_params['country'],
+              company=self.body_params['advertiser_name'],
               association_reason=entry.association_reason
               )
     elif (
@@ -1108,14 +1162,14 @@ class ContentGeneratorService:
         not entry.associative_term_description
         ):
       return (
-          prompts[self.config['language']]['GENERATION']
+          prompts[self.body_params['language']]['GENERATION']
           ['WITH_ASSOCIATIVE_TERM']['WITHOUT_DESCRIPTIONS']
           ).format(
               n=number_of_copies,
               length=length,
               term=entry.term,
               associative_term=entry.associative_term,
-              location=self.config['country'],
-              company=self.config['advertiser'],
+              location=self.body_params['country'],
+              company=self.body_params['advertiser_name'],
               association_reason=entry.association_reason
               )
