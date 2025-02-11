@@ -586,6 +586,7 @@ class ContentGeneratorService:
         self.entries.remove(self.entries[i])
         self.entries[i].clear_generated_content()
         self.entries.append(self.entries[i])
+
       else:
         self.bar()
         i = i + 1
@@ -863,10 +864,11 @@ class ContentGeneratorService:
         )
 
     # Remove copies that are 2 words or less
-    for copy in generated_copies_with_size_enforced:
-      copy_splitted = copy.split(' ')
-      if len(copy_splitted) <= 2:
-        generated_copies_with_size_enforced.remove(copy)
+    if t != 'paths':
+      for copy in generated_copies_with_size_enforced:
+        copy_splitted = copy.split(' ')
+        if len(copy_splitted) <= 2:
+          generated_copies_with_size_enforced.remove(copy)
 
     # If retries still available and not enough copies, generate more
     if (
