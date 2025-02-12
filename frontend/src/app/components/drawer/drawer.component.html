@@ -1,0 +1,59 @@
+<mat-drawer-container class="mat-drawer-container" autosize>
+  <mat-drawer #drawer class="sidenav" mode="side" opened>
+    <mat-stepper #stepper orientation="vertical" [linear]="true">
+      <mat-step>
+        <ng-template matStepLabel>Content Generation Selection</ng-template>
+        <!-- <ng-template matStepContent>
+          <button mat-button (click)="nextView()" matStepperNext>
+            Next
+          </button>
+        </ng-template> -->
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Data Sources Configuration</ng-template>
+        <!-- <ng-template matStepContent>
+          <button mat-button (click)="previousView()" matStepperPrevious>
+            Back
+          </button>
+          <button mat-button (click)="nextView()" matStepperNext [disabled]="isNextButtonSCDisabled">
+            Next
+          </button>
+        </ng-template> -->
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Destinations Configuration</ng-template>
+        <!-- <button mat-button (click)="previousView()" matStepperPrevious>
+          Back
+        </button>
+        <button mat-button (click)="nextView()" matStepperNext [disabled]="isNextButtonDCDisabled">
+          Next
+        </button> -->
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Content Generation Configuration</ng-template>
+        <!-- <button mat-button (click)="previousView()" matStepperPrevious>
+          Back
+        </button>
+        <button mat-button (click)="nextView()" matStepperNext [disabled]="isNextButtonCGCDisabled">
+          Start generation
+        </button> -->
+      </mat-step>
+    </mat-stepper>
+  </mat-drawer>
+
+  <div class="sidenav-content">
+    <div class="components-container">
+      @if (currentView === 'content-type-selection'){
+        <app-content-type-selection (contentTypeSelectionEvent)="receiveContentTypeSelection($event)"></app-content-type-selection>
+      } @if (currentView === 'data-sources-config'){
+        <app-data-sources-config [mustShowSecondTermConfig]="mustShowSecondTermConfig" (changeViewEvent)="previousView()" (nextButtonDisabledEvent)="receiveNextButtonDisabledEvent($event)" (dataSourcesConfigEvent)="receiveDataSourcesConfig($event)"></app-data-sources-config>
+      } @if (currentView === 'destinations-config'){
+        <app-destinations-config (changeViewEvent)="previousView()" (nextButtonDisabledEvent)="receiveNextButtonDisabledEvent($event)" (destinationsConfigEvent)="receiveDestinationConfig($event)"></app-destinations-config>
+      } @if (currentView === 'content-generation-config'){
+        <app-content-generation-config [isSendingRequest]="isSendingRequest" [requestFailed]="requestFailed" (changeViewEvent)="previousView()" (nextButtonDisabledEvent)="receiveNextButtonDisabledEvent($event)" (contentGenerationConfigEvent)="receiveContentGenerationConfig($event)"></app-content-generation-config>
+      } @if (currentView === 'execution-started'){
+        <app-execution-started/>
+      }
+    </div>
+  </div>
+</mat-drawer-container>

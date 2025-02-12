@@ -23,6 +23,7 @@ from typing import Any
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask_cors import CORS
 from output_writers.acs_feed_destination import ACSFeedDestination
 from output_writers.dv360_feed_destination import DV360FeedDestination
 from output_writers.sa360_feed_destination import SA360FeedDestination
@@ -34,6 +35,7 @@ from utils.enums import SecondTermSource
 from utils.utils import Utils
 
 app = Flask(__name__)
+CORS(app)
 
 # Logger config
 logging.basicConfig()
@@ -65,6 +67,16 @@ def get_task_status(tid):
   return jsonify(tasks[tid]), 200
 
 
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+  """Get all tasks' status.
+
+  Returns:
+    A JSON response with the status.
+  """
+  return jsonify(tasks), 200
+
+
 @app.route('/content', methods=['POST'])
 def start_task():
   """App's entry point.
@@ -80,8 +92,8 @@ def start_task():
   global task_id
 
   try:
-    if task_id in tasks and tasks[task_id]['status'] == 'running':
-      return jsonify({'error': 'Task already running'}), 409
+    # if task_id in tasks and tasks[task_id]['status'] == 'running':
+    #   return jsonify({'error': 'Task already running'}), 409
 
     destination = __get_destination(request)
     first_term_source = __get_first_term_source(request)
@@ -122,7 +134,7 @@ def start_task():
 
 
 def __generate_and_export_content(
-    tid: int,
+    task_id: int,
     first_term_source: FirstTermSource,
     second_term_source: SecondTermSource | None,
     must_find_relationship: bool,
@@ -132,7 +144,7 @@ def __generate_and_export_content(
   """Generates and exports content.
 
   Args:
-    tid(int): New task id.
+    task_id(int): New task id.
     first_term_source(FirstTermSource): The first term source.
     second_term_source(SecondTermSource): The second term source.
     must_find_relationship(bool): Whether to find a relationship.
@@ -149,10 +161,10 @@ def __generate_and_export_content(
 
     __export_entries(entries, destination, body_params)
 
-    tasks[tid] = {'status': 'completed', 'result': 'ok'}
+    tasks[task_id] = {'status': 'completed', 'result': 'ok'}
   except Exception as e:
     logging.error(' %s', str(e))
-    tasks[tid] = {'status': 'failed 500', 'result': str(e)}
+    tasks[task_id] = {'status': 'failed 500', 'result': str(e)}
 
 
 def __get_destination(r) -> Destination:
@@ -203,19 +215,17 @@ def __get_first_term_source(r) -> FirstTermSource:
   """
   first_term_source = r.args.get('first-term-source')
 
-  if not first_term_source or first_term_source not in [
-      'spreadsheet',
-      'big_query'
-      ]:
-    raise ValueError(
-        'Invalid first-term-source query param.'+
-        'Supported values are spreadsheet and big_query.'
-        )
+  if not first_term_source:
+    raise ValueError('Missing first-term-source query param.')
 
   if first_term_source == 'spreadsheet':
     first_term_source = FirstTermSource.SPREADSHEET
   elif first_term_source == 'big_query':
     first_term_source = FirstTermSource.BIG_QUERY
+  elif first_term_source == 'list_of_terms':
+    first_term_source = FirstTermSource.LIST_OF_TERMS
+  else:
+    raise ValueError(f'Invalid first-term-source query param. Current value: {first_term_source}')
 
   return first_term_source
 
@@ -234,16 +244,8 @@ def __get_second_term_source(r) -> SecondTermSource:
   """
   second_term_source = r.args.get('second-term-source')
 
-  if second_term_source and second_term_source not in [
-      'google_trends',
-      'search_scout',
-      'rss_feed',
-      'spreadsheet'
-      ]:
-    raise ValueError(
-        'Invalid second-term-source query param. Supported values are '+
-        'none (no param), google_trends, search_scout, rss_feed.'
-        )
+  if not second_term_source:
+    return SecondTermSource.NONE
 
   if second_term_source == 'google_trends':
     second_term_source = SecondTermSource.GOOGLE_TRENDS
@@ -253,8 +255,12 @@ def __get_second_term_source(r) -> SecondTermSource:
     second_term_source = SecondTermSource.RSS_FEED
   elif second_term_source == 'spreadsheet':
     second_term_source = SecondTermSource.SPREADSHEET
+  elif second_term_source == 'big_query':
+    second_term_source = SecondTermSource.BIG_QUERY
   elif second_term_source is None:
     second_term_source = SecondTermSource.NONE
+  else:
+    raise ValueError('Invalid second-term-source query param.')
 
   return second_term_source
 
@@ -317,10 +323,11 @@ def __validate_body_params(
   if data is None:
     raise ValueError('Missing body params.')
 
-  if ('url_validation' in data
-      and data['url_validation'] == 'USE_DEFAULT_URL'
-      and 'default_url' not in data):
-    raise ValueError('Missing default_url body param.')
+  if 'url_validation' in data:
+    if (data['url_validation'] == 'USE_DEFAULT_URL' and 'default_url' not in data):
+      raise ValueError('Missing default_url body param because of url_validation is set to USE_DEFAULT_URL.')
+    elif data['url_validation'] != 'REMOVE_BROKEN_URLS':
+      raise ValueError('Invalid url_validation body param. Supported values are USE_DEFAULT_URL and REMOVE_BROKEN_URLS.')
 
   if 'num_headlines' not in data:
     raise ValueError('Missing num_headlines body param.')
@@ -371,6 +378,11 @@ def __validate_body_params(
         raise ValueError('Missing or invalid limit in first_term_source_config. Must be of type int.')
       if data['first_term_source_config']['limit'] == 0:
         data['first_term_source_config']['limit'] = 9999
+  elif first_term_source == FirstTermSource.LIST_OF_TERMS:
+    if 'terms' not in data['first_term_source_config']:
+      raise ValueError('Missing terms in first_term_source_config.')
+    if not isinstance(data['first_term_source_config']['terms'], list):
+      raise ValueError('Invalid terms in first_term_source_config. Must be of type list.')
 
   if (
       'second_term_source_config' in data and
@@ -431,6 +443,23 @@ def __validate_body_params(
       raise ValueError('Missing or invalid limit in second_term_source_config. Must be of type int.')
     if data['second_term_source_config']['limit'] == 0:
       data['second_term_source_config']['limit'] = 9999
+  elif second_term_source == FirstTermSource.BIG_QUERY:
+    if 'query' not in data['second_term_source_config']:
+      if 'project_id' not in data['second_term_source_config']:
+        raise ValueError('Missing project_id in second_term_source_config.')
+      if 'dataset' not in data['second_term_source_config']:
+        raise ValueError('Missing dataset in second_term_source_config.')
+      if 'table' not in data['second_term_source_config']:
+        raise ValueError('Missing table in second_term_source_config.')
+      if 'term_column' not in data['second_term_source_config']:
+        raise ValueError('Missing term_column in second_term_source_config.')
+      if (
+          'limit' not in data['second_term_source_config'] or
+          not isinstance(data['second_term_source_config']['limit'], int)
+          ):
+        raise ValueError('Missing or invalid limit in second_term_source_config. Must be of type int.')
+      if data['second_term_source_config']['limit'] == 0:
+        data['second_term_source_config']['limit'] = 9999
 
   if (
       destination == Destination.SA360_FEED or
@@ -472,6 +501,37 @@ def __validate_body_params(
         not isinstance(data['destination_config']['starting_row'], int)
         ):
       raise ValueError('Missing or invalid starting_row in destination_config. Must be of type int.')
+
+  # generate_keywords optional, defalts to false
+  if 'generate_keywords' in data:
+    if not isinstance(data['generate_keywords'], bool):
+      raise ValueError('Invalid generate_keywords body param. Must be of type bool.')
+  if not'generate_keywords' in data:
+    data['generate_keywords'] = False
+
+  # advertiser_name required
+  if not 'advertiser_name' in data:
+    raise ValueError('Missing advertiser_name body param.')
+  if not isinstance(data['advertiser_name'], str):
+    raise ValueError('Invalid advertiser_name body param. Must be of type str.')
+
+  # country required
+  if not 'country' in data:
+    raise ValueError('Missing country body param.')
+  if not isinstance(data['country'], str):
+    raise ValueError('Invalid country body param. Must be of type str.')
+
+  # gemini_model optional, defalt in utils/gemini_helper.py
+  if 'gemini_model' in data:
+    if not isinstance(data['gemini_model'], str):
+      raise ValueError('Invalid gemini_model body param. Must be of type str.')
+
+  # language optional, defalts to ES (Spanish)
+  if 'language' in data:
+    if not isinstance(data['language'], str):
+      raise ValueError('Invalid language body param. Must be of type str.')
+  if not'language' in data:
+    data['language'] = 'ES'
 
   return data
 

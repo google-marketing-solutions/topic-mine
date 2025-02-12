@@ -1,0 +1,80 @@
+<!--
+<div>
+  <h1>Content Type Selection</h1>
+  <button type="button" mat-button (click)="sendContentTypeSelection()">Save</button>
+</div>
+-->
+
+<div>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Running mode</h1>
+    </div>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine" target="_blank" rel="noopener noreferrer">Help</a>
+    </div>
+  </div>
+
+<!-- Input text box -->
+   <div style="margin-bottom: 16px;">
+    <label for="inputTerm" style="display: block; font-size: 14px; margin-bottom: 8px;">Endpoint URL:</label>
+    <input
+      id="inputTerm"
+      type="text"
+      placeholder="Type here..."
+      [(ngModel)]="inputTerm"
+      style="width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+    />
+
+    <div *ngIf="errorMessage" style="color: red; font-size: 12px; margin-top: 8px;">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+
+
+  <div class="content-cards-container">
+    <!-- First Content Card -->
+    <div class="content-card" (click)="oneInputTerm()" >
+      <div class="card-header">
+        <div class="icon-container">
+          <h2>One input term</h2>
+          <img src="logo.png" alt="One Input Term Image" class="image-placeholder"/>
+        </div>
+      </div>
+      <div class="card-content">
+        <p>Generate content directly</p>
+      </div>
+    </div>
+
+    <!-- Second Content Card -->
+    <div class="content-card" (click)="twoInputTermFindRelationship()">
+      <div class="card-header">
+        <div class="icon-container">
+          <h2>Two input terms</h2>
+          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder"/>
+        </div>
+      </div>
+      <div class="card-content">
+        <p>Find relationship & generate</p>
+      </div>
+    </div>
+
+
+<!-- Third Content Card -->
+    <div class="content-card" (click)="twoInputTermForceRelationship()">
+      <div class="card-header">
+        <div class="icon-container">
+          <h2>Two input terms</h2>
+          <img src="logo.png" alt="Two Input Terms Image" class="image-placeholder"/>
+        </div>
+      </div>
+      <div class="card-content">
+        <p>Force relationship & generate</p>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>

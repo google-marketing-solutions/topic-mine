@@ -1,0 +1,463 @@
+<div>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Final settings</h1>
+    </div>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine/wiki/Body-params" target="_blank" rel="noopener noreferrer">Help</a>
+    </div>
+  </div>
+
+  <h3 class="pt-5">Basic configuration</h3>
+
+  <mat-chip-listbox selectable multiple class="mat-mdc-chip-set" aria-label="Cutest dog breeds" style="padding-bottom: 20px;">
+    @for (option of options; track option) {
+      <mat-chip-option>{{option}}</mat-chip-option>
+    }
+  </mat-chip-listbox>
+
+  <div class="row">
+    <div class="col-3">
+      <label for="number-of-headlines-input" class="form-label"># of headlines*</label>
+      <div class="input-group">
+        <input type="number" required class="form-control" id="number-of-headlines-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesCounterFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="number-of-headlines-hint">Min.: 1, max.: 15</div>
+    </div>
+    <div class="col-3">
+      <label for="number-of-descriptions-input" class="form-label"># of descriptions*</label>
+      <div class="input-group">
+        <input type="number" required class="form-control" id="number-of-descriptions-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsCounterFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="number-of-descriptions-hint">Min.: 1, max.: 4</div>
+    </div>
+    <div class="col-3">
+      <label for="language-input" class="form-label">Language</label>
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ selectedLanguage }}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" (click)="selectLanguage('Spanish')">Spanish</a></li>
+        <li><a class="dropdown-item" (click)="selectLanguage('English')">English</a></li>
+      </ul>
+    </div>
+    <div class="col-3">
+      <label for="gemini-model-input" class="form-label">Gemini model</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="gemini-model-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+      <div class="form-text" id="gemini-model-hint">Recommended to leave empty to use default model 1.5 Flash. Can indicate custom fine-tuned model here.</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="advertiser-name-input" class="form-label">Advertiser name*</label>
+      <div class="input-group">
+        <input type="text" required class="form-control" id="advertiser-name-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="advertiserNameFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col">
+      <label for="country-input" class="form-label">Country*</label>
+      <div class="input-group">
+        <input type="text" required class="form-control" id="country-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="countryFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+  </div>
+
+  <h3 style="padding-top: 20px;">Blocklisting</h3>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="headlines-blocklisting-input">Headlines blocklist</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="headlines-blocklisting-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in headlines. Case insensitive."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="descriptions-blocklisting-input">Descriptions blocklist</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="descriptions-blocklisting-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in descriptions. Case insensitive."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="headlines-regex-blocklisting-input">Headlines regular expressions blocklist</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="headlines-regex-blocklisting-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in headlines."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="descriptions-regex-blocklisting-input">Descriptions regular expressions blocklist</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="descriptions-regex-blocklisting-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in descriptions."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="padding-top: 20px;">Generic copies</h3>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="input-group">
+        <label for="generic-headlines-input">Generic headlines</label>
+        <div class="input-group">
+          <textarea type="text" rows="4" class="form-control" id="generic-headlines-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericHeadlinesFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of headlines that will be present in the output in case the AI cannot generate anymore."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="generic-descriptions-input">Generic descriptions</label>
+      <div class="input-group">
+        <textarea type="text" rows="4" class="form-control" id="generic-descriptions-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericDescriptionsFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of descriptions that will be present in the output in case the AI cannot generate anymore."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODO: IMPLEMENT ADVANCED SETTINGS IN SOME PART OF THE UI IN A CONFIG PAGE -->
+  <!--
+  <h3 style="padding-top: 20px;">Advanced settings</h3>
+
+  <div class="row">
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Client ID</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Client secret</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Refresh token</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="form-text" id="basic-addon4">OAuth credentials. If blank, application default credentials (ADC) will be used. Recommended to leave blank.</div>
+  </div>
+
+  <div class="row">
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Google Ads Customer ID</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Google Ads developer token</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="basic-url" class="form-label">Gemini API key</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-8">
+      <div class="form-text" id="basic-addon4">Required to generate keywords with the Keyword Planner, which yields better results.</div>
+    </div>
+    <div class="col-4">
+      <div class="form-text" id="basic-addon4">Required to use Gemini.</div>
+    </div>
+  </div>
+
+  <label for="basic-url">Headlines prompt</label>
+  <div class="input-group">
+    <textarea
+    type="text"
+    rows="5"
+    class="form-control"
+    id="basic-url"
+    aria-describedby="basic-addon3 basic-addon4"
+    matInput
+    [formControl]="headlinesBlocklistingFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Custom prompt to use for headlines generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+  </div>
+
+  <label for="basic-url">Descriptions prompt</label>
+  <div class="input-group">
+    <textarea
+    type="text"
+    rows="5"
+    class="form-control"
+    id="basic-url"
+    aria-describedby="basic-addon3 basic-addon4"
+    matInput
+    [formControl]="headlinesBlocklistingFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Custom prompt to use for descriptions generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+  </div> -->
+
+  <!-- ////////////////// ACCORDEON STYLE ////////////////// -->
+  <!-- <div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+      <h3 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+          Basic configuration
+        </button>
+      </h3>
+      <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+          <mat-chip-listbox selectable multiple class="mat-mdc-chip-set" aria-label="Cutest dog breeds" style="padding-bottom: 20px;">
+            @for (option of options; track option) {
+              <mat-chip-option>{{option}}</mat-chip-option>
+            }
+          </mat-chip-listbox>
+
+          <div class="row">
+            <div class="col-3">
+              <label for="basic-url" class="form-label"># of headlines*</label>
+              <div class="input-group">
+                <input type="number" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesCounterFormControl" [errorStateMatcher]="matcher">
+              </div>
+              <div class="form-text" id="basic-addon4">Min.: 1, max.: 15</div>
+            </div>
+            <div class="col-3">
+              <label for="basic-url" class="form-label"># of descriptions*</label>
+              <div class="input-group">
+                <input type="number" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsCounterFormControl" [errorStateMatcher]="matcher">
+              </div>
+              <div class="form-text" id="basic-addon4">Min.: 1, max.: 4</div>
+            </div>
+            <div class="col-3">
+              <label for="basic-url" class="form-label">Language</label>
+              <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ selectedLanguage }}</button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" (click)="selectLanguage('Spanish')">Spanish</a></li>
+                <li><a class="dropdown-item" (click)="selectLanguage('English')">English</a></li>
+              </ul>
+            </div>
+            <div class="col-3">
+              <label for="basic-url" class="form-label">Gemini model</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiModelFormControl" [errorStateMatcher]="matcher">
+              </div>
+              <div class="form-text" id="basic-addon4">Recommended to leave empty to use default model 1.5 Flash. Can indicate custom fine-tuned model here.</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="basic-url" class="form-label">Advertiser name*</label>
+              <div class="input-group">
+                <input type="text" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="advertiserNameFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="col">
+              <label for="basic-url" class="form-label">Country*</label>
+              <div class="input-group">
+                <input type="text" required class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="countryFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+          Blocklisting
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group">
+                <label for="basic-url">Headlines blocklist</label>
+                <div class="input-group">
+                  <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in headlines. Case insensitive."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="basic-url">Descriptions blocklist</label>
+              <div class="input-group">
+                <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of words or phrases blocked in descriptions. Case insensitive."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-6">
+              <div class="input-group">
+                <label for="basic-url">Headlines regular expressions blocklist</label>
+                <div class="input-group">
+                  <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="headlinesRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in headlines."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="basic-url">Descriptions regular expressions blocklist</label>
+              <div class="input-group">
+                <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionsRegexBlocklistingFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of regular expressions blocked in descriptions."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+          Generic copies
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group">
+                <label for="basic-url">Generic headlines</label>
+                <div class="input-group">
+                  <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericHeadlinesFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of headlines that will be present in the output in case the AI cannot generate anymore."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="basic-url">Generic descriptions</label>
+              <div class="input-group">
+                <textarea type="text" rows="4" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="genericDescriptionsFormControl" [errorStateMatcher]="matcher" placeholder="Comma-separated list of descriptions that will be present in the output in case the AI cannot generate anymore."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <!-- TODO: ADD SUPPORT FOR CUSTOM PROMPTS IN THE BACKEND. DO NOT INCLUDE PLACEHOLDERS IN THE CUSTOM PROMPTS. -->
+    <!-- <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+          Custom prompts
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <label for="basic-url">Headlines prompt</label>
+          <div class="input-group">
+            <textarea
+            type="text"
+            rows="5"
+            class="form-control"
+            id="basic-url"
+            aria-describedby="basic-addon3 basic-addon4"
+            matInput
+            [formControl]="headlinesBlocklistingFormControl"
+            [errorStateMatcher]="matcher"
+            placeholder="Custom prompt to use for headlines generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+          </div>
+
+          <label for="basic-url" class="pt-3">Descriptions prompt</label>
+          <div class="input-group">
+            <textarea
+            type="text"
+            rows="5"
+            class="form-control"
+            id="basic-url"
+            aria-describedby="basic-addon3 basic-addon4"
+            matInput
+            [formControl]="headlinesBlocklistingFormControl"
+            [errorStateMatcher]="matcher"
+            placeholder="Custom prompt to use for descriptions generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+          Advanced settings
+        </button>
+      </h2>
+      <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+        <div class="accordion-body">
+          <div class="row">
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Client ID</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="clientIDFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Client secret</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="clientSecretFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Refresh token</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="refreshTokenFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="form-text" id="basic-addon4">OAuth credentials. If blank, application default credentials (ADC) will be used. Recommended to leave blank.</div>
+          </div>
+
+          <div class="row pt-3">
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Google Ads Customer ID</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="googleAdsCustomerIDFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Google Ads developer token</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="googleAdsDeveloperTokenFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+            <div class="col-4">
+              <label for="basic-url" class="form-label">Gemini API key</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiApiKeyFormControl" [errorStateMatcher]="matcher">
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-8">
+              <div class="form-text" id="basic-addon4">Required to generate keywords with the Keyword Planner, which yields better results.</div>
+            </div>
+            <div class="col-4">
+              <div class="form-text" id="basic-addon4">Required to use Gemini.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="side-by-side-container" style="display: flex; gap: 20px; justify-content: center; padding: 50px 0;">
+    <button type="button" mat-stroked-button (click)="goBack()">Back</button>
+    <!-- TODO: THE CONDITIONAL IS PRESENT TO ALLOW FOR DIFFERENT FUNCTION CALLING WHEN RETRYING-->
+    <button type="button" [disabled]="isStartButtonDisabled" mat-flat-button (click)="isSendingRequest ? null : (requestFailed ? sendContentGenerationConfig() : sendContentGenerationConfig())">
+      @if (isSendingRequest) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+         Loading...
+      }
+      @if (!isSendingRequest && !requestFailed) {
+        <span>Start generation</span>
+      }
+      @if (requestFailed) {
+        <!-- TODO: FIX ICON -->
+        <i class="bi bi-arrow-clockwise"></i>
+        Retry
+      }
+    </button>
+  </div>
+
+</div>

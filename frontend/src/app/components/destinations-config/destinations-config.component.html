@@ -1,0 +1,40 @@
+<div>
+  <div class="row align-items-center">
+    <div class="col-11">
+      <h1>Output configuration</h1>
+    </div>
+    <div class="col-1">
+      <a href="https://github.com/google-marketing-solutions/topic-mine/wiki/%5BSA360-or-DV360%5D-body-params-for-output-configuration" target="_blank" rel="noopener noreferrer">Help</a>
+    </div>
+  </div>
+
+
+  <div class="row pt-5">
+    <div class="col">
+      <label for="format-destination-input" class="form-label">Format*</label>
+      <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{ selectedFormat }}</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" (click)="selectFormat('Google Ads')">Google Ads</a></li>
+        <li><a class="dropdown-item" (click)="selectFormat('Search Ads 360')">Search Ads 360</a></li>
+        <li><a class="dropdown-item" (click)="selectFormat('Display & Video 360')">Display & Video 360</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <label for="spreadsheet-id-destination-input" class="form-label">Spreadsheet ID*</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="spreadsheet-id-destination-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col">
+      <label for="sheet-name-destination-input" class="form-label">Sheet name*</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="sheet-name-destination-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+  </div>
+
+  <div class="button-container" style="display: flex; gap: 20px; justify-content: center; padding: 50px 0;">
+    <button type="button" mat-stroked-button (click)="goBack()">Back</button>
+    <button type="button" mat-flat-button (click)="sendOutputConfig()" [disabled]="isNextButtonDisabled">Next</button>
+  </div>
+</div>
