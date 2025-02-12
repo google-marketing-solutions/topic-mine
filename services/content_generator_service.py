@@ -45,7 +45,6 @@ class ContentGeneratorService:
 
   def __init__(self, config: dict[str, str]):
     self.config = config
-    self.gemini_helper = GeminiHelper(self.config, self.body_params['gemini_model'])
     self.bigquery_helper = BigQueryHelper(self.config)
     if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
         self.keyword_suggestion_service = KeywordSuggestionService(self.config)
@@ -71,6 +70,7 @@ class ContentGeneratorService:
       list(Entry): A list of entries with content generated, ready to export.
     """
     logging.info(' Starting method generate_content')
+    self.gemini_helper = GeminiHelper(self.config, self.body_params['gemini_model'])
     self.first_term_source = first_term_source
     self.second_term_source = second_term_source
     self.must_find_relationship = must_find_relationship

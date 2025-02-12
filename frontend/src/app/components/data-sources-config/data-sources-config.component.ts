@@ -50,7 +50,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 
 export interface DataSourcesConfig {
   firstTermSourceConfig: any;
-  secondTermSourceConfig: any;
+  secondTermSourceConfig?: any;
 }
 
 // Custom integer validator function
@@ -239,7 +239,7 @@ export class DataSourcesConfigComponent {
           spreadsheetId: this.spreadsheetIdGoogleSheetsFirstTermFormControl.value,
           sheetName: this.sheetNameGoogleSheetsFirstTermFormControl.value,
           termColumn: this.termColumnGoogleSheetsFirstTermFormControl.value,
-          startingRow: this.startingRowGoogleSheetsFirstTermFormControl.value,
+          startingRow: Number(this.startingRowGoogleSheetsFirstTermFormControl.value),
           descriptionColumn: this.descriptionColumnGoogleSheetsFirstTermFormControl.value,
           skuColumn: this.skuColumnGoogleSheetsFirstTermFormControl.value,
           urlColumn: this.urlColumnGoogleSheetsFirstTermFormControl.value,
@@ -257,16 +257,19 @@ export class DataSourcesConfigComponent {
           limit: this.limitBigQueryFirstTermFormControl.value,
         },
         listOfTermsConfig: {
-          listOfTerms: this.listOfTermsFirstTermFormControl.value,
+          listOfTerms: this.listOfTermsFirstTermFormControl.value?.split(',')?.map(item => item.trim()).filter(item => item !== '') || [],
         }
-      },
-      secondTermSourceConfig: {
+      }
+    };
+
+    if (this.mustShowSecondTermConfig) {
+      config['secondTermSourceConfig'] = {
         type: this.secondTermSourceSelected.replace(' second term', ''),
         googleSheetsConfig: {
           spreadsheetId: this.spreadsheetIdGoogleSheetsSecondTermFormControl.value,
           sheetName: this.sheetNameGoogleSheetsSecondTermFormControl.value,
           termColumn: this.termColumnGoogleSheetsSecondTermFormControl.value,
-          startingRow: this.startingRowGoogleSheetsSecondTermFormControl.value,
+          startingRow: Number(this.startingRowGoogleSheetsSecondTermFormControl.value),
           descriptionColumn: this.descriptionColumnGoogleSheetsSecondTermFormControl.value,
         },
         bigQueryConfig: {
@@ -275,13 +278,13 @@ export class DataSourcesConfigComponent {
           table: this.tableBigQuerySecondTermFormControl.value,
           termColumn: this.termColumnBigQuerySecondTermFormControl.value,
           descriptionColumn: this.descriptionColumnBigQuerySecondTermFormControl.value,
-          limit: this.limitBigQuerySecondTermFormControl.value,
+          limit: Number(this.limitBigQuerySecondTermFormControl.value),
         },
         googleTrendsConfig: {
-          limit: this.limitGoogleTrendsSecondTermFormControl.value,
+          limit: Number(this.limitGoogleTrendsSecondTermFormControl.value) || 0,
         }
       }
-    };
+    }
 
     this.dataSourcesConfigEvent.emit(config);
 

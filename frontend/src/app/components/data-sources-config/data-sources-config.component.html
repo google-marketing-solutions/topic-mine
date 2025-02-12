@@ -23,7 +23,7 @@
           <button (click)="onFirstTermTabSelected('BigQuery first term');" class="nav-link" id="bigquery-first-term-tab" data-bs-toggle="tab" data-bs-target="#bigquery-first-term-tab-pane" type="button" role="tab" aria-controls="bigquery-first-term-tab-pane" aria-selected="false">BigQuery</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button disabled (click)="onFirstTermTabSelected('List of terms first term');" class="nav-link" id="list-of-terms-first-term-tab" data-bs-toggle="tab" data-bs-target="#list-of-terms-first-term-tab-pane" type="button" role="tab" aria-controls="list-of-terms-first-term-tab-pane" aria-selected="false">List of terms</button>
+          <button (click)="onFirstTermTabSelected('List of terms first term');" class="nav-link" id="list-of-terms-first-term-tab" data-bs-toggle="tab" data-bs-target="#list-of-terms-first-term-tab-pane" type="button" role="tab" aria-controls="list-of-terms-first-term-tab-pane" aria-selected="false">List of terms</button>
         </li>
       </ul>
     </div>
@@ -36,54 +36,54 @@
       <h5 class="pt-3">General</h5>
       <div class="row">
         <div class="col-5">
-          <label for="basic-url" class="form-label">Spreadsheet ID*</label>
+          <label for="spreadsheet-id-gs-ft-input" class="form-label">Spreadsheet ID*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="spreadsheetIdGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="spreadsheet-id-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col-5">
-          <label for="basic-url" class="form-label">Sheet name*</label>
+          <label for="sheet-name-gs-ft-input" class="form-label">Sheet name*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="sheetNameGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="sheet-name-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Starting row*</label>
+          <label for="starting-row-gs-ft-input" class="form-label">Starting row*</label>
           <div class="input-group">
-            <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="startingRowGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="startingRowGoogleSheetsFirstTermFormControl.value" type="number" class="form-control" id="starting-row-gs-ft-input" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="startingRowGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
       </div>
       <h5 class="pt-3">Columns</h5>
       <div class="row">
         <div class="col">
-          <label for="basic-url" class="form-label">Terms*</label>
+          <label for="term-column-gs-ft-input" class="form-label">Terms*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="termColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="termColumnGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="term-column-gs-ft-input" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="termColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Descriptions</label>
+          <label for="descriptoin-column-gs-ft-input" class="form-label">Descriptions</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="descriptionColumnGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="descriptoin-column-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">SKU</label>
+          <label for="sku-column-gs-ft-input" class="form-label">SKU</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="skuColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="skuColumnGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="sku-column-gs-ft-input" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="skuColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">URL</label>
+          <label for="url-column-gs-ft-input" class="form-label">URL</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="urlColumnGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="url-column-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Image URL</label>
+          <label for="image-url-column-gs-ft-input" class="form-label">Image URL</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="imageUrlColumnGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="image-url-column-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
       </div>
@@ -93,60 +93,60 @@
       <h5 class="pt-3">General</h5>
       <div class="row">
         <div class="col">
-          <label for="basic-url" class="form-label">Project ID*</label>
+          <label for="project-id-bq-ft-input" class="form-label">Project ID*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="projectIdBigQueryFirstTermFormControl.value" type="text" class="form-control" id="project-id-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Dataset*</label>
+          <label for="dataset-bq-ft-input" class="form-label">Dataset*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="datasetBigQueryFirstTermFormControl.value" type="text" class="form-control" id="dataset-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Table name*</label>
+          <label for="table-name-bq-ft-input" class="form-label">Table name*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="tableBigQueryFirstTermFormControl.value" type="text" class="form-control" id="table-name-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col-2">
-          <label for="basic-url" class="form-label">Limit</label>
+          <label for="limit-bq-ft-input" class="form-label">Limit</label>
           <div class="input-group">
-            <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="limitBigQueryFirstTermFormControl.value" type="number" class="form-control" id="limit-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
       </div>
       <h5 class="pt-3">Columns</h5>
       <div class="row">
         <div class="col">
-          <label for="basic-url" class="form-label">Term*</label>
+          <label for="term-column-bq-ft-input" class="form-label">Term*</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="termColumnBigQueryFirstTermFormControl.value" type="text" class="form-control" id="term-column-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Descriptions</label>
+          <label for="description-column-bq-ft-input" class="form-label">Descriptions</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="descriptionColumnBigQueryFirstTermFormControl.value" type="text" class="form-control" id="description-column-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">SKU</label>
+          <label for="sku-column-bq-ft-input" class="form-label">SKU</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="skuColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="skuColumnBigQueryFirstTermFormControl.value" type="text" class="form-control" id="sku-column-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="skuColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">URL</label>
+          <label for="url-column-bq-ft-input" class="form-label">URL</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="urlColumnBigQueryFirstTermFormControl.value" type="text" class="form-control" id="url-column-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="urlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
         <div class="col">
-          <label for="basic-url" class="form-label">Image URL</label>
+          <label for="image-url-column-bq-ft-input" class="form-label">Image URL</label>
           <div class="input-group">
-            <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
+            <input [value]="imageUrlColumnBigQueryFirstTermFormControl.value" type="text" class="form-control" id="image-url-column-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="imageUrlColumnBigQueryFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
       </div>
@@ -155,9 +155,9 @@
     <div class="tab-pane fade" id="list-of-terms-first-term-tab-pane" role="tabpanel" aria-labelledby="list-of-terms-first-term-tab" tabindex="0">
       <h5 class="pt-3">List of terms</h5>
       <div class="input-group">
-        <textarea type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="listOfTermsFirstTermFormControl" [errorStateMatcher]="matcher"></textarea>
+        <textarea [value]="listOfTermsFirstTermFormControl.value" type="text" class="form-control" id="list-of-terms-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="listOfTermsFirstTermFormControl" [errorStateMatcher]="matcher"></textarea>
       </div>
-      <div class="form-text" id="basic-addon4">Comma separated list of terms to use as input.</div>
+      <div class="form-text" id="list-of-terms-bq-ft-hint">Comma separated list of terms to use as input.</div>
     </div>
   </div>
 
@@ -173,7 +173,7 @@
             <button (click)="onSecondTermTabSelected('Google Sheets second term');" class="nav-link active" id="google-sheets-second-term-tab" data-bs-toggle="tab" data-bs-target="#google-sheets-second-term-tab-pane" type="button" role="tab" aria-controls="google-sheets-second-term-tab-pane" aria-selected="true">Google Sheets</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button disabled (click)="onSecondTermTabSelected('BigQuery second term');" class="nav-link" id="bigquery-second-term-tab" data-bs-toggle="tab" data-bs-target="#bigquery-second-term-tab-pane" type="button" role="tab" aria-controls="bigquery-second-term-tab-pane" aria-selected="false">BigQuery</button>
+            <button (click)="onSecondTermTabSelected('BigQuery second term');" class="nav-link" id="bigquery-second-term-tab" data-bs-toggle="tab" data-bs-target="#bigquery-second-term-tab-pane" type="button" role="tab" aria-controls="bigquery-second-term-tab-pane" aria-selected="false">BigQuery</button>
           </li>
           <li class="nav-item" role="presentation">
             <button (click)="onSecondTermTabSelected('Google Trends second term');" class="nav-link" id="google-trends-second-term-tab" data-bs-toggle="tab" data-bs-target="#google-trends-second-term-tab-pane" type="button" role="tab" aria-controls="google-trends-second-term-tab-pane" aria-selected="false">Google Trends</button>
@@ -189,36 +189,36 @@
         <h5 class="pt-3">General</h5>
         <div class="row">
           <div class="col-5">
-            <label for="basic-url" class="form-label">Spreadsheet ID*</label>
+            <label for="spreadsheet-id-gs-st-input" class="form-label">Spreadsheet ID*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="spreadsheetIdGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="spreadsheet-id-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col-5">
-            <label for="basic-url" class="form-label">Sheet name*</label>
+            <label for="sheet-name-gs-st-input" class="form-label">Sheet name*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="sheetNameGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="sheet-name-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col">
-            <label for="basic-url" class="form-label">Starting row*</label>
+            <label for="starting-row-gs-st-input" class="form-label">Starting row*</label>
             <div class="input-group">
-              <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="startingRowGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="startingRowGoogleSheetsSecondTermFormControl.value" type="number" class="form-control" id="starting-row-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="startingRowGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
         </div>
         <h5 class="pt-3">Columns</h5>
         <div class="row">
           <div class="col">
-            <label for="basic-url" class="form-label">Terms*</label>
+            <label for="term-column-gs-st-input" class="form-label">Terms*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="termColumnGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="term-column-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col">
-            <label for="basic-url" class="form-label">Descriptions</label>
+            <label for="description-column-gs-st-input" class="form-label">Descriptions</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="descriptionColumnGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="description-column-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
         </div>
@@ -228,42 +228,42 @@
         <h5 class="pt-3">General</h5>
         <div class="row">
           <div class="col">
-            <label for="basic-url" class="form-label">Project ID*</label>
+            <label for="project-id-bq-st-input" class="form-label">Project ID*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="projectIdBigQuerySecondTermFormControl.value" type="text" class="form-control" id="project-id-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="projectIdBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col">
-            <label for="basic-url" class="form-label">Dataset*</label>
+            <label for="dataset-bq-st-input" class="form-label">Dataset*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="datasetBigQuerySecondTermFormControl.value" type="text" class="form-control" id="dataset-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="datasetBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col">
-            <label for="basic-url" class="form-label">Table name*</label>
+            <label for="table-name-bq-st-input" class="form-label">Table name*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="tableBigQuerySecondTermFormControl.value" type="text" class="form-control" id="table-name-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="tableBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col-2">
-            <label for="basic-url" class="form-label">Limit</label>
+            <label for="limit-bq-st-input" class="form-label">Limit</label>
             <div class="input-group">
-              <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="limitBigQuerySecondTermFormControl.value" type="number" class="form-control" id="limit-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
         </div>
         <h5 class="pt-3">Columns</h5>
         <div class="row">
           <div class="col">
-            <label for="basic-url" class="form-label">Term*</label>
+            <label for="term-column-bq-st-input" class="form-label">Term*</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="termColumnBigQuerySecondTermFormControl.value" type="text" class="form-control" id="term-column-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="termColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
           <div class="col">
-            <label for="basic-url" class="form-label">Descriptions</label>
+            <label for="description-column-bq-st-input" class="form-label">Descriptions</label>
             <div class="input-group">
-              <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
+              <input [value]="descriptionColumnBigQuerySecondTermFormControl.value" type="text" class="form-control" id="description-column-bq-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="descriptionColumnBigQuerySecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
         </div>
@@ -272,9 +272,9 @@
       <div class="tab-pane fade" id="google-trends-second-term-tab-pane" role="tabpanel" aria-labelledby="google-trends-second-term-tab" tabindex="0">
         <h5 class="pt-3">Google Trends</h5>
         <div class="input-group">
-          <input type="number" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitGoogleTrendsSecondTermFormControl" [errorStateMatcher]="matcher">
+          <input [value]="limitGoogleTrendsSecondTermFormControl.value" type="number" class="form-control" id="list-of-terms-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitGoogleTrendsSecondTermFormControl" [errorStateMatcher]="matcher">
         </div>
-        <div class="form-text" id="basic-addon4">Number of trends to retrieve. Empty = no limit.</div>
+        <div class="form-text" id="list-of-terms-st-hint">Number of trends to retrieve. Empty = no limit.</div>
       </div>
     </div>
   }

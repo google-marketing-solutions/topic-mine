@@ -23,6 +23,7 @@ from typing import Any
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask_cors import CORS
 from output_writers.acs_feed_destination import ACSFeedDestination
 from output_writers.dv360_feed_destination import DV360FeedDestination
 from output_writers.sa360_feed_destination import SA360FeedDestination
@@ -34,6 +35,7 @@ from utils.enums import SecondTermSource
 from utils.utils import Utils
 
 app = Flask(__name__)
+CORS(app)
 
 # Logger config
 logging.basicConfig()
@@ -65,6 +67,16 @@ def get_task_status(tid):
   return jsonify(tasks[tid]), 200
 
 
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+  """Get all tasks' status.
+
+  Returns:
+    A JSON response with the status.
+  """
+  return jsonify(tasks), 200
+
+
 @app.route('/content', methods=['POST'])
 def start_task():
   """App's entry point.
@@ -80,8 +92,8 @@ def start_task():
   global task_id
 
   try:
-    if task_id in tasks and tasks[task_id]['status'] == 'running':
-      return jsonify({'error': 'Task already running'}), 409
+    # if task_id in tasks and tasks[task_id]['status'] == 'running':
+    #   return jsonify({'error': 'Task already running'}), 409
 
     destination = __get_destination(request)
     first_term_source = __get_first_term_source(request)
@@ -122,7 +134,7 @@ def start_task():
 
 
 def __generate_and_export_content(
-    tid: int,
+    task_id: int,
     first_term_source: FirstTermSource,
     second_term_source: SecondTermSource | None,
     must_find_relationship: bool,
@@ -132,7 +144,7 @@ def __generate_and_export_content(
   """Generates and exports content.
 
   Args:
-    tid(int): New task id.
+    task_id(int): New task id.
     first_term_source(FirstTermSource): The first term source.
     second_term_source(SecondTermSource): The second term source.
     must_find_relationship(bool): Whether to find a relationship.
@@ -149,10 +161,10 @@ def __generate_and_export_content(
 
     __export_entries(entries, destination, body_params)
 
-    tasks[tid] = {'status': 'completed', 'result': 'ok'}
+    tasks[task_id] = {'status': 'completed', 'result': 'ok'}
   except Exception as e:
     logging.error(' %s', str(e))
-    tasks[tid] = {'status': 'failed 500', 'result': str(e)}
+    tasks[task_id] = {'status': 'failed 500', 'result': str(e)}
 
 
 def __get_destination(r) -> Destination:
@@ -213,7 +225,7 @@ def __get_first_term_source(r) -> FirstTermSource:
   elif first_term_source == 'list_of_terms':
     first_term_source = FirstTermSource.LIST_OF_TERMS
   else:
-    raise ValueError('Invalid first-term-source query param.')
+    raise ValueError(f'Invalid first-term-source query param. Current value: {first_term_source}')
 
   return first_term_source
 

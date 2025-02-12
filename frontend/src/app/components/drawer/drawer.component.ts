@@ -34,6 +34,8 @@ import { ContentTypeConfig } from '../content-type-selection/content-type-select
 import { DestinationConfig } from '../destinations-config/destinations-config.component';
 import { DataSourcesConfig } from '../data-sources-config/data-sources-config.component';
 import { ContentGenerationConfig } from '../content-generation-config/content-generation-config.component'
+import { HttpClient } from '@angular/common/http'; // Import HttpClient
+import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
 
 @Component({
   selector: 'app-drawer',
@@ -48,11 +50,15 @@ import { ContentGenerationConfig } from '../content-generation-config/content-ge
     DestinationsConfigComponent,
     ContentGenerationConfigComponent,
     ExecutionStartedComponent,
+    HttpClientModule
   ],
   templateUrl: './drawer.component.html',
   styleUrl: './drawer.component.css',
 })
 export class DrawerComponent {
+  // constructor(private requestService: RequestService) { } // Inject the service
+  constructor(private http: HttpClient) { }
+
   @ViewChild('stepper') stepper!: MatStepper;
 
   isNextButtonCTSDisabled: boolean = true;
@@ -143,33 +149,28 @@ export class DrawerComponent {
     this.generateBodyParams();
 
     console.log('QUERY PATH: ' + this.path)
-    console.log('BODY PARAMS: ' + this.body)
+    console.log('BODY PARAMS: ' + JSON.stringify(this.body, null, 2));
 
-    // TODO: SEND REQUEST
-
-    setTimeout(() => {
-      const success = Math.random() < 0.1; // 80% success rate for demo
-
-      if (success) {
+    this.http.post('http://127.0.0.1:8080' + this.path, this.body).subscribe({
+      next: (response) => {
+        // Handle success
+        console.log('Success:', response);
         this.isSendingRequest = false;
         this.nextView();
-      } else {
+      },
+      error: (error) => {
+        // Handle errors
+        console.error('Error:', error);
         this.isSendingRequest = false;
         this.requestFailed = true;
+        // Display an error message to the user
       }
-
-    }, 3000);
+    });
   }
 
   generateQueryPath() {
-    console.log('CONTENT TYPE SELECTION CONFIG')
-    console.log(this.contentTypeSelectionConfig)
-    console.log('DATA SOURCES CONFIG')
-    console.log(this.dataSourcesConfig)
-    console.log('DESTINATION CONFIG')
-    console.log(this.destinationConfig)
-    console.log('CONTENT GENERATION CONFIG')
-    console.log(this.contentGenerationConfig)
+    this.path = ''
+
     if (this.destinationConfig!.outputFormat === 'Google Ads') {
       // TODO: check if format is the same for GA and SA360
       this.path += '/content?destination=sa360feed';
@@ -204,6 +205,8 @@ export class DrawerComponent {
   }
 
   generateBodyParams() {
+    this.body = {}
+
     this.body['num_headlines'] = this.contentGenerationConfig!.numberOfHeadlines;
     this.body['num_descriptions'] = this.contentGenerationConfig!.numberOfDescriptions;
 
@@ -243,32 +246,34 @@ export class DrawerComponent {
       }
     }
 
-    if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Sheets') {
-      this.body['second_term_source_config'] = {
-        // Mandatory
-        'spreadsheet_id': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.spreadsheetId,
-        'sheet_name': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.sheetName,
-        'starting_row': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.startingRow,
-        'term_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.termColumn,
+    if (this.contentTypeSelectionConfig!.numberOfTerms === 2) {
+      if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Sheets') {
+        this.body['second_term_source_config'] = {
+          // Mandatory
+          'spreadsheet_id': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.spreadsheetId,
+          'sheet_name': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.sheetName,
+          'starting_row': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.startingRow,
+          'term_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.termColumn,
 
-        // Optional
-        'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.descriptionColumn
-      }
-    } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'BigQuery') {
-      this.body['second_term_source_config'] = {
-        // Mandatory
-        'project_id': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.projectId,
-        'dataset': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.dataset,
-        'table': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.table,
-        'term_column': this.dataSourcesConfig!.secondTermSourceConfig.termColumn,
+          // Optional
+          'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.descriptionColumn
+        }
+      } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'BigQuery') {
+        this.body['second_term_source_config'] = {
+          // Mandatory
+          'project_id': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.projectId,
+          'dataset': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.dataset,
+          'table': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.table,
+          'term_column': this.dataSourcesConfig!.secondTermSourceConfig.termColumn,
 
-        // Optional
-        'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.descriptionColumn,
-        'limit': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.limit ?? 0,
-      }
-    } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Trends') {
-      this.body['second_term_source_config'] = {
-        'limit':this.dataSourcesConfig!.secondTermSourceConfig.googleTrendsConfig.limit
+          // Optional
+          'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.descriptionColumn,
+          'limit': this.dataSourcesConfig!.secondTermSourceConfig.bigQueryConfig.limit ?? 0,
+        }
+      } else if (this.dataSourcesConfig!.secondTermSourceConfig.type === 'Google Trends') {
+        this.body['second_term_source_config'] = {
+          'limit':this.dataSourcesConfig!.secondTermSourceConfig.googleTrendsConfig.limit
+        }
       }
     }
 
