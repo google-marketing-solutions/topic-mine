@@ -23,7 +23,6 @@ import vertexai
 
 import dirtyjson
 import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from prompts.prompts import prompts
 from vertexai.generative_models import GenerativeModel, SafetySetting
 

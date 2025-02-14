@@ -678,7 +678,7 @@ class ContentGeneratorService:
     if not keywords:
       prompt = (
         prompts[self.config["language"]]["KEYWORDS_GENERATION"]
-        .replace("{term}", term)
+        .format(term=term)
       )
       keywords = self.gemini_helper.generate_text_list(prompt)
 
@@ -686,19 +686,19 @@ class ContentGeneratorService:
 
   def __check_blocklists(
       self,
-      t: str,
+      type: str,
       copies: list[str]
       ) -> list[str]:
     """Check copies and remove them if they contain blocklisted terms or regexes.
 
     Args:
-      t (str): The type of copies (headlines|descriptions).
+      type (str): The type of copies (headlines|descriptions).
       copies (list[str]): A list of copies.
 
     Returns:
       list(str): A list of copies that are not blocklisted.
     """
-    if t == 'headlines':
+    if type == 'headlines':
       try:
         for term in self.body_params['headlines_blocklist']:
           i = 0
@@ -721,7 +721,7 @@ class ContentGeneratorService:
               i = i + 1
       except KeyError as _:
         pass
-    elif t == 'descriptions':
+    elif type == 'descriptions':
       try:
         for term in self.body_params['descriptions_blocklist']:
           i = 0
