@@ -288,25 +288,50 @@ class ContentGeneratorService:
       associative terms and a list of associative terms descriptions.
     """
     logging.info(' Getting associative terms and descriptions from gt')
-    query = f"""
-            SELECT
-                term, ARRAY_AGG(STRUCT(rank,week,country_name,country_code,score,refresh_date) ORDER BY week DESC LIMIT 1) x
+
+    limit = ""
+    if self.body_params['second_term_source_config']['limit'] < 9999:
+      limit = f"LIMIT {self.body_params['second_term_source_config']['limit']}"
+
+    if self.config["country"] == "United States":
+      query = f"""
+        SELECT
+          term, ARRAY_AGG(STRUCT(rank,week,score,refresh_date) ORDER BY week DESC LIMIT 1) term_info
+        FROM
+          `bigquery-public-data.google_trends.top_terms`
+        WHERE
+          refresh_date =
+            (SELECT
+              MAX(refresh_date)
             FROM
-                `bigquery-public-data.google_trends.international_top_terms`
-            WHERE
-                refresh_date =
-                    (SELECT
-                        MAX(refresh_date)
-                    FROM
-                    `bigquery-public-data.google_trends.international_top_terms`
-                    )
-                AND country_name = '{self.config['country']}'
-            GROUP BY
-                term
-            ORDER BY
-                (SELECT rank FROM UNNEST(x))
-            LIMIT {self.body_params['second_term_source_config']['limit']}
-            """
+              `bigquery-public-data.google_trends.top_terms`
+            )
+        GROUP BY
+          term
+        ORDER BY
+          (SELECT rank FROM UNNEST(term_info))
+        {limit}
+      """
+    else:
+      query = f"""
+              SELECT
+                  term, ARRAY_AGG(STRUCT(rank,week,country_name,country_code,score,refresh_date) ORDER BY week DESC LIMIT 1) x
+              FROM
+                  `bigquery-public-data.google_trends.international_top_terms`
+              WHERE
+                  refresh_date =
+                      (SELECT
+                          MAX(refresh_date)
+                      FROM
+                      `bigquery-public-data.google_trends.international_top_terms`
+                      )
+                  AND country_name = '{self.config['country']}'
+              GROUP BY
+                  term
+              ORDER BY
+                  (SELECT rank FROM UNNEST(x))
+              {limit}
+              """
     top_terms = {}
 
     result = self.bigquery_helper.run_query(query)
@@ -625,7 +650,7 @@ class ContentGeneratorService:
       logging.info(' Descriptions: %s', descriptions)
 
     logging.info(' Generating keywords for term %s', entry.term)
-    keywords = self.__get_keywords([entry.term])
+    keywords = self.__get_keywords(entry.term)
     logging.info(' Keywords: %s', keywords)
 
     if 'generate_paths' in self.body_params and self.body_params['generate_paths']:
@@ -638,46 +663,44 @@ class ContentGeneratorService:
     entry.keywords = keywords
     entry.paths = paths
 
-  def __get_keywords(self, term: list[str]) -> list[str]:
+  def __get_keywords(self, term: str) -> list[str]:
     """Gets keywords for a given term.
 
     Args:
-      term (list[str]): The term to get keywords for.
+      term (str): The term to get keywords for.
     Returns:
       list[str]: A list of keywords.
     """
     keywords = []
     if 'google_ads_developer_token' in self.config and 'login_customer_id' in self.config:
-      keywords = self.keyword_suggestion_service.get_keywords(term)
+      keywords = self.keyword_suggestion_service.get_keywords([term])
 
     if not keywords:
-      prompt = f"""
-                Dado el término '{term}', dame una lista de hasta 10 keywords para Google ads que pueda usar relacionadas con el término.
-                Dame el resultado de la siguiente forma:
-                ["Característica 1", "Característica 2", ..., "Característica N"]
-                La respuesta debes darmela exactamente en el formato que te he pasado, sin agregar saltos de linea ni espacios innecesarios. Solo debe ser una lista de keywords separados por comas, todo entre corchetes y nada mas.
-                """
+      prompt = (
+        prompts[self.config["language"]]["KEYWORDS_GENERATION"]
+        .format(term=term)
+      )
       keywords = self.gemini_helper.generate_text_list(prompt)
 
     return keywords
 
-  def __check_blacklists(
+  def __check_blocklists(
       self,
-      t: str,
+      type: str,
       copies: list[str]
       ) -> list[str]:
-    """Check copies and remove them if they contain blacklisted terms or regexes.
+    """Check copies and remove them if they contain blocklisted terms or regexes.
 
     Args:
-      t (str): The type of copies (headlines|descriptions).
+      type (str): The type of copies (headlines|descriptions).
       copies (list[str]): A list of copies.
 
     Returns:
-      list(str): A list of copies that are not blacklisted.
+      list(str): A list of copies that are not blocklisted.
     """
-    if t == 'headlines':
+    if type == 'headlines':
       try:
-        for term in self.body_params['headlines_blacklist']:
+        for term in self.body_params['headlines_blocklist']:
           i = 0
           while i < len(copies):
             if term.lower() in copies[i].lower():
@@ -688,7 +711,7 @@ class ContentGeneratorService:
         pass
 
       try:
-        for regexp in self.body_params['headlines_regexp_blacklist']:
+        for regexp in self.body_params['headlines_regexp_blocklist']:
           pattern = re.compile(regexp)
           i = 0
           while i < len(copies):
@@ -698,9 +721,9 @@ class ContentGeneratorService:
               i = i + 1
       except KeyError as _:
         pass
-    elif t == 'descriptions':
+    elif type == 'descriptions':
       try:
-        for term in self.body_params['descriptions_blacklist']:
+        for term in self.body_params['descriptions_blocklist']:
           i = 0
           while i < len(copies):
             if term.lower() in copies[i].lower():
@@ -711,7 +734,7 @@ class ContentGeneratorService:
         pass
 
       try:
-        for regexp in self.body_params['descriptions_regexp_blacklist']:
+        for regexp in self.body_params['descriptions_regexp_blocklist']:
           pattern = re.compile(regexp)
           i = 0
           while i < len(copies):
@@ -833,8 +856,8 @@ class ContentGeneratorService:
 
       i = i + 1
 
-    # Remove copies that are blacklisted
-    generated_copies_with_size_enforced = self.__check_blacklists(
+    # Remove copies that are blocklisted
+    generated_copies_with_size_enforced = self.__check_blocklists(
         t,
         generated_copies_with_size_enforced
         )
@@ -889,13 +912,10 @@ class ContentGeneratorService:
     with alive_bar(len(descriptions)) as feature_extraction_progress_bar:
       main_features_for_all_descriptions = []
       for description in descriptions:
-        prompt = f"""
-                Dada la siguiente descripcion de producto:
-                "{description}"
-                Dame una lista breve de las caracteristicas principales.
-                Dame el resultado en el siguiente formato:
-                "Característica 1", "Característica 2", ..., "Característica N"
-              """
+        prompt = (
+          prompts[self.config["language"]]["EXTRACT_MAIN_FEATURES"]
+          .replace("{description}", description)
+        )
         try:
           main_features = self.gemini_helper.run_prompt(
               prompt

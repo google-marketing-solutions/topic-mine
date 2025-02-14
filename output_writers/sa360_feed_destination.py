@@ -34,8 +34,8 @@ FEED_HEADERS = [
     'Relationship',
     'Reason',
     'SKU',
-    'Keywords',
     'Test URL',
+    'Keywords',
     'Headline 1',
     'Headline 2',
     'Headline 3',
@@ -620,8 +620,8 @@ class SA360FeedDestination(Destination):
         feed_row.relationship,
         feed_row.reason,
         feed_row.sku,
-        'kw',
         feed_row.url,
+        ",".join(feed_row.keywords)
     ]
     for i in range(0, 15):
       if i < len(feed_row.headlines):
