@@ -20,9 +20,7 @@ import logging
 import re
 import time
 import vertexai
-
 import dirtyjson
-import google.generativeai as genai
 from prompts.prompts import prompts
 from vertexai.generative_models import GenerativeModel, SafetySetting
 
@@ -69,19 +67,14 @@ class GeminiHelper:
 
     if 'gemini_model' in config and config["gemini_model"]:
       model_name = config['gemini_model']
-      models = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
+      models = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro', 'gemini-2.0-flash']
       if model_name not in models:
         model_name = 'gemini-1.5-flash'
     else:
       model_name = 'gemini-1.5-flash'
 
-    if 'gemini_api_key' in config and config["gemini_api_key"]:
-      key = config['gemini_api_key']
-      genai.configure(api_key=key)
-      self.model = genai.GenerativeModel(model_name)
-    else:
-      vertexai.init(project=config['project_id'], location='us-central1')
-      self.model = GenerativeModel(model_name)
+    vertexai.init(project=config['project_id'], location='us-central1')
+    self.model = GenerativeModel(model_name)
 
   def generate_dict(self, prompt: str) -> dict:
     """Makes a request to Gemini and returns a dict.
