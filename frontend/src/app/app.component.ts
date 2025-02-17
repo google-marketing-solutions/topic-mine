@@ -23,8 +23,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { DrawerComponent } from './components/drawer/drawer.component';
+import { RouterModule } from '@angular/router'; // Import RouterModule
 
 @Component({
   selector: 'app-root',
@@ -32,8 +31,7 @@ import { DrawerComponent } from './components/drawer/drawer.component';
     RouterOutlet,
     MatButtonModule,
     MatIconModule,
-    NavbarComponent,
-    DrawerComponent,
+    RouterModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

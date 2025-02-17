@@ -1,0 +1,7 @@
+.settings-container {
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding-inline: 20%;
+  padding-top: 48px;
+}

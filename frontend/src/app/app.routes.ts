@@ -20,5 +20,14 @@
 ***************************************************************************/
 
 import { Routes } from '@angular/router';
+import { HistoryComponent } from './components/history/history.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { DrawerComponent } from './components/drawer/drawer.component';
 
-export const routes: Routes = [];
+
+export const routes: Routes = [
+  { path: 'home', component: DrawerComponent },
+  { path: 'history', component: HistoryComponent },
+  { path: 'settings', component: SettingsComponent },
+  { path: '', redirectTo: '/home', pathMatch: 'full' }
+];

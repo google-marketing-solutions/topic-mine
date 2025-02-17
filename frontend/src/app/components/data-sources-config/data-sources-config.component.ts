@@ -86,6 +86,7 @@ export class DataSourcesConfigComponent {
   sheetNameGoogleSheetsFirstTermFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   termColumnGoogleSheetsFirstTermFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   startingRowGoogleSheetsFirstTermFormControl = new FormControl('', [Validators.required, Validators.min(1), integerValidator()]);
+  limitGoogleSheetsFirstTermFormControl = new FormControl('', [Validators.required, Validators.min(1), integerValidator()]);
   // Optional Google Sheets first term fields
   descriptionColumnGoogleSheetsFirstTermFormControl = new FormControl('', []);
   skuColumnGoogleSheetsFirstTermFormControl = new FormControl('', []);
@@ -114,6 +115,7 @@ export class DataSourcesConfigComponent {
   sheetNameGoogleSheetsSecondTermFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   termColumnGoogleSheetsSecondTermFormControl = new FormControl('', [Validators.required, Validators.nullValidator]);
   startingRowGoogleSheetsSecondTermFormControl = new FormControl('', [Validators.required, Validators.min(1), integerValidator()]);
+  limitGoogleSheetsSecondTermFormControl = new FormControl('', [Validators.required, Validators.min(1), integerValidator()]);
   // Optional Google Sheets second term fields
   descriptionColumnGoogleSheetsSecondTermFormControl = new FormControl('', []);
 
@@ -144,6 +146,7 @@ export class DataSourcesConfigComponent {
     this.sheetNameGoogleSheetsFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.termColumnGoogleSheetsFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.startingRowGoogleSheetsFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
+    this.limitGoogleSheetsFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     // FIRST TERM, BIG QUERY
     this.projectIdBigQueryFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.datasetBigQueryFirstTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
@@ -156,6 +159,7 @@ export class DataSourcesConfigComponent {
     this.sheetNameGoogleSheetsSecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.termColumnGoogleSheetsSecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.startingRowGoogleSheetsSecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
+    this.limitGoogleSheetsSecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     // SECOND TERM, BIG QUERY
     this.projectIdBigQuerySecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
     this.datasetBigQuerySecondTermFormControl.valueChanges.subscribe(() => this.updateNextButtonState());
@@ -179,7 +183,8 @@ export class DataSourcesConfigComponent {
         this.spreadsheetIdGoogleSheetsFirstTermFormControl.valid &&
         this.sheetNameGoogleSheetsFirstTermFormControl.valid &&
         this.termColumnGoogleSheetsFirstTermFormControl.valid &&
-        this.startingRowGoogleSheetsFirstTermFormControl.valid
+        this.startingRowGoogleSheetsFirstTermFormControl.valid &&
+        this.limitGoogleSheetsFirstTermFormControl.valid
       ) || (
         this.firstTermSourceSelected === 'BigQuery first term' &&
         this.projectIdBigQueryFirstTermFormControl.valid &&
@@ -201,7 +206,8 @@ export class DataSourcesConfigComponent {
         this.spreadsheetIdGoogleSheetsSecondTermFormControl.valid &&
         this.sheetNameGoogleSheetsSecondTermFormControl.valid &&
         this.termColumnGoogleSheetsSecondTermFormControl.valid &&
-        this.startingRowGoogleSheetsSecondTermFormControl.valid
+        this.startingRowGoogleSheetsSecondTermFormControl.valid &&
+        this.limitGoogleSheetsSecondTermFormControl.valid
       ) || (
         this.secondTermSourceSelected === 'BigQuery second term' &&
         this.mustShowSecondTermConfig === true &&
@@ -240,6 +246,7 @@ export class DataSourcesConfigComponent {
           sheetName: this.sheetNameGoogleSheetsFirstTermFormControl.value,
           termColumn: this.termColumnGoogleSheetsFirstTermFormControl.value,
           startingRow: Number(this.startingRowGoogleSheetsFirstTermFormControl.value),
+          limit: Number(this.limitGoogleSheetsFirstTermFormControl.value),
           descriptionColumn: this.descriptionColumnGoogleSheetsFirstTermFormControl.value,
           skuColumn: this.skuColumnGoogleSheetsFirstTermFormControl.value,
           urlColumn: this.urlColumnGoogleSheetsFirstTermFormControl.value,
@@ -271,6 +278,7 @@ export class DataSourcesConfigComponent {
           termColumn: this.termColumnGoogleSheetsSecondTermFormControl.value,
           startingRow: Number(this.startingRowGoogleSheetsSecondTermFormControl.value),
           descriptionColumn: this.descriptionColumnGoogleSheetsSecondTermFormControl.value,
+          limit: Number(this.limitGoogleSheetsSecondTermFormControl.value),
         },
         bigQueryConfig: {
           projectId: this.projectIdBigQuerySecondTermFormControl.value,

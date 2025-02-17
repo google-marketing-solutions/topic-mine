@@ -36,6 +36,7 @@ import { DataSourcesConfig } from '../data-sources-config/data-sources-config.co
 import { ContentGenerationConfig } from '../content-generation-config/content-generation-config.component'
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
 import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
+import { GlobalService } from '../../services/global.service';
 
 @Component({
   selector: 'app-drawer',
@@ -57,7 +58,7 @@ import { HttpClientModule } from '@angular/common/http'; // Import HttpClientMod
 })
 export class DrawerComponent {
   // constructor(private requestService: RequestService) { } // Inject the service
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, public globalService: GlobalService) { }
 
   @ViewChild('stepper') stepper!: MatStepper;
 
@@ -83,7 +84,6 @@ export class DrawerComponent {
 
   previousView() {
     if (this.currentView === 'content-type-selection') {
-      console.log('GO BACK HOME'); // TODO: GO BACK HOME
       this.stepper.selectedIndex = 0;
     } else if (this.currentView === 'data-sources-config') {
       this.currentView = 'content-type-selection';
@@ -148,10 +148,11 @@ export class DrawerComponent {
     this.generateQueryPath();
     this.generateBodyParams();
 
+    console.log('BASE URL: ' + this.globalService.baseUrl)
     console.log('QUERY PATH: ' + this.path)
     console.log('BODY PARAMS: ' + JSON.stringify(this.body, null, 2));
 
-    this.http.post('http://127.0.0.1:8080' + this.path, this.body).subscribe({
+    this.http.post(this.globalService.baseUrl + this.path, this.body).subscribe({
       next: (response) => {
         // Handle success
         console.log('Success:', response);
@@ -217,6 +218,7 @@ export class DrawerComponent {
         'sheet_name': this.dataSourcesConfig!.firstTermSourceConfig.googleSheetsConfig.sheetName,
         'starting_row': this.dataSourcesConfig!.firstTermSourceConfig.googleSheetsConfig.startingRow,
         'term_column': this.dataSourcesConfig!.firstTermSourceConfig.googleSheetsConfig.termColumn,
+        'limit': this.dataSourcesConfig!.firstTermSourceConfig.googleSheetsConfig.limit,
 
         // Optional
         'term_description_column': this.dataSourcesConfig!.firstTermSourceConfig.googleSheetsConfig.descriptionColumn,
@@ -254,6 +256,7 @@ export class DrawerComponent {
           'sheet_name': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.sheetName,
           'starting_row': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.startingRow,
           'term_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.termColumn,
+          'limit': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.limit,
 
           // Optional
           'term_description_column': this.dataSourcesConfig!.secondTermSourceConfig.googleSheetsConfig.descriptionColumn

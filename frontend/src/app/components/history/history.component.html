@@ -1,0 +1,18 @@
+<div class="history-container">
+  <h1>History</h1>
+
+  <div class="list-group mt-3 overflow-auto" style="max-height: 70vh;">
+    @for (entry of history; track entry) {
+      <a class="list-group-item list-group-item-action mb-3" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{entry.title}}</h5>
+          <small>{{entry.date}}</small>
+        </div>
+        <div class="d-flex w-100 justify-content-between">
+          <p class="mb-1">{{entry.details}}</p>
+          <small>{{entry.status}}</small>
+        </div>
+      </a>
+    }
+  </div>
+</div>

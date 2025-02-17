@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 export interface ContentTypeConfig {
-  url: string;
   numberOfTerms: number;
   mustFindRelationship: boolean | null;
 }
@@ -19,27 +18,16 @@ export interface ContentTypeConfig {
   styleUrl: './content-type-selection.component.css',
 })
 export class ContentTypeSelectionComponent {
-  title = 'Content Type Selection';
-  inputTerm: string = ''; // Property to hold the user input
   @Output() contentTypeSelectionEvent = new EventEmitter<ContentTypeConfig>();
-  errorMessage: string = ''; // Property to hold error messages
+  errorMessage: string = '';
 
-  // Function to handle term logic
   private handleTerm(numberOfTerms: string, mustFindRelationship: boolean | null) {
-    // Validate URL
-    // if (!this.isValidUrl(this.inputTerm)) {
-    //   this.errorMessage = 'Please enter a valid URL.';
-    //   return; // Exit if URL is invalid
-    // }
 
-    // Prepare return object
     const returnObject: ContentTypeConfig = {
-      url: this.inputTerm,
       numberOfTerms: parseInt(numberOfTerms),
       mustFindRelationship: mustFindRelationship,
     };
 
-    // Clear error message and emit event
     this.errorMessage = '';
     this.contentTypeSelectionEvent.emit(returnObject);
   }
@@ -54,21 +42,5 @@ export class ContentTypeSelectionComponent {
 
   twoInputTermForceRelationship() {
     this.handleTerm("2", true); // Must find relationship is true
-  }
-
-  // Helper function to validate URL
-  private isValidUrl(url: string): boolean {
-    const urlPattern = new RegExp(
-      '^(https?:\\/\\/)?' + // Protocol
-      '((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|' + // Domain name
-      'localhost|' + // Localhost
-      '\\d{1,3}(\\.\\d{1,3}){3})' + // OR IP (v4)
-      '(\\:\\d+)?' + // Port
-      '(\\/[-a-zA-Z0-9@:%._\\+~#=]*)*' + // Path
-      '(\\?[;&a-zA-Z0-9@:%._\\+~#=]*)?' + // Query string
-      '(\\#[-a-zA-Z0-9@:%._\\+~#=]*)?$', // Fragment locator
-      'i'
-    );
-    return urlPattern.test(url);
   }
 }

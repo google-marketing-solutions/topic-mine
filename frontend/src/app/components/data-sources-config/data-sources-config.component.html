@@ -35,22 +35,28 @@
     <div class="tab-pane fade show active row" id="google-sheets-first-term-tab-pane" role="tabpanel" aria-labelledby="google-sheets-first-term-tab" tabindex="0">
       <h5 class="pt-3">General</h5>
       <div class="row">
-        <div class="col-5">
+        <div class="col-4">
           <label for="spreadsheet-id-gs-ft-input" class="form-label">Spreadsheet ID*</label>
           <div class="input-group">
             <input [value]="spreadsheetIdGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="spreadsheet-id-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
-        <div class="col-5">
+        <div class="col-4">
           <label for="sheet-name-gs-ft-input" class="form-label">Sheet name*</label>
           <div class="input-group">
             <input [value]="sheetNameGoogleSheetsFirstTermFormControl.value" type="text" class="form-control" id="sheet-name-gs-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
-        <div class="col">
+        <div class="col-2">
           <label for="starting-row-gs-ft-input" class="form-label">Starting row*</label>
           <div class="input-group">
             <input [value]="startingRowGoogleSheetsFirstTermFormControl.value" type="number" class="form-control" id="starting-row-gs-ft-input" aria-describedby="basic-addon3 basic-addon4"  matInput [formControl]="startingRowGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
+          </div>
+        </div>
+        <div class="col-2">
+          <label for="limit-gs-ft-input" class="form-label">Limit*</label>
+          <div class="input-group">
+            <input [value]="limitGoogleSheetsFirstTermFormControl.value" type="number" class="form-control" id="limit-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitGoogleSheetsFirstTermFormControl" [errorStateMatcher]="matcher">
           </div>
         </div>
       </div>
@@ -188,22 +194,28 @@
       <div class="tab-pane fade show active row" id="google-sheets-second-term-tab-pane" role="tabpanel" aria-labelledby="google-sheets-second-term-tab" tabindex="0">
         <h5 class="pt-3">General</h5>
         <div class="row">
-          <div class="col-5">
+          <div class="col-4">
             <label for="spreadsheet-id-gs-st-input" class="form-label">Spreadsheet ID*</label>
             <div class="input-group">
               <input [value]="spreadsheetIdGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="spreadsheet-id-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="spreadsheetIdGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
-          <div class="col-5">
+          <div class="col-4">
             <label for="sheet-name-gs-st-input" class="form-label">Sheet name*</label>
             <div class="input-group">
               <input [value]="sheetNameGoogleSheetsSecondTermFormControl.value" type="text" class="form-control" id="sheet-name-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="sheetNameGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
-          <div class="col">
+          <div class="col-2">
             <label for="starting-row-gs-st-input" class="form-label">Starting row*</label>
             <div class="input-group">
               <input [value]="startingRowGoogleSheetsSecondTermFormControl.value" type="number" class="form-control" id="starting-row-gs-st-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="startingRowGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
+            </div>
+          </div>
+          <div class="col-2">
+            <label for="limit-gs-st-input" class="form-label">Limit*</label>
+            <div class="input-group">
+              <input [value]="limitGoogleSheetsSecondTermFormControl.value" type="number" class="form-control" id="limit-bq-ft-input" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="limitGoogleSheetsSecondTermFormControl" [errorStateMatcher]="matcher">
             </div>
           </div>
         </div>

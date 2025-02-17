@@ -21,8 +21,8 @@
 
 mat-drawer-container {
   width: 100%;
-  margin-top: 96px;
-  height: calc(100vh - 96px);
+  /* TODO: IS THERE A BETTER WAY TO DO THIS? */
+  height: calc(100vh - 68px);
 }
 
 .sidenav-content {
@@ -40,7 +40,7 @@ mat-drawer-container {
 .components-container {
   padding-left: 32px;
   padding-right: 32px;
-  padding-top: 12px;
+  padding-top: 48px;
   padding-bottom: 12px;
 }
 

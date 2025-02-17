@@ -1,0 +1,130 @@
+<div class="settings-container">
+  <h1>Settings</h1>
+
+  <!-- <div class="row mt-3">
+    <div class="col-4">
+      <label for="client-id" class="form-label">Client ID</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="client-id" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="clientIdFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="client-secret" class="form-label">Client secret</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="client-secret" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="clientSecretFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="refresh-token" class="form-label">Refresh token</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="refresh-token" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="refreshTokenFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="form-text">OAuth credentials. If blank, application default credentials (ADC) will be used. Recommended to leave blank.</div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-4">
+      <label for="customer-id" class="form-label">Google Ads Customer ID</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="customer-id" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="googleAdsCustomerIdFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="developer-token" class="form-label">Google Ads developer token</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="developer-token" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="googleAdsRefreshTokenFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+    <div class="col-4">
+      <label for="api-key" class="form-label">Gemini API key</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="api-key" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="geminiApiKeyFormControl" [errorStateMatcher]="matcher">
+      </div>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-8">
+      <div class="form-text">Required to generate keywords with the Keyword Planner, which yields better results.</div>
+    </div>
+    <div class="col-4">
+      <div class="form-text">Required to use Gemini.</div>
+    </div>
+  </div> -->
+
+  <!-- <label for="basic-url">Headlines prompt</label>
+  <div class="input-group">
+    <textarea
+    type="text"
+    rows="5"
+    class="form-control"
+    id="basic-url"
+    aria-describedby="basic-addon3 basic-addon4"
+    matInput
+    [formControl]="headlinesBlocklistingFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Custom prompt to use for headlines generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+  </div>
+
+  <label for="basic-url">Descriptions prompt</label>
+  <div class="input-group">
+    <textarea
+    type="text"
+    rows="5"
+    class="form-control"
+    id="basic-url"
+    aria-describedby="basic-addon3 basic-addon4"
+    matInput
+    [formControl]="headlinesBlocklistingFormControl"
+    [errorStateMatcher]="matcher"
+    placeholder="Custom prompt to use for descriptions generation. Must include the following placeholders: {n}, {length}, {term}, {term_description}, {company}"></textarea>
+  </div> -->
+
+  <div>
+    <label for="base-url" class="form-label">Topic Mine base URL</label>
+    <div class="input-group">
+      <input type="text" placeholder="https://topic-mine-xxx.us-central1.run.app" class="form-control" id="customer-id" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="baseUrlFormControl" [errorStateMatcher]="matcher" [(ngModel)]="this.globalService.baseUrl">
+    </div>
+  </div>
+  <div class="form-text">URL of the Cloud Run service where Topic Mine is deployed. Can be obtained in the GCP console -> Cloud Run -> Topic Mine service details.</div>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <label for="customer-id" class="form-label">Google Ads Customer ID</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="customer-id" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="customerIdFormControl" [errorStateMatcher]="matcher" [(ngModel)]="this.globalService.customerId">
+      </div>
+    </div>
+    <div class="col-6">
+      <label for="developer-token" class="form-label">Google Ads developer token</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="developer-token" aria-describedby="basic-addon3 basic-addon4" matInput [formControl]="developerTokenFormControl" [errorStateMatcher]="matcher" [(ngModel)]="this.globalService.developerToken">
+      </div>
+    </div>
+  </div>
+  <div class="form-text">Required to use <a href="https://ads.google.com/home/tools/keyword-planner/" target="_blank" rel="noopener noreferrer">Google Ads' Keyword Planner</a>. If not included, Topic Mine will use Gemini to generate keywords, which might not yield as precise keywords as the Keyword Planner. The Google Ads customer ID is found usually at the top right of Google Ads console with a format similar to XXX-XXX-XXXX, copy it without dashes or hyphens. To obtain the Google Ads developer token, follow instructions <a href="https://developers.google.com/google-ads/api/docs/get-started/dev-token" target="_blank" rel="noopener noreferrer">here</a>.</div>
+</div>
+
+<div style="display: flex; gap: 20px; justify-content: center; padding: 50px 0;">
+  <button type="button" mat-stroked-button (click)="goBack()">Back</button>
+  <button type="button" [disabled]="isSaveButtonDisabled" mat-flat-button (click)="isSendingRequest ? null : (mustOpenModal ? openModal() : saveSettings())">Save</button>
+
+<!-- Modal -->
+<div #myModal class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Atention!</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        If any of the fields "Google Ads Customer ID" or "Google Ads developer token" is not present, the Google Ads Keyword Planner will <b>not</b> be used to generate keywords. Instead, if keyword generation is enabled, Gemini will be used.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="saveSettings()">Accept</button>
+      </div>
+    </div>
+  </div>
+</div>
