@@ -142,6 +142,22 @@ prompts_es = {
                         texto_acortado
                         Solamente escribe como respuesta el texto acortado, sin comillas, saltos de linea ni nada adicional.
                         """,
+    'PATH_SIZE_ENFORCEMENT': """
+        Te daré una lista de textos de rutas de visualización de anuncios de búsqueda responsivos para Google Ads que pueden ser demasiado largos,
+        de una lista de rutas, cada una de las cuales se denomina individualmente una parte. La ruta debe tener el formato de
+        ["parte 1 de la ruta", "parte 2 de la ruta"], y es posible que solo exista una parte o
+        que la ruta esté vacía (que son casos válidos).
+        Comprueba cada parte. Acorta la parte si tiene más de {max_length} caracteres y verifica todas las partes.
+        Si una parte no necesita acortarse, mantén la misma parte en la lista.
+        El texto es: {copy}
+        Dame el resultado en el siguiente formato (el mismo formato que el texto):
+        ["escribe la parte 1 de la ruta aquí", "escribe la parte 2 de la ruta aquí"]
+        La respuesta debe ser dada exactamente en el formato que te he dado, sin agregar
+        saltos de línea innecesarios ni espacios. Solo debe ser una lista de textos separados por comas,
+        todo entre corchetes y nada más.
+        IMPORTANTE: NO debe contener mayúsculas ni espacios, si son varias palabras deben
+        ir en minúsculas y separadas por un guión.
+    """,
     'EXTRACT_MAIN_FEATURES': """
         Dada la siguiente descripcion de producto:
         "{description}"

@@ -170,6 +170,22 @@ prompts_en = {
     shortened_text
     The response should be just the shortened text without quotation marks, line breaks or anything else.
   """,
+    "PATH_SIZE_ENFORCEMENT": """
+    I will give you a list of Responsive Search Ads display path texts for Google Ads that may be too long,
+    from a list of paths, each individually called a part.  The path should be in the format of
+    ["part 1 of the path", "part 2 of the path"], and it is possible for only one part to exist or
+    the path being empty (which are valid cases).
+    Check each part.  Make the part shorter if the part is greater than {max_length} characters, and check all parts.
+    If a part does not need shortening, then keep the same part on the list.
+    The text is: {copy}
+    Give me the result in the following format (the same format as the text):
+    ["write part 1 of the path here", "write part 2 of the path here"]
+    The answer must be given to me exactly in the format that I have given you, without adding
+    unnecessary line breaks or spaces. It should only be a list of texts separated by commas,
+    everything between brackets and nothing else.
+    IMPORTANT: It should NOT contain capital letters or spaces, if there are several words they should
+    be in lowercase and separated by a hyphen.
+  """,
     "EXTRACT_MAIN_FEATURES": """
     Given the following product description:
     '{description}'
