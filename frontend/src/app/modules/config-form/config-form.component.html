@@ -1,0 +1,300 @@
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <form [formGroup]="configForm">
+      <mat-stepper linear="false" #stepper>
+        <!-- Brands and Products Configuration Step-->
+        <mat-step [stepControl]="configForm">
+          <ng-template matStepLabel
+            >Brands and Products Configuration</ng-template
+          >
+          <div class="form-item">
+            <mat-radio-group
+              aria-labelledby="example-radio-group-label"
+              formControlName="brandsProductsSelection"
+            >
+              <mat-radio-button class="example-radio-button" value="gmcList"
+                >Use brands and products from Google Merchant
+                Center</mat-radio-button
+              >
+              <mat-radio-button
+                class="example-radio-button"
+                value="customerList"
+                >Use customer provided list of brands and
+                products</mat-radio-button
+              >
+            </mat-radio-group>
+          </div>
+          @if(configForm.get("brandsProductsSelection")?.value === 'gmcList') {
+          <div class="brands-product-selection-config flex-start">
+            <div class="form-item">
+              <mat-form-field class="gmcId" appearance="fill">
+                <mat-label>Google Merchant Center ID</mat-label>
+                <input matInput formControlName="gmcId" id="gmcId" />
+                <mat-icon matSuffix>id</mat-icon>
+                @if (configForm.get('gmcId')?.invalid ) {
+                <mat-error></mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <button
+              mat-flat-button
+              [disabled]="disableLoadGMCButton()"
+              (click)="loadBrandsAndProducts()"
+            >
+              Load
+            </button>
+          </div>
+          <!-- Brands & Products Selects -->
+          @if(brands.length > 0 || products.length > 0) {
+          <div class="flex-start">
+            <div class="form-item">
+              <mat-form-field>
+                <mat-label>Brands</mat-label>
+                <mat-select
+                  formControlName="brands"
+                  id="brands"
+                  (selectionChange)="onBrandChange($event)"
+                  multiple
+                >
+                  <mat-option value="select-brand">Select a Brand</mat-option>
+                  @for (brand of brands; track brand) {
+                  <mat-option [value]="brand">{{ brand }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="form-item">
+              <mat-form-field>
+                <mat-label>Products</mat-label>
+                <mat-select formControlName="products" id="products" multiple>
+                  @for (product of products; track product) {
+                  <mat-option [value]="product">{{ product }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          } } @if(configForm.get("brandsProductsSelection")?.value === 'customerList') {
+            <div class="form-item">
+              <mat-form-field appearance="fill">
+                <mat-label>Brand</mat-label>
+                <input
+                  matInput
+                  formControlName="customerProvidedBrand"
+                  id="customerProvidedBrand"
+                />
+                <mat-icon matSuffix>store</mat-icon>
+                @if (configForm.get('customerProvidedBrand')?.invalid ) {
+                <mat-error></mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-item">
+            <mat-form-field class="large-input" appearance="fill">
+              <mat-label>Products</mat-label>
+              <textarea
+                matInput
+                rows="5"
+                cols="5"
+                formControlName="customerProvidedProducts"
+                id="customerProvidedProducts"
+              >
+              </textarea>
+              <mat-icon matSuffix>store</mat-icon>
+              @if (configForm.get('customerProvidedProducts')?.invalid ) {
+              <mat-error></mat-error>
+              }
+            </mat-form-field>
+          </div>
+          }
+          <div class="buttons-container">
+            <button
+              mat-button
+              [disabled]="!enableStep1NextButton()"
+              matStepperNext
+            >
+              Next
+            </button>
+          </div>
+        </mat-step>
+
+        <!-- Trends Step -->
+        <mat-step [stepControl]="configForm" label="Select or input the trends">
+          <div class="trends-container">
+            <div class="form-item">
+              <mat-radio-group
+                aria-labelledby="example-radio-group-label"
+                formControlName="trendsSelection"
+              >
+                <mat-radio-button
+                  class="example-radio-button"
+                  value="externalTrends"
+                  >Use External Google Trends</mat-radio-button
+                >
+                <mat-radio-button
+                  class="example-radio-button"
+                  value="internalTrends"
+                  >Use Internal Customer Trends</mat-radio-button
+                >
+              </mat-radio-group>
+            </div>
+          </div>
+          @if (configForm.get("trendsSelection")?.value === 'externalTrends') {
+          <mat-expansion-panel
+            class="trends-list"
+            (opened)="panelOpenState.set(true)"
+            (closed)="panelOpenState.set(false)"
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Top {{ this.trends.length }} terms from the BigQuery dataset
+              </mat-panel-title>
+              <mat-panel-description>
+                Expand to select the trends that you want to use.
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-selection-list
+              formControlName="externalTrends"
+              id="externalTrends"
+            >
+              @for (trend of trends; track trend) {
+              <mat-list-option [value]="trend">{{ trend }}</mat-list-option>
+              }
+            </mat-selection-list>
+          </mat-expansion-panel>
+          } @if (configForm.get("trendsSelection")?.value === 'internalTrends')
+          {
+          <div class="form-item">
+            <mat-form-field class="large-input" appearance="fill">
+              <mat-label>Internal Trends</mat-label>
+              <textarea
+                matInput
+                rows="5"
+                cols="5"
+                formControlName="internalTrends"
+                id="internalTrends"
+              >
+              </textarea>
+              <mat-icon matSuffix>analytics</mat-icon>
+              @if (configForm.get('internalTrends')?.invalid ) {
+              <mat-error></mat-error>
+              }
+            </mat-form-field>
+          </div>
+          }
+          <div class="buttons-container">
+            <button mat-button matStepperPrevious>Back</button>
+            <button
+              mat-button
+              [disabled]="!enableStep2NextButton()"
+              matStepperNext
+            >
+              Next
+            </button>
+          </div>
+        </mat-step>
+
+        <!-- Search Ads Step -->
+        <mat-step
+          [stepControl]="configForm"
+          label="Search Ads Copies Configuration"
+        >
+          <div class="search-ads-copy flex-start">
+            <div class="settings">
+              <div class="flex-start">
+                <div class="form-item">
+                  <mat-form-field class="numbers">
+                    <mat-label># Headlines</mat-label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="15"
+                      matInput
+                      formControlName="numHeadlines"
+                      id="numHeadlines"
+                    />
+                  </mat-form-field>
+                </div>
+                <div class="form-item">
+                  <mat-form-field class="numbers">
+                    <mat-label># Descriptions</mat-label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="4"
+                      matInput
+                      formControlName="numDescriptions"
+                      id="numDescriptions"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="form-item">
+                <mat-form-field>
+                  <mat-label>Language</mat-label>
+                  <mat-select
+                    formControlName="language"
+                    id="language"
+                    (selectionChange)="onLanguageChange($event)"
+                  >
+                    <mat-option value="EN">English</mat-option>
+                    <mat-option value="ES">Spanish</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-item">
+                <mat-form-field class="large-input">
+                  <mat-label>Headlines Block List (optional)</mat-label>
+                  <textarea
+                    rows="5"
+                    cols="5"
+                    matInput
+                    formControlName="headlinesBlockList"
+                    id="headlinesBlockList"
+                  >
+                  </textarea>
+                </mat-form-field>
+              </div>
+              <div class="form-item">
+                <mat-form-field class="large-input">
+                  <mat-label>Descriptions Block List (optional)</mat-label>
+                  <textarea
+                    rows="5"
+                    cols="5"
+                    matInput
+                    formControlName="descriptionsBlockList"
+                    id="descriptionsBlockList"
+                  >
+                  </textarea>
+                </mat-form-field>
+              </div>
+            </div>
+            <!-- Prompt -->
+            <div class="prompt-container">
+              <mat-label>Example Prompt</mat-label>
+              <div>
+                <label><strong>Headlines</strong></label
+                ><br />
+                <p [innerHTML]="promptHeadlines"></p>
+                <label><strong>Descriptions</strong></label
+                ><br />
+                <p [innerHTML]="promptDescriptions"></p>
+              </div>
+            </div>
+          </div>
+          <div class="buttons-container">
+            <button mat-button matStepperPrevious>Back</button>
+            <!--button mat-button (click)="stepper.reset()">Reset</button-->
+            <button
+              mat-flat-button
+              [disabled]="!enableStep3Button()"
+              (click)="generateAds()"
+            >
+              Generate Ads
+            </button>
+          </div>
+        </mat-step>
+      </mat-stepper>
+    </form>
+  </mat-card-content>
+</mat-card>
