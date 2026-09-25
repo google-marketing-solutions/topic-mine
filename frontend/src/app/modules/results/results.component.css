@@ -1,0 +1,25 @@
+.results-container {
+  width: 80%;
+  margin: 32px auto;
+
+  mat-card-header {
+    margin-bottom: 8px;
+  }
+  mat-expansion-panel {
+    width: 90%;
+    margin: 8px auto;
+  }
+}
+
+p {
+  padding: 8px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin: 8px 16px 16px 0px;
+  }
+}
