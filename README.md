@@ -14,6 +14,21 @@
  limitations under the License.
  -->
 
+[!WARNING]
+DEPRECATION NOTICE: This project is no longer actively maintained.
+
+This repository has reached the end of its active development lifecycle and is officially in an unmaintained state.
+
+What this means for the project:
+
+- No New Features: We will not be accepting, reviewing, or implementing any new feature requests.
+- No Bug Fixes: New bug reports will not be addressed.
+- No Security Updates: Future security vulnerabilities will not be patched or investigated. Using this software in production environments is done entirely at your own risk.
+- Closed to Contributions: The issue tracker is effectively frozen. Any new issues, pull requests, or support questions will be ignored or automatically closed without review.
+
+Future Availability and Forking
+The source code will remain publicly available here indefinitely in a read-only capacity for historical reference and educational purposes.
+
 # Topic Mine
 
 Topic Mine is a Google Open Source project that generates ad content for Search Ads and, in some cases, Display Ads, and that can be directly imported to Google Ads, Search Ads 360 and DV360.
