@@ -355,22 +355,44 @@ def __validate_body_params(
     if data['first_term_source_config']['limit'] == 0:
       data['first_term_source_config']['limit'] = 9999
   elif first_term_source == FirstTermSource.BIG_QUERY:
-    if 'query' not in data['first_term_source_config']:
-      if 'project_id' not in data['first_term_source_config']:
-        raise ValueError('Missing project_id in first_term_source_config.')
-      if 'dataset' not in data['first_term_source_config']:
-        raise ValueError('Missing dataset in first_term_source_config.')
-      if 'table' not in data['first_term_source_config']:
-        raise ValueError('Missing table in first_term_source_config.')
-      if 'term_column' not in data['first_term_source_config']:
-        raise ValueError('Missing term_column in first_term_source_config.')
-      if (
-          'limit' not in data['first_term_source_config'] or
-          not isinstance(data['first_term_source_config']['limit'], int)
-          ):
-        raise ValueError('Missing or invalid limit in first_term_source_config. Must be of type int.')
-      if data['first_term_source_config']['limit'] == 0:
-        data['first_term_source_config']['limit'] = 9999
+    if 'query' in data['first_term_source_config']:
+      raise ValueError(
+          'Arbitrary BigQuery queries via "query" parameter are not supported for security reasons. '
+          'Please specify project_id, dataset, table, and term_column.'
+          )
+    if 'project_id' not in data['first_term_source_config']:
+      raise ValueError('Missing project_id in first_term_source_config.')
+    if not Utils.is_valid_project_id(data['first_term_source_config']['project_id']):
+      raise ValueError('Invalid project_id in first_term_source_config.')
+
+    if 'dataset' not in data['first_term_source_config']:
+      raise ValueError('Missing dataset in first_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['first_term_source_config']['dataset']):
+      raise ValueError('Invalid dataset in first_term_source_config.')
+
+    if 'table' not in data['first_term_source_config']:
+      raise ValueError('Missing table in first_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['first_term_source_config']['table'], allow_hyphen=True):
+      raise ValueError('Invalid table in first_term_source_config.')
+
+    if 'term_column' not in data['first_term_source_config']:
+      raise ValueError('Missing term_column in first_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['first_term_source_config']['term_column']):
+      raise ValueError('Invalid term_column in first_term_source_config.')
+
+    for col_key in ['term_description_column', 'sku_column', 'url_column', 'image_url_column']:
+      if col_key in data['first_term_source_config']:
+        if not Utils.is_valid_bigquery_identifier(data['first_term_source_config'][col_key]):
+          raise ValueError(f'Invalid {col_key} in first_term_source_config.')
+
+    if (
+        'limit' not in data['first_term_source_config'] or
+        not isinstance(data['first_term_source_config']['limit'], int) or
+        data['first_term_source_config']['limit'] < 0
+        ):
+      raise ValueError('Missing or invalid limit in first_term_source_config. Must be of type int.')
+    if data['first_term_source_config']['limit'] == 0:
+      data['first_term_source_config']['limit'] = 9999
 
   if (
       'second_term_source_config' in data and
@@ -396,15 +418,32 @@ def __validate_body_params(
   elif second_term_source == SecondTermSource.SEARCH_SCOUT:
     if 'project_id' not in data['second_term_source_config']:
       raise ValueError('Missing project_id in second_term_source_config.')
+    if not Utils.is_valid_project_id(data['second_term_source_config']['project_id']):
+      raise ValueError('Invalid project_id in second_term_source_config.')
+
     if 'dataset' not in data['second_term_source_config']:
       raise ValueError('Missing dataset in second_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['second_term_source_config']['dataset']):
+      raise ValueError('Invalid dataset in second_term_source_config.')
+
     if 'table' not in data['second_term_source_config']:
       raise ValueError('Missing table in second_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['second_term_source_config']['table'], allow_hyphen=True):
+      raise ValueError('Invalid table in second_term_source_config.')
+
     if 'term_column' not in data['second_term_source_config']:
       raise ValueError('Missing term_column in second_term_source_config.')
+    if not Utils.is_valid_bigquery_identifier(data['second_term_source_config']['term_column']):
+      raise ValueError('Invalid term_column in second_term_source_config.')
+
+    if 'term_description_column' in data['second_term_source_config']:
+      if not Utils.is_valid_bigquery_identifier(data['second_term_source_config']['term_description_column']):
+        raise ValueError('Invalid term_description_column in second_term_source_config.')
+
     if (
         'limit' not in data['second_term_source_config'] or
-        not isinstance(data['second_term_source_config']['limit'], int)
+        not isinstance(data['second_term_source_config']['limit'], int) or
+        data['second_term_source_config']['limit'] < 0
         ):
       raise ValueError('Missing or invalid limit in second_term_source_config. Must be of type int.')
     if data['second_term_source_config']['limit'] == 0:

@@ -66,6 +66,7 @@ fi
 
 echo "Deploying Cloud Run..."
 gcloud run deploy $cloud_run_service --region=$project_region --source="." \
+    --no-allow-unauthenticated \
     --service-account $service_account_name \
     --timeout 3600 \
     --memory 4Gi
