@@ -22,6 +22,7 @@ import logging
 
 from google.cloud import bigquery
 from utils.authentication_helper import Authenticator
+from utils.utils import Utils
 
 # Logger config
 logging.basicConfig()
@@ -65,6 +66,17 @@ class BigQueryHelper:
     Returns:
       list[str]: A list containing the values of the specified column.
     """
+    if not Utils.is_valid_project_id(project_id):
+      raise ValueError(f'Invalid project_id: {project_id}')
+    if not Utils.is_valid_bigquery_identifier(dataset_id):
+      raise ValueError(f'Invalid dataset_id: {dataset_id}')
+    if not Utils.is_valid_bigquery_identifier(table_id, allow_hyphen=True):
+      raise ValueError(f'Invalid table_id: {table_id}')
+    if not Utils.is_valid_bigquery_identifier(column_name):
+      raise ValueError(f'Invalid column_name: {column_name}')
+    if not isinstance(limit, int) or limit < 1:
+      raise ValueError(f'Invalid limit: {limit}. Must be positive integer.')
+
     query = (
         'SELECT ' + column_name +
         ' FROM `' + project_id + '.' + dataset_id + '.' + table_id +

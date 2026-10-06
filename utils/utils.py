@@ -16,14 +16,15 @@
 """
 
 import json
+import re
 
 
 class Utils:
   """This class contains multiple utilities.
   """
 
-  @staticmethod
-  def load_config(config_file_name: str) -> object:
+  @classmethod
+  def load_config(cls, config_file_name: str) -> object:
     """Loads the configuration data from the given path.
 
     Args:
@@ -35,3 +36,43 @@ class Utils:
     config_file_path = './' + config_file_name
     with open(config_file_path, 'r') as config_file:
       return json.load(config_file)
+
+  @classmethod
+  def is_valid_bigquery_identifier(
+      cls,
+      identifier: object,
+      allow_hyphen: bool = False,
+      max_length: int = 1024
+      ) -> bool:
+    """Validates that a string is a safe BigQuery identifier (dataset, table, or column name).
+
+    Args:
+      identifier (object): The identifier to validate.
+      allow_hyphen (bool): Whether to allow hyphens (permitted in some table IDs).
+      max_length (int): Maximum allowable length.
+
+    Returns:
+      bool: True if valid, False otherwise.
+    """
+    if not isinstance(identifier, str) or not identifier:
+      return False
+    if len(identifier) > max_length:
+      return False
+    pattern = r'^[a-zA-Z0-9_\-]+$' if allow_hyphen else r'^[a-zA-Z0-9_]+$'
+    return bool(re.match(pattern, identifier))
+
+  @classmethod
+  def is_valid_project_id(cls, project_id: object) -> bool:
+    """Validates that a string is a safe GCP project ID.
+
+    Args:
+      project_id (object): The project ID to validate.
+
+    Returns:
+      bool: True if valid, False otherwise.
+    """
+    if not isinstance(project_id, str) or not project_id:
+      return False
+    if len(project_id) > 100 or len(project_id) < 1:
+      return False
+    return bool(re.match(r'^[a-zA-Z0-9_\-.:]+$', project_id))

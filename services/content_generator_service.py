@@ -173,23 +173,6 @@ class ContentGeneratorService:
       A tuple with a list of terms, descriptions, skus, urls and image_urls.
     """
     logging.info(' Getting terms and descriptions from bq')
-    if 'query' in self.body_params['first_term_source_config']:
-      query = self.body_params['first_term_source_config']['query']
-      r = self.bigquery_helper.run_query(query)
-      terms = [row['term'] for row in r]
-      descriptions = (
-          [row['description'] for row in r]
-          if 'description' in r[0].keys() else []
-          )
-      skus = [row['sku'] for row in r] if 'sku' in r[0].keys() else []
-      urls = [row['url'] for row in r] if 'url' in r[0].keys() else []
-      image_urls = (
-          [row['image_url'] for row in r]
-          if 'image_url' in r[0].keys() else []
-          )
-
-      return terms, descriptions, skus, urls, image_urls
-
     project_id = self.body_params['first_term_source_config']['project_id']
     dataset_id = self.body_params['first_term_source_config']['dataset']
     table_id = self.body_params['first_term_source_config']['table']
