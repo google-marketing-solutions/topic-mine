@@ -1,0 +1,84 @@
+mat-card {
+  width: 80%;
+  margin: 32px auto;
+}
+
+.topic-mine-config {
+  width: 80%;
+  margin: 32px auto;
+}
+
+.trends-list {
+  margin: 32px 0px 32px 0px;
+}
+
+mat-divider {
+  margin: 16px 0px;
+  color: rgba(240, 240, 240, 0.966);
+}
+
+.large-input {
+  /*width: 30%;*/
+}
+
+.form-container {
+  padding: 16px;
+  .form-item {
+    margin-top: 16px;
+  }
+}
+
+.trends-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-right: 16px;
+  }
+}
+
+.flex-start {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.brands-product-selection-config {
+  button {
+    margin: auto 16px;
+  }
+}
+
+mat-form-field {
+  margin: 8px;
+}
+
+.search-ads-copy {
+  margin-bottom: 16px;
+  .settings {
+    .large-input {
+      width: 100%;
+    }
+  }
+}
+
+.prompt-container {
+  padding: 16px;
+  width: 50%;
+  margin: 0px auto;
+
+  div {
+    margin-top: 16px;
+    border: 1px dotted gray;
+    height: 88%;
+    padding: 16px;
+  }
+}
+
+.highlight {
+  color: red;
+}
